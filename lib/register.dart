@@ -75,10 +75,6 @@ class _RegisterPageState extends State<RegisterPage> {
     // TODO: implement initState
     super.initState();
     verificationCodeDecoration=defaultVerificationCodeDecoration;
-    //昵称是选填
-    // _uNickNameController.addListener(() {
-    //   print(_uNickNameController.text);
-    // });
     _uPhoneController.addListener(() {
       print(_uPhoneController.text);
       setRegisterState();
