@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/register.dart';
 import '../login.dart';
 import '../main.dart';
 
@@ -12,6 +13,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
   Map<String, Widget> routes = {
     'home': MyHomePage(), //定义app路径
     'login': LoginPage(), //定义login路径
+    'register':RegisterPage(),//定义注册路径
   };
 
   String routerName = routeBeforeHook(settings);
@@ -34,11 +36,9 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
 }
 
 String routeBeforeHook(RouteSettings settings) {
-  if(checkToken()==false){
+  if('home'==settings.name!&&checkToken()==false)
     return 'login';
-  }else{
-    return settings.name!;
-  }
+  return settings.name!;
 }
 bool checkToken() {
   String token = LoginPrefs.getToken()??'';

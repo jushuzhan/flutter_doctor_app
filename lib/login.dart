@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(top: 180),
+                      margin: EdgeInsets.only(top: 200),
                       padding: EdgeInsets.fromLTRB(48, 80, 48, 48),
                       child: Card(
                         color: Colors.white,
@@ -178,6 +178,10 @@ class _LoginPageState extends State<LoginPage> {
                                       child: TextFormField(
                                         autofocus: false,
                                         keyboardType: TextInputType.number,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color:Color(0xFF333333),
+                                        ),
                                         decoration: InputDecoration(
                                           hintText: "请输入您的手机号码",
                                           hintStyle: TextStyle(
@@ -253,6 +257,10 @@ class _LoginPageState extends State<LoginPage> {
                                           LengthLimitingTextInputFormatter(20),
                                         ],
                                         focusNode: _uPassFocusNode,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color:Color(0xFF333333),
+                                        ),
                                       ),
                                       flex: 1,
                                     ),
@@ -394,6 +402,7 @@ class _LoginPageState extends State<LoginPage> {
                                         onTap: (){
                                           print("注册账号");
                                           //TODO 注册账号 跳转至注册界面
+                                          Navigator.pushNamed(context, 'register');//跳转至首页
                                         },
                                         child:  Text('注册账号',style: TextStyle(
                                           color: Color(0xFF999999),
