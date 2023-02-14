@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
-import 'package:flutter_doctor_app/common/register.dart';
+import 'package:flutter_doctor_app/register.dart';
 import '../login.dart';
 import '../main.dart';
 
