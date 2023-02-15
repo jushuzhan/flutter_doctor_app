@@ -60,8 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          //文字白色
-          title: Text("问诊申请"),
+          title: Text("问诊申请",style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFFFFFFFF)
+          ),),
           bottom: TabBar(
             tabs: tabs.map((e) => Tab(text: e)).toList(),
           ),
@@ -69,12 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: 40,
               child: Image.asset(
-                'images/info_image_portrait.png',
+                'assets/images/info_image_portrait.png',
               ),
               margin: EdgeInsets.fromLTRB(0.0, 0.0, 30.0, 0.0),
             ),
           ],
-          systemOverlayStyle: SystemUiOverlayStyle.light,
+          systemOverlayStyle: SystemUiOverlayStyle.light,//状态栏字体为白色
         ),
         body: TabBarView(
           //构建

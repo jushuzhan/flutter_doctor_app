@@ -5,6 +5,7 @@ import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/register.dart';
 import '../login.dart';
 import '../main.dart';
+import '../privacypolicy.dart';
 
 /*
  *  这个方法是固定写法，功能就像是一个拦截器。
@@ -14,6 +15,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'home': MyHomePage(), //定义app路径
     'login': LoginPage(), //定义login路径
     'register':RegisterPage(),//定义注册路径
+    'privacy_policy':PrivacyPolicyPage(),//定义隐私政策路径
   };
 
   String routerName = routeBeforeHook(settings);

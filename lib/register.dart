@@ -42,15 +42,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final FocusNode _uSurePasswordFocusNode = FocusNode(); //确认密码
   bool _checkboxSelected = false; //维护复选框状态
 
-  String passwordAssertName = "images/passwordinvisible.png"; //右边默认不显示密码
+  String passwordAssertName = "assets/images/passwordinvisible.png"; //右边默认不显示密码
   bool showPassword = false; //密码框最右边默认不显示密码
-  String surePasswordAssertName = "images/passwordinvisible.png"; //右边默认不显示密码
+  String surePasswordAssertName = "assets/images/passwordinvisible.png"; //右边默认不显示密码
   bool sureShowPassword = false; //密码框最右边默认不显示密码
   int registerTextColor = 0xFF999999; //注册字体颜色
   int registerBackgroundColor = 0xFFE6E6E6; //注册按钮背景颜色
   bool _isDisable = true; //注册按钮是否可用，默认是不可用
 
-  late Timer _timer;//延迟初始化
+  Timer? _timer;//延迟初始化
   int _countdownTime=0;
   bool _isVerificationCodeDisable = false; //获取验证码按钮是否可用，默认是可用的
   String verificationCodeData="获取验证码";
@@ -129,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
           titleSpacing: 15.0, //标题距离左边大小
           leading: IconButton(
               icon: Image.asset(
-                'images/nav_icon_back.png',
+                'assets/images/nav_icon_back.png',
                 width: 24,
               ),
               padding: EdgeInsets.only(left: 15),
@@ -173,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   Container(
                     child: Image.asset(
-                      'images/logo.png',
+                      'assets/images/logo.png',
                       width: 100,
                       alignment: Alignment.topRight,
                     ),
@@ -534,10 +534,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                             showPassword = !showPassword;
                                             if (!showPassword) {
                                               passwordAssertName =
-                                                  "images/passwordinvisible.png";
+                                                  "assets/images/passwordinvisible.png";
                                             } else {
                                               passwordAssertName =
-                                                  "images/passwordvisible.png";
+                                                  "assets/images/passwordvisible.png";
                                             }
                                           });
                                         },
@@ -634,10 +634,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                                 !sureShowPassword;
                                             if (!sureShowPassword) {
                                               surePasswordAssertName =
-                                                  "images/passwordinvisible.png";
+                                                  "assets/images/passwordinvisible.png";
                                             } else {
                                               surePasswordAssertName =
-                                                  "images/passwordvisible.png";
+                                                  "assets/images/passwordvisible.png";
                                             }
                                           });
                                         },
@@ -692,7 +692,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           ),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
-                                              //TODO 跳转至webview界面
+                                              Navigator.pushNamed(context, 'privacy_policy');//跳转至首页
                                             },
                                         ),
                                       ])),
@@ -759,7 +759,7 @@ class _RegisterPageState extends State<RegisterPage> {
     // TODO: implement dispose
     super.dispose();
     if(_timer!=null){
-      _timer.cancel();
+      _timer!.cancel();
     }
   }
   void onVerificationCodeClick(){
@@ -767,29 +767,7 @@ class _RegisterPageState extends State<RegisterPage> {
       Fluttertoast.showToast(msg: "请输入正确长度的手机号");
       return;
     }
-    // setState(() {
-    //   if (_timer != null) {
-    //     return;
-    //   }
-    //   // Timer的第一秒倒计时是有一点延迟的，为了立刻显示效果可以添加下一行。
-    //   verificationCodeData = '${_countdownTime--}s';
-    //   verificationCodeDecoration=decoration;
-    //   _isVerificationCodeDisable=true;//获取验证码按钮不可用
-    //   _timer =
-    //   new Timer.periodic(new Duration(seconds: 1), (timer) {
-    //     setState(() {
-    //       if (_countdownTime > 0) {
-    //         verificationCodeData = '${_countdownTime--}s';
-    //       } else {
-    //         verificationCodeData = '重新获取';
-    //         _isVerificationCodeDisable=false;//获取验证码按钮可用
-    //         verificationCodeDecoration=defaultVerificationCodeDecoration;
-    //         _countdownTime = 119;
-    //         _timer.cancel();
-    //       }
-    //     });
-    //   });
-    // });
+    _uPhoneFocusNode.unfocus();
     if(_countdownTime==0){
       //TODO HTTP请求发送验证码
       setState(() {
@@ -812,14 +790,17 @@ class _RegisterPageState extends State<RegisterPage> {
             _isVerificationCodeDisable=false;//获取验证码按钮可用
             verificationCodeData="重新获取";
             verificationCodeDecoration=defaultVerificationCodeDecoration;
-            _timer.cancel();
+            _timer!.cancel();
             return;
           }
           verificationCodeData='$_countdownTime'+"s";
       })
     };
+    if(_timer==null){
+      _timer = Timer.periodic(oneSec, callback);
+    }
 
-    _timer = Timer.periodic(oneSec, callback);
+
   }
 
   void onRegisterClick() async {
@@ -831,7 +812,42 @@ class _RegisterPageState extends State<RegisterPage> {
       _uVerificationCodeNode.unfocus();
       _uPasswordFocusNode.unfocus();
       _uSurePasswordFocusNode.unfocus();
-      LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
+
+      if (_uPhoneController.text.length==0) {
+        Fluttertoast.showToast(msg: "请先输入手机号");
+        return;
+      }
+      if (_uPhoneController.text.length != 11) {
+        Fluttertoast.showToast(msg: "请输入正确长度的手机号");
+        return;
+      }
+      if (_uVerificationCodeController.text.length==0) {
+        Fluttertoast.showToast(msg: "请先输入验证码");
+        return;
+      }
+      if (_uVerificationCodeController.text.length != 6) {
+        Fluttertoast.showToast(msg: "请输入正确长度的验证码");
+        return;
+      }
+      if (_uPasswordController.text.length==0) {
+        Fluttertoast.showToast(msg: "请先输入密码");
+        return;
+      }
+      if (_uPasswordController.text.length < 6 || _uPasswordController.text.length > 20) {;
+        Fluttertoast.showToast(msg: "请输入正确长度的密码");
+        return;
+      }
+      if (_uSurePasswordController.text.length < 6 || _uSurePasswordController.text.length > 20) {
+        Fluttertoast.showToast(msg: "请输入正确长度的确认密码");
+        return;
+      }
+      if (_uPasswordController.text.compareTo(_uSurePasswordController.text)!=0) {
+        Fluttertoast.showToast(msg: "两次输入密码不一致");
+        return;
+      }
+
+      //TODO 调接口注册 注册成功此界面消失
+      //LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
       Navigator.of(context).pop(); //注册页消失
     });
   }

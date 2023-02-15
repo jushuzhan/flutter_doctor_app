@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _uNameFocusNode=FocusNode();
   final FocusNode _uPassFocusNode=FocusNode();
 
-  String passwordAssertName = "images/passwordinvisible.png"; //右边默认不显示密码
+  String passwordAssertName = "assets/images/passwordinvisible.png"; //右边默认不显示密码
   bool showPassword = false; //密码框最右边默认不显示密码
   int loginTextColor = 0xFF999999; //登录字体颜色
   int loginBackgroundColor = 0xFFE6E6E6; //登录按钮背景颜色
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Container(
                     child: Image.asset(
-                      'images/logo.png',
+                      'assets/images/logo.png',
                       width: 100,
                       alignment: Alignment.topRight,
                     ),
@@ -271,10 +271,10 @@ class _LoginPageState extends State<LoginPage> {
                                             showPassword = !showPassword;
                                             if (!showPassword) {
                                               passwordAssertName =
-                                                  "images/passwordinvisible.png";
+                                                  "assets/images/passwordinvisible.png";
                                             } else {
                                               passwordAssertName =
-                                                  "images/passwordvisible.png";
+                                                  "assets/images/passwordvisible.png";
                                             }
                                           });
                                         },
@@ -348,7 +348,7 @@ class _LoginPageState extends State<LoginPage> {
                                             children: <Widget>[
                                               Container(
                                                 child: Image.asset(
-                                                  'images/weixin_icon.png',
+                                                  'assets/images/weixin_icon.png',
                                                   width: 24,
                                                 ),
                                                 margin:
