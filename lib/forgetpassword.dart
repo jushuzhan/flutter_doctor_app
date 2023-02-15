@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class RegisterPage extends StatefulWidget {
+class ForgetPasswordPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -19,15 +19,13 @@ class RegisterPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  _RegisterPageState createState() {
+  _ForgetPasswordPageState createState() {
     // TODO: implement createState
-    return _RegisterPageState();
+    return _ForgetPasswordPageState();
   }
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController _uNickNameController =
-      TextEditingController(); //昵称
+class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController _uPhoneController = TextEditingController(); //手机号
   final TextEditingController _uVerificationCodeController =
       TextEditingController(); //验证码
@@ -35,20 +33,19 @@ class _RegisterPageState extends State<RegisterPage> {
       TextEditingController(); //密码
   final TextEditingController _uSurePasswordController =
       TextEditingController(); //确认密码
-  final FocusNode _uNickNameFocusNode = FocusNode(); //昵称
   final FocusNode _uPhoneFocusNode = FocusNode(); //手机号
   final FocusNode _uVerificationCodeNode = FocusNode(); //验证码
   final FocusNode _uPasswordFocusNode = FocusNode(); //密码
   final FocusNode _uSurePasswordFocusNode = FocusNode(); //确认密码
-  bool _checkboxSelected = false; //维护复选框状态
+
 
   String passwordAssertName = "assets/images/passwordinvisible.png"; //右边默认不显示密码
   bool showPassword = false; //密码框最右边默认不显示密码
   String surePasswordAssertName = "assets/images/passwordinvisible.png"; //右边默认不显示密码
   bool sureShowPassword = false; //密码框最右边默认不显示密码
-  int registerTextColor = 0xFF999999; //注册字体颜色
-  int registerBackgroundColor = 0xFFE6E6E6; //注册按钮背景颜色
-  bool _isDisable = true; //注册按钮是否可用，默认是不可用
+  int sureTextColor = 0xFF999999; //注册字体颜色
+  int sureBackgroundColor = 0xFFE6E6E6; //注册按钮背景颜色
+  bool _isDisable = true; //确认按钮是否可用，默认是不可用
 
   Timer? _timer;//延迟初始化
   int _countdownTime=0;
@@ -77,38 +74,38 @@ class _RegisterPageState extends State<RegisterPage> {
     verificationCodeDecoration=defaultVerificationCodeDecoration;
     _uPhoneController.addListener(() {
       print(_uPhoneController.text);
-      setRegisterState();
+      setSureState();
     });
     _uVerificationCodeController.addListener(() {
       print(_uVerificationCodeController.text);
-      setRegisterState();
+      setSureState();
     });
     _uPasswordController.addListener(() {
       print(_uPasswordController.text);
-      setRegisterState();
+      setSureState();
     });
     _uSurePasswordController.addListener(() {
       print(_uSurePasswordController.text);
-      setRegisterState();
+      setSureState();
     });
   }
 
-  void setRegisterState() {
+  void setSureState() {
     if (_uPhoneController.text.length == 11 &&
         _uVerificationCodeController.text.length == 6 &&
         _uPasswordController.text.length >= 6 &&
-        _uSurePasswordController.text.length >= 6 &&
-        _checkboxSelected) {
+        _uSurePasswordController.text.length >= 6
+    ) {
       setState(() {
         _isDisable = false; //注册按钮可用
-        registerTextColor = 0xFFFFFFFF;
-        registerBackgroundColor = 0xFF009999;
+        sureTextColor = 0xFFFFFFFF;
+        sureBackgroundColor = 0xFF009999;
       });
     } else {
       setState(() {
         _isDisable = true; //注册按钮不可用
-        registerTextColor = 0xFF999999;
-        registerBackgroundColor = 0xFFE6E6E6;
+        sureTextColor = 0xFF999999;
+        sureBackgroundColor = 0xFFE6E6E6;
       });
     }
   }
@@ -161,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Expanded(
                     child: Container(
                       child: Text(
-                        '欢迎注册\n来吧建康专家端',
+                        '-\n忘记密码',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -187,7 +184,7 @@ class _RegisterPageState extends State<RegisterPage> {
             left: 15,
             right: 15,
             child: Container(
-              height: MediaQuery.of(context).size.height - 22,
+              height: MediaQuery.of(context).size.height - 85,
               child: Column(
                 children: <Widget>[
                   Expanded(
@@ -200,82 +197,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderOnForeground: true,
                         child: Column(
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-                              child: Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text(
-                                        '昵\u3000称',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Color(0xFF666666),
-                                        ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4)),
-                                        color: Color(0xFFF8F8F8),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 4),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Text(
-                                          '(选填)',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFF999999),
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.only(left: 7),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-                              child: Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          hintText: "请设置您的昵称（最大20个字符）",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFFCCCCCC),
-                                              fontSize: 13),
-                                          border: InputBorder.none,
-                                        ),
-                                        controller: _uNickNameController,
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(20),
-                                        ],
-                                        focusNode: _uNickNameFocusNode,
-                                        keyboardType: TextInputType.name,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color(0xFF333333),
-                                        ),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                  width: 1,
-                                  color: Color(0xFFEEEEEE),
-                                ))),
-                              ),
-                            ),
                             Padding(
                               padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
                               child: Container(
@@ -660,49 +581,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
-                              child: Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Checkbox(
-                                        value: _checkboxSelected,
-                                        activeColor: Color(0xFF009999),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _checkboxSelected = value!;
-                                            setRegisterState();
-                                          });
-                                        }),
-                                    Expanded(
-                                      child: Text.rich(TextSpan(children: [
-                                        TextSpan(
-                                          text: "我已阅读并同意",
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Color(0xFF999999),
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: "《官方服务协议和隐私说明》",
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Color(0xFF009999),
-                                            decoration:
-                                                TextDecoration.underline,
-                                          ),
-                                          recognizer: TapGestureRecognizer()
-                                            ..onTap = () {
-                                              Navigator.pushNamed(context, 'privacy_policy');//跳转至隐私政策
-                                            },
-                                        ),
-                                      ])),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
                               padding: EdgeInsets.fromLTRB(43, 40, 43, 16),
                               child: Row(
                                 children: <Widget>[
@@ -710,11 +588,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                     child: Container(
                                       child: ElevatedButton(
                                         onPressed:
-                                            _isDisable ? null : onRegisterClick,
+                                            _isDisable ? null : onSureClick,
                                         child: Text(
-                                          '注册',
+                                          '确认',
                                           style: TextStyle(
-                                            color: Color(registerTextColor),
+                                            color: Color(sureTextColor),
                                             fontSize: 16,
                                           ),
                                         ),
@@ -729,7 +607,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                               MaterialStateProperty.all(0),
                                           backgroundColor:
                                               MaterialStateProperty.all(Color(
-                                                  registerBackgroundColor)),
+                                                  sureBackgroundColor)),
                                         ),
                                       ),
                                       height: 50,
@@ -803,11 +681,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   }
 
-  void onRegisterClick() async {
-    print("注册");
+  void onSureClick() async {
+    print("确认");
     setState(() {
       // 当所有编辑框都失去焦点时键盘就会收起
-      _uNickNameFocusNode.unfocus();
       _uPhoneFocusNode.unfocus();
       _uVerificationCodeNode.unfocus();
       _uPasswordFocusNode.unfocus();
@@ -846,7 +723,7 @@ class _RegisterPageState extends State<RegisterPage> {
         return;
       }
 
-      //TODO 调接口注册 注册成功此界面消失
+      //TODO 调接口确认密码 密码确认成功此界面消失
       //LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
       Navigator.of(context).pop(); //注册页消失
     });

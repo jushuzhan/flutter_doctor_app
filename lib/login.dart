@@ -422,7 +422,7 @@ class _LoginPageState extends State<LoginPage> {
                                       GestureDetector(
                                         onTap: (){
                                           print("忘记密码");
-                                          //TODO 忘记密码 跳转至忘记密码界面
+                                          Navigator.pushNamed(context, 'forget_password');//跳转至忘记密码
                                         },
                                         child:Text('忘记密码',style: TextStyle(
                                             color: Color(0xFF999999),
