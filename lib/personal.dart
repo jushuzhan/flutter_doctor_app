@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+
+import 'common/view/ExitBottomDialog.dart';
 
 class PersonalPage extends StatefulWidget {
   @override
@@ -24,6 +27,9 @@ class _PersonalPageState extends State<PersonalPage> {
   bool isEdited = false; //默认是未编辑状态
 
   bool isAudit = false; //默认是未审核状态
+
+  //var onExitLoginClick;
+
 
   @override
   void initState() {
@@ -55,6 +61,9 @@ class _PersonalPageState extends State<PersonalPage> {
     orderListDetector = getDetector('订单列表', onOrderListClick);
     editInfoDetector = getDetector('编辑信息', onEditInfoClick);
     setDetector = getDetector('设置', onSetClick);
+    // onExitLoginClick=()=>{
+    //
+    // };
   }
 
   @override
@@ -78,7 +87,7 @@ class _PersonalPageState extends State<PersonalPage> {
           actions: [
             GestureDetector(
               onTap: () {
-                //TODO 跳转至个人中心界面
+                exitPersonal();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -367,5 +376,24 @@ class _PersonalPageState extends State<PersonalPage> {
         ],
       ),
     );
+  }
+  //退出 TODO 需要调接口退出
+  void exitPersonal(){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+        return ExitBottomDialog(callBack: (){
+          onExitLoginClick();
+        });
+    }
+    );
+  }
+  //点击退出登录 TODO 需要调接口
+  void onExitLoginClick() async{
+    print("退出");
+   var clear= await LoginPrefs.clearLogin();
+    Navigator.of(context).pushNamedAndRemoveUntil(
+    "login", ModalRoute.withName("login"));
   }
 }
