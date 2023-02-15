@@ -66,14 +66,32 @@ class _MyHomePageState extends State<MyHomePage> {
           ),),
           bottom: TabBar(
             tabs: tabs.map((e) => Tab(text: e)).toList(),
+            indicatorSize: TabBarIndicatorSize.label,
+            labelColor: Color(0xFFFFFFFF),
+            unselectedLabelColor: Color(0x99FFFFFF),
+            labelStyle: TextStyle(
+              fontSize:16
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontSize: 14
+            ),
+            indicatorPadding: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.only(bottom: 8),
+
           ),
           actions: [
-            Container(
-              width: 40,
-              child: Image.asset(
-                'assets/images/info_image_portrait.png',
+            GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, 'personal');//跳转至首页
+              },
+              child: Container(
+                width: 40,
+                //TODO 之后需要改变头像的路径
+                child: Image.asset(
+                  'assets/images/info_image_portrait.png',
+                ),
+                margin: EdgeInsets.fromLTRB(0.0, 0.0, 30.0, 0.0),
               ),
-              margin: EdgeInsets.fromLTRB(0.0, 0.0, 30.0, 0.0),
             ),
           ],
           systemOverlayStyle: SystemUiOverlayStyle.light,//状态栏字体为白色
