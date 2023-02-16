@@ -8,6 +8,7 @@ import '../login.dart';
 import '../main.dart';
 import '../personal.dart';
 import '../privacypolicy.dart';
+import '../setting.dart';
 
 /*
  *  这个方法是固定写法，功能就像是一个拦截器。
@@ -20,6 +21,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'privacy_policy':PrivacyPolicyPage(),//定义隐私政策路径
     'forget_password':ForgetPasswordPage(),//定义忘记密码路径
     'personal':PersonalPage(),//定义个人中心路径
+    'setting':SettingPage(),//定义设置路径
   };
 
   String routerName = routeBeforeHook(settings);

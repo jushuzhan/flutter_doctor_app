@@ -54,9 +54,8 @@ class _PersonalPageState extends State<PersonalPage> {
           Navigator.of(context).pop(),
         };
     onSetClick = () => {
-          //Navigator.pushNamed(context, 'personal'),//跳转至首页
-          //TODO 之后跳转至设置界面
-          Navigator.of(context).pop(),
+          Navigator.pushNamed(context, 'setting'),//跳转至设置
+
         };
     orderListDetector = getDetector('订单列表', onOrderListClick);
     editInfoDetector = getDetector('编辑信息', onEditInfoClick);
