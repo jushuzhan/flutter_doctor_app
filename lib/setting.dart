@@ -34,9 +34,7 @@ class _SettingPageState extends State<SettingPage> {
   void initView() {
     horizontalLine = getHorizontalLine();
     onModifyPasswordClick = () => {
-          //Navigator.pushNamed(context, 'personal'),//跳转至首页
-          //TODO 之后跳转至订修改密码界面
-          Navigator.of(context).pop(),
+          Navigator.pushNamed(context, 'modify_password'),//跳转至修改密码
         };
     onChangeBindPhoneClick = () => {
           //Navigator.pushNamed(context, 'personal'),//跳转至首页

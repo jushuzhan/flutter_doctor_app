@@ -6,6 +6,7 @@ import 'package:flutter_doctor_app/register.dart';
 import '../forgetpassword.dart';
 import '../login.dart';
 import '../main.dart';
+import '../modifypassword.dart';
 import '../personal.dart';
 import '../privacypolicy.dart';
 import '../setting.dart';
@@ -22,6 +23,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'forget_password':ForgetPasswordPage(),//定义忘记密码路径
     'personal':PersonalPage(),//定义个人中心路径
     'setting':SettingPage(),//定义设置路径
+    'modify_password':ModifyPasswordPage(),//定义修改密码路径
   };
 
   String routerName = routeBeforeHook(settings);
