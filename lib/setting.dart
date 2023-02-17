@@ -37,9 +37,7 @@ class _SettingPageState extends State<SettingPage> {
           Navigator.pushNamed(context, 'modify_password'),//跳转至修改密码
         };
     onChangeBindPhoneClick = () => {
-          //Navigator.pushNamed(context, 'personal'),//跳转至首页
-          //TODO 之后跳转至换绑手机界面
-          //Navigator.of(context).pop(),
+          Navigator.pushNamed(context, 'change_bind_phone'),//跳转至换绑手机
         };
     onPrivacyClick = () => {
           Navigator.pushNamed(context, 'privacy_policy'),//跳转至隐私政策
