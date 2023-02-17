@@ -5,6 +5,7 @@ import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/register.dart';
 import '../about.dart';
 import '../changebindphone.dart';
+import '../changephone.dart';
 import '../forgetpassword.dart';
 import '../login.dart';
 import '../main.dart';
@@ -28,6 +29,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'modify_password':ModifyPasswordPage(),//定义修改密码路径
     'about':AboutPage(),//定义关于我们路径
     'change_bind_phone':ChangeBindPhonePage(),//定义换绑手机路径
+    'change_phone':ChangePhonePage(),//定义换绑手机路径
   };
 
   String routerName = routeBeforeHook(settings);

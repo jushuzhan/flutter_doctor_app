@@ -86,7 +86,7 @@ class _ChangeBindPhonePageState extends State<ChangeBindPhonePage> {
                   Expanded(
                     child: Container(
                       child: ElevatedButton(
-                        onPressed: ()=> Navigator.of(context).pop(),//TODO 之后跳转换绑手机界面
+                        onPressed: ()=> Navigator.pushNamed(context, 'change_phone',arguments: null), //TODO 之后传手机号给换绑手机界面
                         child: Text(
                           '更换手机号码',
                           style: TextStyle(

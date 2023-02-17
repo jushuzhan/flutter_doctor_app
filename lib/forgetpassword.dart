@@ -54,7 +54,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
    BoxDecoration? verificationCodeDecoration;
   final BoxDecoration defaultVerificationCodeDecoration=BoxDecoration(
   border: Border.all(
-  color: Color(0xFF009999),
+  color: Color(0x66009999),
   width: 1.0),
   // color: Color(0xFFCCCCCC),//验证码背景色
   borderRadius: BorderRadius.all(
