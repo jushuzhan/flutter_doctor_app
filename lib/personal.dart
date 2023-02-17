@@ -46,12 +46,12 @@ class _PersonalPageState extends State<PersonalPage> {
     onOrderListClick = () => {
           //Navigator.pushNamed(context, 'personal'),//跳转至首页
           //TODO 之后跳转至订单列表界面
-          Navigator.of(context).pop(),
+          //Navigator.of(context).pop(),
         };
     onEditInfoClick = () => {
           //Navigator.pushNamed(context, 'personal'),//跳转至首页
           //TODO 之后跳转至编辑信息界面
-          Navigator.of(context).pop(),
+          //Navigator.of(context).pop(),
         };
     onSetClick = () => {
           Navigator.pushNamed(context, 'setting'),//跳转至设置
@@ -70,6 +70,7 @@ class _PersonalPageState extends State<PersonalPage> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
+          titleSpacing: 15.0, //标题距离左边大小
           title: Text(
             "个人中心",
             style: TextStyle(fontSize: 18, color: Color(0xFFFFFFFF)),
@@ -79,7 +80,6 @@ class _PersonalPageState extends State<PersonalPage> {
                 'assets/images/nav_icon_back.png',
                 width: 24,
               ),
-              padding: EdgeInsets.only(left: 15),
               onPressed: () {
                 Navigator.of(context).pop();
               }),

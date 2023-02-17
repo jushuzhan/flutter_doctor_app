@@ -39,17 +39,16 @@ class _SettingPageState extends State<SettingPage> {
     onChangeBindPhoneClick = () => {
           //Navigator.pushNamed(context, 'personal'),//跳转至首页
           //TODO 之后跳转至换绑手机界面
-          Navigator.of(context).pop(),
+          //Navigator.of(context).pop(),
         };
     onPrivacyClick = () => {
-          //Navigator.pushNamed(context, 'personal'),//跳转至首页
-          //TODO 之后跳转至隐私条款界面
-          Navigator.of(context).pop(),
+          Navigator.pushNamed(context, 'privacy_policy'),//跳转至隐私政策
+
         };
     onAboutClick = () => {
       //Navigator.pushNamed(context, 'personal'),//跳转至首页
       //TODO 之后跳转至关于我们界面
-      Navigator.of(context).pop(),
+      //Navigator.of(context).pop(),
     };
     modifyPasswordDetector = getDetector('修改密码', onModifyPasswordClick);
     changeBindPhoneDetector = getDetector('换绑手机', onChangeBindPhoneClick);
@@ -63,6 +62,7 @@ class _SettingPageState extends State<SettingPage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color(0xFFFFFFFF),
+          titleSpacing: 15.0, //标题距离左边大小
           title: Text(
             "设置",
             style: TextStyle(fontSize: 18, color: Color(0XFF333333)),
@@ -72,7 +72,6 @@ class _SettingPageState extends State<SettingPage> {
                 'assets/images/nav_icon_back_gray.png',
                 width: 24,
               ),
-              padding: EdgeInsets.only(left: 15),
               onPressed: () {
                 Navigator.of(context).pop();
               }),

@@ -81,6 +81,7 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color(0xFFFFFFFF),
+          titleSpacing: 15.0, //标题距离左边大小
           title: Text(
             "修改密码",
             style: TextStyle(fontSize: 18, color: Color(0XFF333333)),
@@ -90,7 +91,6 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
                 'assets/images/nav_icon_back_gray.png',
                 width: 24,
               ),
-              padding: EdgeInsets.only(left: 15),
               onPressed: () {
                 Navigator.of(context).pop();
               }),

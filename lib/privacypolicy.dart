@@ -109,6 +109,7 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> with SingleTicker
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color(0xFFFFFFFF),
+          titleSpacing: 15.0, //标题距离左边大小
           title: Text("隐私条款",style: TextStyle(
             fontSize: 18,
             color: Color(0XFF333333),
@@ -118,7 +119,6 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> with SingleTicker
                 'assets/images/nav_icon_back_gray.png',
                 width: 24,
               ),
-              padding: EdgeInsets.only(left: 15),
               onPressed: () {
                 Navigator.of(context).pop();
               }),
