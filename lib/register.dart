@@ -131,604 +131,608 @@ class _RegisterPageState extends State<RegisterPage> {
                 'assets/images/nav_icon_back.png',
                 width: 24,
               ),
-              padding: EdgeInsets.only(left: 15),
               onPressed: () {
                 Navigator.of(context).pop();
               }),
       ),
-      body: Stack(
-        children: <Widget>[
-          //上半部分
-          Container(
-            width: MediaQuery.of(context).size.width, // 获取屏幕尺寸,宽度充满全屏,
-            height: MediaQuery.of(context).size.height*0.18,
-            alignment: Alignment.topLeft,
-            decoration: BoxDecoration(
-                color: Color(0xFF009999), //背景颜色
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.zero,
-                  topRight: Radius.zero,
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
-                )),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    child: Text(
-                      '欢迎注册\n来吧建康专家端',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
+      body:
+      SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+            //上半部分
+            Container(
+              width: MediaQuery.of(context).size.width, // 获取屏幕尺寸,宽度充满全屏,
+              height: MediaQuery.of(context).size.height*0.18,
+              alignment: Alignment.topLeft,
+              decoration: BoxDecoration(
+                  color: Color(0xFF009999), //背景颜色
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.zero,
+                    topRight: Radius.zero,
+                    bottomLeft: Radius.circular(32),
+                    bottomRight: Radius.circular(32),
+                  )),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      child: Text(
+                        '欢迎注册\n来吧建康专家端',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold
+                        ),
                       ),
+                      padding: EdgeInsets.only(left: 15),
                     ),
-                    padding: EdgeInsets.only(left: 15),
+                    flex: 1,
                   ),
-                  flex: 1,
-                ),
-                Container(
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: 80,
-                    alignment: Alignment.center,
-                  ),
-                  padding: EdgeInsets.only(right: 15),
-                )
-              ],
+                  Container(
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 80,
+                      alignment: Alignment.center,
+                    ),
+                    padding: EdgeInsets.only(right: 15),
+                  )
+                ],
+              ),
             ),
-          ),
-          //下半部分
-          Card(
-            color: Colors.white,
-            elevation: 2,
-            borderOnForeground: true,
-            margin: EdgeInsets.only(top: 88,left: 15,right: 15,bottom: MediaQuery.of(context).size.height*0.03),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            '昵\u3000称',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)),
-                            color: Color(0xFFF8F8F8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 3, horizontal: 4),
-                        ),
-                        Expanded(
-                          child: Container(
+            //下半部分
+            Card(
+              color: Colors.white,
+              elevation: 2,
+              borderOnForeground: true,
+              margin: EdgeInsets.only(top: 88,left: 15,right: 15,bottom: 22),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
                             child: Text(
-                              '(选填)',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF999999),
-                              ),
-                            ),
-                            padding: EdgeInsets.only(left: 7),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintText: "请设置您的昵称（最大20个字符）",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                  fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                            controller: _uNickNameController,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(20),
-                            ],
-                            focusNode: _uNickNameFocusNode,
-                            keyboardType: TextInputType.name,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFEEEEEE),
-                            ))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            '手机号',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)),
-                            color: Color(0xFFF8F8F8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 3, horizontal: 4),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              '(必填)',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF999999),
-                              ),
-                            ),
-                            padding: EdgeInsets.only(left: 7),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintText: "请输入您的手机号码",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                  fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                            controller: _uPhoneController,
-                            inputFormatters: [
-                              FilteringTextInputFormatter(
-                                  RegExp("[0-9]"),
-                                  allow: true),
-                              //只能输入字母或数字],
-                              LengthLimitingTextInputFormatter(11),
-                            ],
-                            focusNode: _uPhoneFocusNode,
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFEEEEEE),
-                            ))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            '验证码',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)),
-                            color: Color(0xFFF8F8F8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 3, horizontal: 4),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              '(必填)',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF999999),
-                              ),
-                            ),
-                            padding: EdgeInsets.only(left: 7),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintText: "请输入接收到的验证码",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                  fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                            controller:
-                            _uVerificationCodeController,
-                            inputFormatters: [
-                              FilteringTextInputFormatter(
-                                  RegExp("[0-9]"),
-                                  allow: true),
-                              //只能输入字母或数字],
-                              LengthLimitingTextInputFormatter(6),
-                            ],
-                            focusNode: _uVerificationCodeNode,
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                        Container(
-                          child: GestureDetector(
-                            onTap:(){
-                              if(!_isVerificationCodeDisable){
-                                onVerificationCodeClick();
-                              }
-                            },
-                            child: Container     (
-                              width: 64,
-                              height: 24,
-                              alignment: Alignment.center,
-                              child: Text(verificationCodeData,style: TextStyle(
-                                fontSize: 11,
-                                color:
-                                _countdownTime ==0
-                                    ? Color(0xFF009999)
-                                    : Color(0xFFFFFFFF),
-                              ),),
-                              decoration: verificationCodeDecoration,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFEEEEEE),
-                            ))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            '密\u3000码',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)),
-                            color: Color(0xFFF8F8F8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 3, horizontal: 4),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              '(必填)',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF999999),
-                              ),
-                            ),
-                            padding: EdgeInsets.only(left: 7),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintText: "请输入6~20位英文字母、数字或符号",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                  fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                            controller: _uPasswordController,
-                            inputFormatters: [
-                              //我这里设置为不允许输入汉字],
-                              LengthLimitingTextInputFormatter(20),
-                            ],
-                            obscureText: !showPassword,
-                            focusNode: _uPasswordFocusNode,
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                        Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                showPassword = !showPassword;
-                                if (!showPassword) {
-                                  passwordAssertName =
-                                  "assets/images/passwordinvisible.png";
-                                } else {
-                                  passwordAssertName =
-                                  "assets/images/passwordvisible.png";
-                                }
-                              });
-                            },
-                            child: ImageIcon(
-                              AssetImage(
-                                passwordAssertName,
-                              ),
-                              size: 20,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFEEEEEE),
-                            ))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            '确认密码',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)),
-                            color: Color(0xFFF8F8F8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 3, horizontal: 4),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              '(必填)',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF999999),
-                              ),
-                            ),
-                            padding: EdgeInsets.only(left: 7),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintText: "请再次输入您的密码",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                  fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                            controller: _uSurePasswordController,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(20),
-                            ],
-                            obscureText: !sureShowPassword,
-                            focusNode: _uSurePasswordFocusNode,
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                        Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                sureShowPassword =
-                                !sureShowPassword;
-                                if (!sureShowPassword) {
-                                  surePasswordAssertName =
-                                  "assets/images/passwordinvisible.png";
-                                } else {
-                                  surePasswordAssertName =
-                                  "assets/images/passwordvisible.png";
-                                }
-                              });
-                            },
-                            child: ImageIcon(
-                              AssetImage(
-                                surePasswordAssertName,
-                              ),
-                              size: 20,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFEEEEEE),
-                            ))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Checkbox(
-                            value: _checkboxSelected,
-                            activeColor: Color(0xFF009999),
-                            onChanged: (value) {
-                              setState(() {
-                                _checkboxSelected = value!;
-                                setRegisterState();
-                              });
-                            }),
-                        Expanded(
-                          child: Text.rich(TextSpan(children: [
-                            TextSpan(
-                              text: "我已阅读并同意",
+                              '昵\u3000称',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Color(0xFF999999),
+                                color: Color(0xFF666666),
                               ),
                             ),
-                            TextSpan(
-                              text: "《官方服务协议和隐私说明》",
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFF009999),
-                                decoration:
-                                TextDecoration.underline,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.pushNamed(context, 'privacy_policy');//跳转至隐私政策
-                                },
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(4)),
+                              color: Color(0xFFF8F8F8),
                             ),
-                          ])),
-                          flex: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(43, 40, 43, 16),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          child: ElevatedButton(
-                            onPressed:
-                            _isDisable ? null : onRegisterClick,
-                            child: Text(
-                              '注册',
-                              style: TextStyle(
-                                color: Color(registerTextColor),
-                                fontSize: 16,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(25)),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 4),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                '(选填)',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFF999999),
                                 ),
                               ),
-                              elevation:
-                              MaterialStateProperty.all(0),
-                              backgroundColor:
-                              MaterialStateProperty.all(Color(
-                                  registerBackgroundColor)),
+                              padding: EdgeInsets.only(left: 7),
                             ),
+                            flex: 1,
                           ),
-                          height: 50,
-                        ),
-                        flex: 1,
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "请设置您的昵称（最大20个字符）",
+                                hintStyle: TextStyle(
+                                    color: Color(0xFFCCCCCC),
+                                    fontSize: 13),
+                                border: InputBorder.none,
+                              ),
+                              controller: _uNickNameController,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(20),
+                              ],
+                              focusNode: _uNickNameFocusNode,
+                              keyboardType: TextInputType.name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Color(0xFFEEEEEE),
+                              ))),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              '手机号',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF666666),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(4)),
+                              color: Color(0xFFF8F8F8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 4),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                '(必填)',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFF999999),
+                                ),
+                              ),
+                              padding: EdgeInsets.only(left: 7),
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "请输入您的手机号码",
+                                hintStyle: TextStyle(
+                                    color: Color(0xFFCCCCCC),
+                                    fontSize: 13),
+                                border: InputBorder.none,
+                              ),
+                              controller: _uPhoneController,
+                              inputFormatters: [
+                                FilteringTextInputFormatter(
+                                    RegExp("[0-9]"),
+                                    allow: true),
+                                //只能输入字母或数字],
+                                LengthLimitingTextInputFormatter(11),
+                              ],
+                              focusNode: _uPhoneFocusNode,
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Color(0xFFEEEEEE),
+                              ))),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              '验证码',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF666666),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(4)),
+                              color: Color(0xFFF8F8F8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 4),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                '(必填)',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFF999999),
+                                ),
+                              ),
+                              padding: EdgeInsets.only(left: 7),
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "请输入接收到的验证码",
+                                hintStyle: TextStyle(
+                                    color: Color(0xFFCCCCCC),
+                                    fontSize: 13),
+                                border: InputBorder.none,
+                              ),
+                              controller:
+                              _uVerificationCodeController,
+                              inputFormatters: [
+                                FilteringTextInputFormatter(
+                                    RegExp("[0-9]"),
+                                    allow: true),
+                                //只能输入字母或数字],
+                                LengthLimitingTextInputFormatter(6),
+                              ],
+                              focusNode: _uVerificationCodeNode,
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            flex: 1,
+                          ),
+                          Container(
+                            child: GestureDetector(
+                              onTap:(){
+                                if(!_isVerificationCodeDisable){
+                                  onVerificationCodeClick();
+                                }
+                              },
+                              child: Container     (
+                                width: 64,
+                                height: 24,
+                                alignment: Alignment.center,
+                                child: Text(verificationCodeData,style: TextStyle(
+                                  fontSize: 11,
+                                  color:
+                                  _countdownTime ==0
+                                      ? Color(0xFF009999)
+                                      : Color(0xFFFFFFFF),
+                                ),),
+                                decoration: verificationCodeDecoration,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Color(0xFFEEEEEE),
+                              ))),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              '密\u3000码',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF666666),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(4)),
+                              color: Color(0xFFF8F8F8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 4),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                '(必填)',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFF999999),
+                                ),
+                              ),
+                              padding: EdgeInsets.only(left: 7),
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "请输入6~20位英文字母、数字或符号",
+                                hintStyle: TextStyle(
+                                    color: Color(0xFFCCCCCC),
+                                    fontSize: 13),
+                                border: InputBorder.none,
+                              ),
+                              controller: _uPasswordController,
+                              inputFormatters: [
+                                //我这里设置为不允许输入汉字],
+                                LengthLimitingTextInputFormatter(20),
+                              ],
+                              obscureText: !showPassword,
+                              focusNode: _uPasswordFocusNode,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            flex: 1,
+                          ),
+                          Container(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                  if (!showPassword) {
+                                    passwordAssertName =
+                                    "assets/images/passwordinvisible.png";
+                                  } else {
+                                    passwordAssertName =
+                                    "assets/images/passwordvisible.png";
+                                  }
+                                });
+                              },
+                              child: ImageIcon(
+                                AssetImage(
+                                  passwordAssertName,
+                                ),
+                                size: 20,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Color(0xFFEEEEEE),
+                              ))),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              '确认密码',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF666666),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(4)),
+                              color: Color(0xFFF8F8F8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 4),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                '(必填)',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFF999999),
+                                ),
+                              ),
+                              padding: EdgeInsets.only(left: 7),
+                            ),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "请再次输入您的密码",
+                                hintStyle: TextStyle(
+                                    color: Color(0xFFCCCCCC),
+                                    fontSize: 13),
+                                border: InputBorder.none,
+                              ),
+                              controller: _uSurePasswordController,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(20),
+                              ],
+                              obscureText: !sureShowPassword,
+                              focusNode: _uSurePasswordFocusNode,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            flex: 1,
+                          ),
+                          Container(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  sureShowPassword =
+                                  !sureShowPassword;
+                                  if (!sureShowPassword) {
+                                    surePasswordAssertName =
+                                    "assets/images/passwordinvisible.png";
+                                  } else {
+                                    surePasswordAssertName =
+                                    "assets/images/passwordvisible.png";
+                                  }
+                                });
+                              },
+                              child: ImageIcon(
+                                AssetImage(
+                                  surePasswordAssertName,
+                                ),
+                                size: 20,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Color(0xFFEEEEEE),
+                              ))),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Checkbox(
+                              value: _checkboxSelected,
+                              activeColor: Color(0xFF009999),
+                              onChanged: (value) {
+                                setState(() {
+                                  _checkboxSelected = value!;
+                                  setRegisterState();
+                                });
+                              }),
+                          Expanded(
+                            child: Text.rich(TextSpan(children: [
+                              TextSpan(
+                                text: "我已阅读并同意",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF999999),
+                                ),
+                              ),
+                              TextSpan(
+                                text: "《官方服务协议和隐私说明》",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF009999),
+                                  decoration:
+                                  TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.pushNamed(context, 'privacy_policy');//跳转至隐私政策
+                                  },
+                              ),
+                            ])),
+                            flex: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(43, 40, 43, 19),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            child: ElevatedButton(
+                              onPressed:
+                              _isDisable ? null : onRegisterClick,
+                              child: Text(
+                                '注册',
+                                style: TextStyle(
+                                  color: Color(registerTextColor),
+                                  fontSize: 16,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(25)),
+                                  ),
+                                ),
+                                elevation:
+                                MaterialStateProperty.all(0),
+                                backgroundColor:
+                                MaterialStateProperty.all(Color(
+                                    registerBackgroundColor)),
+                              ),
+                            ),
+                            height: 50,
+                          ),
+                          flex: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
+
     );
   }
   @override
