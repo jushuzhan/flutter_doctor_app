@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_doctor_app/common/App.dart';
 import 'color.dart';
 import 'keepalivewrapper.dart';
 import 'common/MyRoutes.dart';
 import 'common/LoginPrefs.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 void main() async{
-  String value= await LoginPrefs.init();// await 关键字必须用在异步方法中 await等待异步方法执行完毕 异步方法必须用变量接收
+  String value= await App.init();// await 关键字必须用在异步方法中 await等待异步方法执行完毕 异步方法必须用变量接收
   if('ok'==value){
     runApp(MyApp());
   }

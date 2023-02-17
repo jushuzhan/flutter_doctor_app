@@ -46,9 +46,7 @@ class _SettingPageState extends State<SettingPage> {
 
         };
     onAboutClick = () => {
-      //Navigator.pushNamed(context, 'personal'),//跳转至首页
-      //TODO 之后跳转至关于我们界面
-      //Navigator.of(context).pop(),
+      Navigator.pushNamed(context, 'about'),//跳转至关于我们界面
     };
     modifyPasswordDetector = getDetector('修改密码', onModifyPasswordClick);
     changeBindPhoneDetector = getDetector('换绑手机', onChangeBindPhoneClick);
