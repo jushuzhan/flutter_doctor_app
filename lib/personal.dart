@@ -391,7 +391,7 @@ class _PersonalPageState extends State<PersonalPage> {
   //点击退出登录 TODO 需要调接口
   void onExitLoginClick() async{
     print("退出");
-   var clear= await LoginPrefs.clearLogin();
+    LoginPrefs.clearLogin();
     Navigator.of(context).pushNamedAndRemoveUntil(
     "login", ModalRoute.withName("login"));
   }

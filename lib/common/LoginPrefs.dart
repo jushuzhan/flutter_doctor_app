@@ -21,7 +21,11 @@ class LoginPrefs{
   static void removeToken() {
     App.prefs.remove(TOKEN);
   }
-  static Future<void>clearLogin() async{
+  // static Future<bool>clearLogin() async{
+  //  return  App.prefs.clear();
+  // }
+  static void clearLogin() {
     App.prefs.clear();
   }
+
 }
