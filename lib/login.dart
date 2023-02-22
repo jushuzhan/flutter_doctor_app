@@ -435,8 +435,7 @@ class _LoginPageState extends State<LoginPage> {
     print("登录");
     setState(() {
       // 当所有编辑框都失去焦点时键盘就会收起
-      _uNameFocusNode.unfocus();
-      _uPassFocusNode.unfocus();
+      FocusScope.of(context).unfocus();
       LoginPrefs.saveToken(_uNameController.text);//保存token (我这里保存的输入框中输入的值)
       Navigator.of(context).pop();//登录页消失
       Navigator.pushNamed(context, 'home');//跳转至首页

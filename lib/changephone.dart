@@ -385,7 +385,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
       Fluttertoast.showToast(msg: "请输入正确长度的手机号");
       return;
     }
-    _uPhoneFocusNode.unfocus();
+    FocusScope.of(context).unfocus();
     if (_countdownTime == 0) {
       //TODO HTTP请求发送验证码
       setState(() {

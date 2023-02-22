@@ -788,11 +788,7 @@ class _RegisterPageState extends State<RegisterPage> {
     print("注册");
     setState(() {
       // 当所有编辑框都失去焦点时键盘就会收起
-      _uNickNameFocusNode.unfocus();
-      _uPhoneFocusNode.unfocus();
-      _uVerificationCodeNode.unfocus();
-      _uPasswordFocusNode.unfocus();
-      _uSurePasswordFocusNode.unfocus();
+      FocusScope.of(context).unfocus();
 
       if (_uPhoneController.text.length==0) {
         Fluttertoast.showToast(msg: "请先输入手机号");

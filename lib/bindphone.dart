@@ -491,10 +491,7 @@ class _BindPhonePageState extends State<BindPhonePage> {
     print("下一步");
     setState(() {
       // 当所有编辑框都失去焦点时键盘就会收起
-      _uPhoneFocusNode.unfocus();
-      _uVerificationCodeNode.unfocus();
-
-
+      FocusScope.of(context).unfocus();
       if (_uPhoneController.text.length==0) {
         Fluttertoast.showToast(msg: "请先输入手机号");
         return;

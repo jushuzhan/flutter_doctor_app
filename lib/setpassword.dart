@@ -407,8 +407,7 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
     print("确认");
     setState(() {
       // 当所有编辑框都失去焦点时键盘就会收起
-      _uPasswordFocusNode.unfocus();
-      _uSurePasswordFocusNode.unfocus();
+      FocusScope.of(context).unfocus();
 
       if (_uPasswordController.text.length==0) {
         Fluttertoast.showToast(msg: "请先输入密码");

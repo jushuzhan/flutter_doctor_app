@@ -49,9 +49,9 @@ class _PersonalPageState extends State<PersonalPage> {
           //Navigator.of(context).pop(),
         };
     onEditInfoClick = () => {
-          //Navigator.pushNamed(context, 'personal'),//跳转至首页
+
           //TODO 之后跳转至编辑信息界面
-          //Navigator.of(context).pop(),
+       Navigator.pushNamed(context, 'edit_info'),//跳转至编辑信息
         };
     onSetClick = () => {
           Navigator.pushNamed(context, 'setting'),//跳转至设置
