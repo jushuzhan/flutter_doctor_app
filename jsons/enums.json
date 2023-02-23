@@ -1,0 +1,1959 @@
+{
+  "result": [
+    {
+      "enmuType": "IotProductKey",
+      "enum": [
+        {
+          "key": "a1LdFjmiaYu",
+          "value": "筛查仪"
+        },
+        {
+          "key": "a1xrVVtUJ76",
+          "value": "干眼仪"
+        },
+        {
+          "key": "a1hd9EDURVH",
+          "value": "测试筛查仪"
+        }
+      ]
+    },
+    {
+      "enmuType": "DeviceInitStatus",
+      "enum": [
+        {
+          "key": "0",
+          "value": "失败"
+        },
+        {
+          "key": "1",
+          "value": "成功"
+        }
+      ]
+    },
+    {
+      "enmuType": "DeviceInfoStatus",
+      "enum": [
+        {
+          "key": "0",
+          "value": "已禁用"
+        },
+        {
+          "key": "1",
+          "value": "在线"
+        },
+        {
+          "key": "2",
+          "value": "离线"
+        },
+        {
+          "key": "3",
+          "value": "未激活"
+        }
+      ]
+    },
+    {
+      "enmuType": "TenantType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "自营"
+        },
+        {
+          "key": "2",
+          "value": "合作"
+        },
+        {
+          "key": "3",
+          "value": "租用"
+        },
+        {
+          "key": "4",
+          "value": "独立"
+        }
+      ]
+    },
+    {
+      "enmuType": "Gender",
+      "enum": [
+        {
+          "key": "0",
+          "value": "-"
+        },
+        {
+          "key": "1",
+          "value": "男"
+        },
+        {
+          "key": "2",
+          "value": "女"
+        }
+      ]
+    },
+    {
+      "enmuType": "LensMaterialType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "玻璃"
+        },
+        {
+          "key": "1",
+          "value": "树脂"
+        },
+        {
+          "key": "2",
+          "value": "PC"
+        },
+        {
+          "key": "3",
+          "value": "RGP"
+        }
+      ]
+    },
+    {
+      "enmuType": "FrameType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "全框"
+        },
+        {
+          "key": "1",
+          "value": "半框"
+        },
+        {
+          "key": "2",
+          "value": "无框"
+        }
+      ]
+    },
+    {
+      "enmuType": "FrameDeformType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "无"
+        },
+        {
+          "key": "1",
+          "value": "一般"
+        },
+        {
+          "key": "2",
+          "value": "严重"
+        }
+      ]
+    },
+    {
+      "enmuType": "ContactLensWearType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "日戴"
+        },
+        {
+          "key": "1",
+          "value": "偶尔戴镜过夜"
+        },
+        {
+          "key": "2",
+          "value": "长期戴镜过夜"
+        },
+        {
+          "key": "3",
+          "value": "备有框架"
+        }
+      ]
+    },
+    {
+      "enmuType": "ContactLensType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "软性隐形眼镜"
+        },
+        {
+          "key": "1",
+          "value": "角膜塑形镜"
+        },
+        {
+          "key": "2",
+          "value": "RGP"
+        },
+        {
+          "key": "3",
+          "value": "散光片"
+        },
+        {
+          "key": "4",
+          "value": "美瞳"
+        }
+      ]
+    },
+    {
+      "enmuType": "StudentSeatType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "1-3排"
+        },
+        {
+          "key": "1",
+          "value": "4-5排"
+        },
+        {
+          "key": "2",
+          "value": "6排后"
+        },
+        {
+          "key": "3",
+          "value": "轮流"
+        }
+      ]
+    },
+    {
+      "enmuType": "AdultBodyConditionType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "健康"
+        },
+        {
+          "key": "1",
+          "value": "欠佳"
+        }
+      ]
+    },
+    {
+      "enmuType": "AdultWorkEnvironmentType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "室内"
+        },
+        {
+          "key": "1",
+          "value": "室外"
+        }
+      ]
+    },
+    {
+      "enmuType": "ExaminationType",
+      "enum": [
+        {
+          "key": "33",
+          "value": "200°眼底照相"
+        },
+        {
+          "key": "32",
+          "value": "OCT"
+        },
+        {
+          "key": "46",
+          "value": "哺光仪"
+        },
+        {
+          "key": "40",
+          "value": "电脑验光（戴镜/散瞳）"
+        },
+        {
+          "key": "41",
+          "value": "电脑验光（戴镜/未散瞳）"
+        },
+        {
+          "key": "28",
+          "value": "电脑验光（检影）"
+        },
+        {
+          "key": "27",
+          "value": "电脑验光（裸眼/散瞳）"
+        },
+        {
+          "key": "7",
+          "value": "电脑验光（裸眼/未散瞳）"
+        },
+        {
+          "key": "42",
+          "value": "电脑验光（去镜/散瞳）"
+        },
+        {
+          "key": "43",
+          "value": "电脑验光（去镜/未散瞳）"
+        },
+        {
+          "key": "45",
+          "value": "干眼问卷"
+        },
+        {
+          "key": "20",
+          "value": "干眼仪"
+        },
+        {
+          "key": "1",
+          "value": "光学生物测量仪"
+        },
+        {
+          "key": "30",
+          "value": "红光反射"
+        },
+        {
+          "key": "11",
+          "value": "焦度计"
+        },
+        {
+          "key": "3",
+          "value": "角膜地形图"
+        },
+        {
+          "key": "2",
+          "value": "角膜内皮细胞计"
+        },
+        {
+          "key": "13",
+          "value": "立体视"
+        },
+        {
+          "key": "15",
+          "value": "裂隙灯"
+        },
+        {
+          "key": "19",
+          "value": "皮脂计"
+        },
+        {
+          "key": "4",
+          "value": "屈光筛查仪"
+        },
+        {
+          "key": "18",
+          "value": "曲率仪"
+        },
+        {
+          "key": "22",
+          "value": "色觉"
+        },
+        {
+          "key": "25",
+          "value": "色觉（Panel）"
+        },
+        {
+          "key": "23",
+          "value": "色觉（详细）"
+        },
+        {
+          "key": "8",
+          "value": "身高体重"
+        },
+        {
+          "key": "21",
+          "value": "视功能基础版"
+        },
+        {
+          "key": "48",
+          "value": "视功能扩展版"
+        },
+        {
+          "key": "36",
+          "value": "视力（戴镜/散瞳）"
+        },
+        {
+          "key": "37",
+          "value": "视力（戴镜/未散瞳）"
+        },
+        {
+          "key": "35",
+          "value": "视力（裸眼/散瞳）"
+        },
+        {
+          "key": "5",
+          "value": "视力（裸眼/未散瞳）"
+        },
+        {
+          "key": "38",
+          "value": "视力（去镜/散瞳）"
+        },
+        {
+          "key": "39",
+          "value": "视力（去镜/未散瞳）"
+        },
+        {
+          "key": "24",
+          "value": "视力EDTA"
+        },
+        {
+          "key": "17",
+          "value": "视疲劳分数"
+        },
+        {
+          "key": "31",
+          "value": "手持验光仪"
+        },
+        {
+          "key": "29",
+          "value": "调节反应"
+        },
+        {
+          "key": "14",
+          "value": "调节灵敏度"
+        },
+        {
+          "key": "26",
+          "value": "斜视"
+        },
+        {
+          "key": "10",
+          "value": "眼底相机"
+        },
+        {
+          "key": "47",
+          "value": "眼前节（基础检查）"
+        },
+        {
+          "key": "9",
+          "value": "眼压"
+        },
+        {
+          "key": "12",
+          "value": "隐斜计"
+        },
+        {
+          "key": "34",
+          "value": "周边离焦验光"
+        },
+        {
+          "key": "16",
+          "value": "主导眼"
+        },
+        {
+          "key": "44",
+          "value": "自助干眼"
+        },
+        {
+          "key": "6",
+          "value": "综合验光仪"
+        }
+      ]
+    },
+    {
+      "enmuType": "ExamRecordType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "自助筛查"
+        },
+        {
+          "key": "1",
+          "value": "筛查活动"
+        },
+        {
+          "key": "2",
+          "value": "视光防控"
+        },
+        {
+          "key": "3",
+          "value": "哺光评估"
+        },
+        {
+          "key": "4",
+          "value": "干眼档案"
+        }
+      ]
+    },
+    {
+      "enmuType": "ExamStatus",
+      "enum": [
+        {
+          "key": "-1",
+          "value": "未开单"
+        },
+        {
+          "key": "0",
+          "value": "已开单"
+        },
+        {
+          "key": "1",
+          "value": "检查中"
+        },
+        {
+          "key": "2",
+          "value": "已检查"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiagnoseStatus",
+      "enum": [
+        {
+          "key": "0",
+          "value": "待诊断"
+        },
+        {
+          "key": "1",
+          "value": "已诊断"
+        }
+      ]
+    },
+    {
+      "enmuType": "CheckItemStatus",
+      "enum": [
+        {
+          "key": "0",
+          "value": "未检查"
+        },
+        {
+          "key": "1",
+          "value": "检查失败"
+        },
+        {
+          "key": "2",
+          "value": "检查成功"
+        }
+      ]
+    },
+    {
+      "enmuType": "PayType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "微信支付"
+        },
+        {
+          "key": "1",
+          "value": "支付宝支付"
+        },
+        {
+          "key": "2",
+          "value": "银联支付"
+        },
+        {
+          "key": "3",
+          "value": "无需支付"
+        }
+      ]
+    },
+    {
+      "enmuType": "OrderType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "自助检查"
+        },
+        {
+          "key": "1",
+          "value": "知识付费"
+        },
+        {
+          "key": "2",
+          "value": "在线问诊"
+        },
+        {
+          "key": "3",
+          "value": "开单检查"
+        }
+      ]
+    },
+    {
+      "enmuType": "OrderStatus",
+      "enum": [
+        {
+          "key": "0",
+          "value": "未支付"
+        },
+        {
+          "key": "1",
+          "value": "支付失败"
+        },
+        {
+          "key": "2",
+          "value": "执行退款"
+        },
+        {
+          "key": "3",
+          "value": "执行关单"
+        },
+        {
+          "key": "4",
+          "value": "退款成功"
+        },
+        {
+          "key": "5",
+          "value": "关单成功"
+        },
+        {
+          "key": "6",
+          "value": "支付成功"
+        },
+        {
+          "key": "7",
+          "value": "后台处理"
+        }
+      ]
+    },
+    {
+      "enmuType": "AlipayStatus",
+      "enum": [
+        {
+          "key": "0",
+          "value": "SUCCESS"
+        },
+        {
+          "key": "1",
+          "value": "PAYERROR"
+        },
+        {
+          "key": "2",
+          "value": "NOTPAY"
+        },
+        {
+          "key": "3",
+          "value": "CLOSED"
+        },
+        {
+          "key": "4",
+          "value": "REFUND"
+        },
+        {
+          "key": "5",
+          "value": "REVOKED"
+        },
+        {
+          "key": "6",
+          "value": "USERPAYING"
+        }
+      ]
+    },
+    {
+      "enmuType": "AppPlatformEnum",
+      "enum": [
+        {
+          "key": "1",
+          "value": "IOS"
+        },
+        {
+          "key": "2",
+          "value": "Android"
+        }
+      ]
+    },
+    {
+      "enmuType": "AppTypeEnum",
+      "enum": [
+        {
+          "key": "1",
+          "value": "用户App"
+        },
+        {
+          "key": "2",
+          "value": "检查App"
+        },
+        {
+          "key": "3",
+          "value": "医生App"
+        },
+        {
+          "key": "4",
+          "value": "自助筛查App"
+        }
+      ]
+    },
+    {
+      "enmuType": "SendMessageJobState",
+      "enum": [
+        {
+          "key": "0",
+          "value": "等待执行"
+        },
+        {
+          "key": "1",
+          "value": "开始执行"
+        },
+        {
+          "key": "2",
+          "value": "执行完成"
+        }
+      ]
+    },
+    {
+      "enmuType": "MessageType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "平台通告"
+        },
+        {
+          "key": "1",
+          "value": "检查提醒"
+        },
+        {
+          "key": "2",
+          "value": "讲堂提醒"
+        },
+        {
+          "key": "3",
+          "value": "问诊提醒"
+        },
+        {
+          "key": "4",
+          "value": "订单提醒"
+        },
+        {
+          "key": "5",
+          "value": "复诊提醒"
+        },
+        {
+          "key": "6",
+          "value": "问诊提醒"
+        },
+        {
+          "key": "7",
+          "value": "问诊提醒"
+        },
+        {
+          "key": "8",
+          "value": "问诊提醒"
+        }
+      ]
+    },
+    {
+      "enmuType": "InfoType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "科普"
+        },
+        {
+          "key": "1",
+          "value": "活动"
+        },
+        {
+          "key": "2",
+          "value": "商机"
+        }
+      ]
+    },
+    {
+      "enmuType": "StatisticsCycle",
+      "enum": [
+        {
+          "key": "1",
+          "value": "年"
+        },
+        {
+          "key": "2",
+          "value": "月"
+        },
+        {
+          "key": "4",
+          "value": "日"
+        }
+      ]
+    },
+    {
+      "enmuType": "OssFileType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "图片"
+        },
+        {
+          "key": "2",
+          "value": "视频"
+        },
+        {
+          "key": "3",
+          "value": "安卓Apk"
+        }
+      ]
+    },
+    {
+      "enmuType": "UserRole",
+      "enum": [
+        {
+          "key": "1",
+          "value": "用户"
+        },
+        {
+          "key": "2",
+          "value": "医生"
+        }
+      ]
+    },
+    {
+      "enmuType": "LoginType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "微信公众号"
+        },
+        {
+          "key": "1",
+          "value": "小程序"
+        },
+        {
+          "key": "2",
+          "value": "APP"
+        }
+      ]
+    },
+    {
+      "enmuType": "CommonBoolType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "否"
+        },
+        {
+          "key": "1",
+          "value": "是"
+        },
+        {
+          "key": "2",
+          "value": "未知"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiscreteType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "小瞳"
+        },
+        {
+          "key": "2",
+          "value": "睫麻"
+        },
+        {
+          "key": "3",
+          "value": "戴OK镜/rgp"
+        },
+        {
+          "key": "4",
+          "value": "取OK镜/rgp"
+        }
+      ]
+    },
+    {
+      "enmuType": "DominantEyeType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "右眼"
+        },
+        {
+          "key": "1",
+          "value": "左眼"
+        },
+        {
+          "key": "2",
+          "value": "双眼交替"
+        }
+      ]
+    },
+    {
+      "enmuType": "VisualFunctionWorthPointType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "2个（红）"
+        },
+        {
+          "key": "2",
+          "value": "3个（绿）"
+        },
+        {
+          "key": "3",
+          "value": "4个"
+        },
+        {
+          "key": "4",
+          "value": "5个（2红 3绿）"
+        }
+      ]
+    },
+    {
+      "enmuType": "VisualFunctionEyePositionType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正位"
+        },
+        {
+          "key": "1",
+          "value": "内隐斜"
+        },
+        {
+          "key": "2",
+          "value": "外隐斜"
+        }
+      ]
+    },
+    {
+      "enmuType": "VisualFunctionExEyePositionType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "正位"
+        },
+        {
+          "key": "2",
+          "value": "斜视"
+        },
+        {
+          "key": "3",
+          "value": "斜位"
+        }
+      ]
+    },
+    {
+      "enmuType": "SynoptophoreType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "同时视"
+        },
+        {
+          "key": "2",
+          "value": "融合"
+        }
+      ]
+    },
+    {
+      "enmuType": "StrabismusType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正眼位"
+        },
+        {
+          "key": "1",
+          "value": "内隐斜"
+        },
+        {
+          "key": "2",
+          "value": "外隐斜"
+        },
+        {
+          "key": "3",
+          "value": "垂直隐斜"
+        },
+        {
+          "key": "4",
+          "value": "恒定性外斜"
+        },
+        {
+          "key": "5",
+          "value": "间歇性外斜"
+        },
+        {
+          "key": "6",
+          "value": "恒定性内斜"
+        },
+        {
+          "key": "7",
+          "value": "间歇性内斜"
+        },
+        {
+          "key": "8",
+          "value": "其他"
+        }
+      ]
+    },
+    {
+      "enmuType": "PhorometerType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正位"
+        },
+        {
+          "key": "1",
+          "value": "外隐斜"
+        },
+        {
+          "key": "2",
+          "value": "内隐斜"
+        }
+      ]
+    },
+    {
+      "enmuType": "SensitivityType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "正片困难"
+        },
+        {
+          "key": "2",
+          "value": "负片困难"
+        },
+        {
+          "key": "3",
+          "value": "正负都困难"
+        },
+        {
+          "key": "4",
+          "value": "正常"
+        }
+      ]
+    },
+    {
+      "enmuType": "ColourSenseType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正常"
+        },
+        {
+          "key": "1",
+          "value": "色弱"
+        },
+        {
+          "key": "2",
+          "value": "色盲"
+        }
+      ]
+    },
+    {
+      "enmuType": "RGColorVisionType",
+      "enum": [
+        {
+          "key": "-1",
+          "value": "红绿色觉正常"
+        },
+        {
+          "key": "0",
+          "value": "红色觉异常"
+        },
+        {
+          "key": "1",
+          "value": "绿色觉异常"
+        },
+        {
+          "key": "2",
+          "value": "待明确的红绿色觉异常"
+        }
+      ]
+    },
+    {
+      "enmuType": "BYColorVisionType",
+      "enum": [
+        {
+          "key": "-1",
+          "value": "蓝黄色觉正常"
+        },
+        {
+          "key": "0",
+          "value": "蓝色觉异常"
+        },
+        {
+          "key": "1",
+          "value": "黄色觉异常"
+        },
+        {
+          "key": "2",
+          "value": "待明确的蓝黄色觉异常"
+        }
+      ]
+    },
+    {
+      "enmuType": "BlindnessLevelType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "轻度"
+        },
+        {
+          "key": "1",
+          "value": "中度"
+        },
+        {
+          "key": "2",
+          "value": "重度"
+        }
+      ]
+    },
+    {
+      "enmuType": "VisionType",
+      "enum": [
+        {
+          "key": "30",
+          "value": "无光感"
+        },
+        {
+          "key": "31",
+          "value": "光感"
+        },
+        {
+          "key": "32",
+          "value": "手动"
+        },
+        {
+          "key": "33",
+          "value": "数指"
+        },
+        {
+          "key": "34",
+          "value": "3.0"
+        },
+        {
+          "key": "35",
+          "value": "3.1"
+        },
+        {
+          "key": "36",
+          "value": "3.2"
+        },
+        {
+          "key": "37",
+          "value": "3.3"
+        },
+        {
+          "key": "38",
+          "value": "3.4"
+        },
+        {
+          "key": "39",
+          "value": "3.5"
+        },
+        {
+          "key": "40",
+          "value": "3.6"
+        },
+        {
+          "key": "41",
+          "value": "3.7"
+        },
+        {
+          "key": "42",
+          "value": "3.8"
+        },
+        {
+          "key": "43",
+          "value": "3.85"
+        },
+        {
+          "key": "44",
+          "value": "3.9"
+        },
+        {
+          "key": "45",
+          "value": "3.95"
+        },
+        {
+          "key": "46",
+          "value": "4.0"
+        },
+        {
+          "key": "47",
+          "value": "4.1"
+        },
+        {
+          "key": "48",
+          "value": "4.2"
+        },
+        {
+          "key": "49",
+          "value": "4.3"
+        },
+        {
+          "key": "50",
+          "value": "4.4"
+        },
+        {
+          "key": "51",
+          "value": "4.5"
+        },
+        {
+          "key": "52",
+          "value": "4.6"
+        },
+        {
+          "key": "53",
+          "value": "4.7"
+        },
+        {
+          "key": "54",
+          "value": "4.8"
+        },
+        {
+          "key": "55",
+          "value": "4.85"
+        },
+        {
+          "key": "56",
+          "value": "4.9"
+        },
+        {
+          "key": "57",
+          "value": "4.95"
+        },
+        {
+          "key": "58",
+          "value": "5.0"
+        },
+        {
+          "key": "59",
+          "value": "5.1"
+        },
+        {
+          "key": "60",
+          "value": "5.2"
+        },
+        {
+          "key": "61",
+          "value": "5.3"
+        },
+        {
+          "key": "62",
+          "value": "5.4"
+        },
+        {
+          "key": "63",
+          "value": "5.5"
+        },
+        {
+          "key": "64",
+          "value": "5.6"
+        },
+        {
+          "key": "65",
+          "value": "5.7"
+        },
+        {
+          "key": "66",
+          "value": "5.8"
+        },
+        {
+          "key": "67",
+          "value": "5.9"
+        },
+        {
+          "key": "68",
+          "value": "6.0"
+        },
+        {
+          "key": "69",
+          "value": "不配合"
+        }
+      ]
+    },
+    {
+      "enmuType": "MirrorType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "OK镜"
+        },
+        {
+          "key": "1",
+          "value": "RGP镜"
+        },
+        {
+          "key": "2",
+          "value": "软镜"
+        }
+      ]
+    },
+    {
+      "enmuType": "RectifyType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "裸眼"
+        },
+        {
+          "key": "1",
+          "value": "框架"
+        },
+        {
+          "key": "2",
+          "value": "RGP"
+        },
+        {
+          "key": "3",
+          "value": "OK镜"
+        },
+        {
+          "key": "4",
+          "value": "软镜"
+        },
+        {
+          "key": "5",
+          "value": "其他"
+        },
+        {
+          "key": "6",
+          "value": "小孔"
+        },
+        {
+          "key": "7",
+          "value": "睫状肌麻痹（睫麻）"
+        },
+        {
+          "key": "8",
+          "value": "近视力"
+        },
+        {
+          "key": "9",
+          "value": "隐形眼镜"
+        },
+        {
+          "key": "10",
+          "value": "夜戴角膜塑形镜"
+        },
+        {
+          "key": "11",
+          "value": "准分子手术"
+        }
+      ]
+    },
+    {
+      "enmuType": "VisionEDTAType",
+      "enum": [
+        {
+          "key": "30",
+          "value": "1.0"
+        },
+        {
+          "key": "31",
+          "value": "0.9"
+        },
+        {
+          "key": "32",
+          "value": "0.8"
+        },
+        {
+          "key": "33",
+          "value": "0.7"
+        },
+        {
+          "key": "34",
+          "value": "0.6"
+        },
+        {
+          "key": "35",
+          "value": "0.5"
+        },
+        {
+          "key": "36",
+          "value": "0.4"
+        },
+        {
+          "key": "37",
+          "value": "0.3"
+        },
+        {
+          "key": "38",
+          "value": "0.2"
+        },
+        {
+          "key": "39",
+          "value": "0.1"
+        },
+        {
+          "key": "40",
+          "value": "0"
+        },
+        {
+          "key": "41",
+          "value": "-0.1"
+        },
+        {
+          "key": "42",
+          "value": "-0.2"
+        },
+        {
+          "key": "43",
+          "value": "-0.3"
+        },
+        {
+          "key": "44",
+          "value": "不配合"
+        }
+      ]
+    },
+    {
+      "enmuType": "AxisOculiType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正常"
+        },
+        {
+          "key": "1",
+          "value": "内"
+        },
+        {
+          "key": "2",
+          "value": "外"
+        },
+        {
+          "key": "3",
+          "value": "左高右"
+        },
+        {
+          "key": "4",
+          "value": "右高左"
+        }
+      ]
+    },
+    {
+      "enmuType": "SebumType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正常"
+        },
+        {
+          "key": "1",
+          "value": "消瘦"
+        },
+        {
+          "key": "2",
+          "value": "肥胖"
+        }
+      ]
+    },
+    {
+      "enmuType": "SlitLampType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "正常"
+        },
+        {
+          "key": "2",
+          "value": "乳头滤泡增生"
+        },
+        {
+          "key": "3",
+          "value": "倒睫"
+        },
+        {
+          "key": "4",
+          "value": "结膜充血"
+        },
+        {
+          "key": "5",
+          "value": "其他"
+        }
+      ]
+    },
+    {
+      "enmuType": "SlitLampEyelashType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "差"
+        },
+        {
+          "key": "1",
+          "value": "良"
+        }
+      ]
+    },
+    {
+      "enmuType": "SlitLampTearsType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "好"
+        },
+        {
+          "key": "2",
+          "value": "一般"
+        },
+        {
+          "key": "3",
+          "value": "差"
+        }
+      ]
+    },
+    {
+      "enmuType": "SlitLampTearsDataType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "＞10mm"
+        },
+        {
+          "key": "2",
+          "value": "＜10mm"
+        },
+        {
+          "key": "3",
+          "value": "＜8mm"
+        }
+      ]
+    },
+    {
+      "enmuType": "SlitLampSimpleTearsDataType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "＞10mm"
+        },
+        {
+          "key": "2",
+          "value": "＜10mm"
+        },
+        {
+          "key": "3",
+          "value": "＜8mm"
+        },
+        {
+          "key": "4",
+          "value": "＜5mm"
+        }
+      ]
+    },
+    {
+      "enmuType": "SlitLampSimpleTrichiasisType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "向上"
+        },
+        {
+          "key": "2",
+          "value": "向内"
+        }
+      ]
+    },
+    {
+      "enmuType": "RetcamType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "正常"
+        },
+        {
+          "key": "2",
+          "value": "豹纹状眼底"
+        },
+        {
+          "key": "3",
+          "value": "杯盘比异常"
+        },
+        {
+          "key": "4",
+          "value": "其他"
+        }
+      ]
+    },
+    {
+      "enmuType": "LeopardFundusType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "轻度"
+        },
+        {
+          "key": "2",
+          "value": "中度"
+        },
+        {
+          "key": "3",
+          "value": "重度"
+        }
+      ]
+    },
+    {
+      "enmuType": "RingDiscType",
+      "enum": [
+        {
+          "key": "1",
+          "value": ">=0.4"
+        },
+        {
+          "key": "2",
+          "value": "<=0.3"
+        }
+      ]
+    },
+    {
+      "enmuType": "AdvancedPathologicalMyopiaType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "局部萎缩灶"
+        },
+        {
+          "key": "2",
+          "value": "融合性萎缩灶"
+        }
+      ]
+    },
+    {
+      "enmuType": "RetcamOtherType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "视盘鼻侧透明环"
+        },
+        {
+          "key": "2",
+          "value": "视盘鼻侧模糊/鼻侧牵引"
+        }
+      ]
+    },
+    {
+      "enmuType": "RedReflexType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "存在、对称"
+        },
+        {
+          "key": "2",
+          "value": "黑影"
+        },
+        {
+          "key": "3",
+          "value": "消失"
+        },
+        {
+          "key": "4",
+          "value": "不对称"
+        }
+      ]
+    },
+    {
+      "enmuType": "BMIType",
+      "enum": [
+        {
+          "key": "-2",
+          "value": "太瘦"
+        },
+        {
+          "key": "-1",
+          "value": "偏瘦"
+        },
+        {
+          "key": "0",
+          "value": "正常"
+        },
+        {
+          "key": "1",
+          "value": "偏胖"
+        },
+        {
+          "key": "2",
+          "value": "肥胖"
+        }
+      ]
+    },
+    {
+      "enmuType": "ALResultType",
+      "enum": [
+        {
+          "key": "-2",
+          "value": "↓↓太低"
+        },
+        {
+          "key": "-1",
+          "value": "↓偏低"
+        },
+        {
+          "key": "0",
+          "value": "正常"
+        },
+        {
+          "key": "1",
+          "value": "↑偏高"
+        },
+        {
+          "key": "2",
+          "value": "↑↑太高"
+        }
+      ]
+    },
+    {
+      "enmuType": "LipidThicknessType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "重度"
+        },
+        {
+          "key": "1",
+          "value": "严重"
+        },
+        {
+          "key": "2",
+          "value": "中等"
+        },
+        {
+          "key": "3",
+          "value": "轻微"
+        },
+        {
+          "key": "4",
+          "value": "正常"
+        },
+        {
+          "key": "5",
+          "value": "优"
+        }
+      ]
+    },
+    {
+      "enmuType": "EnvyAnalysisType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "4级重度"
+        },
+        {
+          "key": "1",
+          "value": "3级严重"
+        },
+        {
+          "key": "2",
+          "value": "2级中等"
+        },
+        {
+          "key": "3",
+          "value": "1级轻微"
+        },
+        {
+          "key": "4",
+          "value": "0级正常"
+        },
+        {
+          "key": "5",
+          "value": "优"
+        }
+      ]
+    },
+    {
+      "enmuType": "TMHType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "重度"
+        },
+        {
+          "key": "1",
+          "value": "严重"
+        },
+        {
+          "key": "2",
+          "value": "中等"
+        },
+        {
+          "key": "3",
+          "value": "轻微"
+        },
+        {
+          "key": "4",
+          "value": "正常"
+        },
+        {
+          "key": "5",
+          "value": "优"
+        }
+      ]
+    },
+    {
+      "enmuType": "PartialBlinkType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "重度"
+        },
+        {
+          "key": "1",
+          "value": "严重"
+        },
+        {
+          "key": "2",
+          "value": "中等"
+        },
+        {
+          "key": "3",
+          "value": "轻微"
+        },
+        {
+          "key": "4",
+          "value": "正常"
+        },
+        {
+          "key": "5",
+          "value": "优"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiagnoseLevelType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "轻"
+        },
+        {
+          "key": "1",
+          "value": "中"
+        },
+        {
+          "key": "2",
+          "value": "高"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiagnoseStrabismusType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "交替"
+        },
+        {
+          "key": "1",
+          "value": "间歇"
+        },
+        {
+          "key": "2",
+          "value": "恒定"
+        },
+        {
+          "key": "3",
+          "value": "调节"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiagnoseGlaucomaType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "正常眼压"
+        },
+        {
+          "key": "1",
+          "value": "开角型"
+        },
+        {
+          "key": "2",
+          "value": "闭角型"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiagnoseTryonActivityType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "紧"
+        },
+        {
+          "key": "1",
+          "value": "正常"
+        },
+        {
+          "key": "2",
+          "value": "松"
+        }
+      ]
+    },
+    {
+      "enmuType": "DiagnoseBType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "BU"
+        },
+        {
+          "key": "1",
+          "value": "BO"
+        },
+        {
+          "key": "2",
+          "value": "BI"
+        },
+        {
+          "key": "3",
+          "value": "BD"
+        }
+      ]
+    },
+    {
+      "enmuType": "DoctorType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "实习医生"
+        },
+        {
+          "key": "2",
+          "value": "住院医师"
+        },
+        {
+          "key": "3",
+          "value": "主治医师"
+        },
+        {
+          "key": "4",
+          "value": "副主任医师"
+        },
+        {
+          "key": "5",
+          "value": "主任医师"
+        }
+      ]
+    },
+    {
+      "enmuType": "TechnicianType",
+      "enum": [
+        {
+          "key": "0",
+          "value": "其他"
+        },
+        {
+          "key": "1",
+          "value": "验光技师（国家职业资格二级）"
+        },
+        {
+          "key": "2",
+          "value": "高级验光技师（国家职业资格一级）"
+        }
+      ]
+    },
+    {
+      "enmuType": "AuditStatus",
+      "enum": [
+        {
+          "key": "1",
+          "value": "等待审核"
+        },
+        {
+          "key": "2",
+          "value": "审核通过"
+        },
+        {
+          "key": "3",
+          "value": "审核未过"
+        }
+      ]
+    },
+    {
+      "enmuType": "TemplateType",
+      "enum": [
+        {
+          "key": "1",
+          "value": "默认"
+        },
+        {
+          "key": "2",
+          "value": "校园筛查"
+        }
+      ]
+    }
+  ],
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

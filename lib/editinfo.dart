@@ -1,10 +1,19 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+import 'dart:io';
+
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/Prefs.dart';
+import 'package:flutter_doctor_app/models/EnumBean.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:date_format/date_format.dart';
+import 'package:image_picker/image_picker.dart';
+
+
 class EditInfoPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -36,11 +45,10 @@ class _EditInfoPageState extends State<EditInfoPage> {
   final TextEditingController _uIdCardController =
       TextEditingController(); //身份证
   final TextEditingController _uHospitalController =
-  TextEditingController(); //医院
+      TextEditingController(); //医院
   final TextEditingController _uDescriptionController =
-  TextEditingController(); //个人简介
-  final TextEditingController _uPriceController =
-  TextEditingController(); //价格
+      TextEditingController(); //个人简介
+  final TextEditingController _uPriceController = TextEditingController(); //价格
   final FocusNode _uNameFocusNode = FocusNode(); //姓名
   final FocusNode _uIdCardFocusNode = FocusNode(); //身份证
   final FocusNode _uHospitalFocusNode = FocusNode(); //医院
@@ -58,45 +66,51 @@ class _EditInfoPageState extends State<EditInfoPage> {
   bool descriptionSuffixIconIsVisible = false; //默认不显示
   bool priceSuffixIconIsVisible = false; //默认不显示
 
-  final defaultNoDataTextStyle=TextStyle(//无数据时的TextStyle
-    color: Color(0xFFCCCCCC),
-    fontSize: 12
-  );
-  final dataTextStyle=TextStyle(//有数据时的TextStyle
+  final defaultNoDataTextStyle = TextStyle(
+      //无数据时的TextStyle
+      color: Color(0xFFCCCCCC),
+      fontSize: 12);
+  final dataTextStyle = TextStyle(
+      //有数据时的TextStyle
       color: Color(0xFF333333),
-      fontSize: 16
-  );
-  String uBirthDate="";//出生日期
-  late Container birthDateContainer;//出生日期
-  String uDoctorType="";//职称
-  late Container doctorTypeContainer;//职称
-  String uTechnicianType="";//技师资格
-  late Container technicianTypeContainer;//技师资格
+      fontSize: 16);
+  String uBirthDate = ""; //出生日期
+
+  String uDoctorTypeText = ""; //职称
+
+  String uTechnicianTypeText = ""; //技师资格
+
   DateTime? _dateTime;
+
+  late List<EnumBean> doctorTypeList;
+  late List<EnumBean> technicianTypeList;
+
+  String? _radioGroup = "";
+
+  void _handleRadioValueChanged(String? value) {
+    setState(() {
+      _radioGroup = value;
+    });
+  }
+
+  List<XFile>? _imageFileList;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     initView();
   }
 
   void initView() {
-
-    //TODO 调接口获取数据
-    uBirthDate="";
-    uDoctorType="";
-    uTechnicianType="";
-    if(""!=uBirthDate){
+    doctorTypeList = getDoctorType();
+    doctorTypeList.add(EnumBean(key: "", value: "取消"));
+    technicianTypeList = getTechnicianType();
+    technicianTypeList.add(EnumBean(key: "", value: "取消"));
+    if ("" != uBirthDate) {
       _dateTime = DateTime.parse(uBirthDate);
     }
-    initBirthdayView();
-    doctorTypeContainer=chooseDataContainer('职称 ',uDoctorType, '请选择您的职称', () {
-      //点击选择职称
-    });
-    technicianTypeContainer=chooseDataContainer('技师资格 ',uTechnicianType, '请选择您的技师资格', () {
-      //点击选择技师资格
-    });
     _uNameController.addListener(() {
       setState(() {
         if (_uNameController.text.length != 0) {
@@ -121,39 +135,39 @@ class _EditInfoPageState extends State<EditInfoPage> {
     });
     _uHospitalController.addListener(() {
       setState(() {
-        if(_uHospitalController.text.length!=0){
+        if (_uHospitalController.text.length != 0) {
           //删除按钮显示
-          hospitalSuffixIconIsVisible=true;
-        }else{
-          hospitalSuffixIconIsVisible=false;
+          hospitalSuffixIconIsVisible = true;
+        } else {
+          hospitalSuffixIconIsVisible = false;
         }
       });
     });
     _uDescriptionController.addListener(() {
       setState(() {
-        if(_uDescriptionController.text.length!=0){
+        if (_uDescriptionController.text.length != 0) {
           //删除按钮显示
-          descriptionSuffixIconIsVisible=true;
-        }else{
-          descriptionSuffixIconIsVisible=false;
+          descriptionSuffixIconIsVisible = true;
+        } else {
+          descriptionSuffixIconIsVisible = false;
         }
       });
     });
     _uPriceController.addListener(() {
       setState(() {
-        if(_uPriceController.text.length!=0){
+        if (_uPriceController.text.length != 0) {
           //删除按钮显示
-          priceSuffixIconIsVisible=true;
-        }else{
-          priceSuffixIconIsVisible=false;
+          priceSuffixIconIsVisible = true;
+        } else {
+          priceSuffixIconIsVisible = false;
         }
       });
     });
     nameSuffixIcon = deleteSuffixIcon(_uNameController);
     idCardSuffixIcon = deleteSuffixIcon(_uIdCardController);
-    hospitalSuffixIcon=deleteSuffixIcon(_uHospitalController);
-    descriptionSuffixIcon=deleteSuffixIcon(_uDescriptionController);
-    priceSuffixIcon=deleteSuffixIcon(_uPriceController);
+    hospitalSuffixIcon = deleteSuffixIcon(_uHospitalController);
+    descriptionSuffixIcon = deleteSuffixIcon(_uDescriptionController);
+    priceSuffixIcon = deleteSuffixIcon(_uPriceController);
   }
 
   void setSaveState() {
@@ -450,12 +464,357 @@ class _EditInfoPageState extends State<EditInfoPage> {
                               ),
                             ),
                             //性别
+                            Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(top: 8),
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    //纵轴居中即垂直居中
+                                    children: <Widget>[
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: '性别  ',
+                                              style: TextStyle(
+                                                  color: Color(0xFF666666)),
+                                            ),
+                                          ],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 105),
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: Color(0xFFEEEEEE)))),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Spacer(
+                                            flex: 3,
+                                          ),
+                                          Flexible(
+                                            child: RadioListTile(
+                                              title: Text(
+                                                "男",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: "男" == _radioGroup
+                                                        ? Color(0xFF333333)
+                                                        : Color(0xFF999999)),
+                                              ),
+                                              value: "男",
+                                              onChanged:
+                                                  _handleRadioValueChanged,
+                                              groupValue: _radioGroup,
+                                              controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .platform,
+                                            ),
+                                          ),
+                                          Flexible(
+                                              child: RadioListTile(
+                                            title: Text("女",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: "女" == _radioGroup
+                                                        ? Color(0xFF333333)
+                                                        : Color(0xFF999999))),
+                                            value: "女",
+                                            groupValue: _radioGroup,
+                                            onChanged: _handleRadioValueChanged,
+                                            controlAffinity:
+                                                ListTileControlAffinity
+                                                    .platform,
+                                          )),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                             //出生日期
-                            birthDateContainer,
+                            Container(
+                              padding: EdgeInsets.only(top: 8),
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    //纵轴居中即垂直居中
+                                    children: <Widget>[
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: '出生日期',
+                                              style: TextStyle(
+                                                  color: Color(0xFF666666)),
+                                            ),
+                                          ],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 105),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      showDatePicker();
+                                                    },
+                                                    child: Text(
+                                                      "" == uBirthDate
+                                                          ? "请选择您的出生日期"
+                                                          : uBirthDate,
+                                                      style: "" == uBirthDate
+                                                          ? defaultNoDataTextStyle
+                                                          : dataTextStyle,
+                                                    ),
+                                                  ),
+                                                  flex: 1,
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  padding:
+                                                      EdgeInsets.only(left: 8),
+                                                  child: Image.asset(
+                                                    'assets/images/button_icon_continue.png',
+                                                    height: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Color(
+                                                            0xFFEEEEEE)))),
+                                          ),
+                                          flex: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             //职称
-                            doctorTypeContainer,
+                            Container(
+                              padding: EdgeInsets.only(top: 8),
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    //纵轴居中即垂直居中
+                                    children: <Widget>[
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "职称",
+                                              style: TextStyle(
+                                                  color: Color(0xFF666666)),
+                                            ),
+                                          ],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 105),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      _showDoctorTypeModalBottomSheet()
+                                                          .then((int? index) {
+                                                        print("职称index:$index");
+                                                        if (index == null) {
+                                                          return;
+                                                        }
+                                                        setState(() {
+                                                          if (doctorTypeList[
+                                                                      index!]
+                                                                  .key!
+                                                                  .length !=
+                                                              0) {
+                                                            uDoctorTypeText =
+                                                                doctorTypeList[
+                                                                        index!]
+                                                                    .value!;
+                                                          } else {
+                                                            uDoctorTypeText =
+                                                                "";
+                                                          }
+                                                        });
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      "" == uDoctorTypeText
+                                                          ? "请选择您的职称"
+                                                          : uDoctorTypeText,
+                                                      style: "" ==
+                                                              uDoctorTypeText
+                                                          ? defaultNoDataTextStyle
+                                                          : dataTextStyle,
+                                                    ),
+                                                  ),
+                                                  flex: 1,
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  padding:
+                                                      EdgeInsets.only(left: 8),
+                                                  child: Image.asset(
+                                                    'assets/images/button_icon_continue.png',
+                                                    height: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Color(
+                                                            0xFFEEEEEE)))),
+                                          ),
+                                          flex: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             //技师资格
-                            technicianTypeContainer,
+                            Container(
+                              padding: EdgeInsets.only(top: 8),
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    //纵轴居中即垂直居中
+                                    children: <Widget>[
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "技师资格",
+                                              style: TextStyle(
+                                                  color: Color(0xFF666666)),
+                                            ),
+                                          ],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 105),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      _showTechnicianTypeModalBottomSheet()
+                                                          .then((int? index) {
+                                                        print("技师index:$index");
+                                                        if (index == null) {
+                                                          return;
+                                                        }
+                                                        setState(() {
+                                                          if (technicianTypeList[
+                                                                      index!]
+                                                                  .key!
+                                                                  .length !=
+                                                              0) {
+                                                            uTechnicianTypeText =
+                                                                technicianTypeList[
+                                                                        index!]
+                                                                    .value!;
+                                                          } else {
+                                                            uTechnicianTypeText =
+                                                                "";
+                                                          }
+                                                        });
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      "" == uTechnicianTypeText
+                                                          ? "请选择您的技师资格"
+                                                          : uTechnicianTypeText,
+                                                      style: "" ==
+                                                              uTechnicianTypeText
+                                                          ? defaultNoDataTextStyle
+                                                          : dataTextStyle,
+                                                    ),
+                                                  ),
+                                                  flex: 1,
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  padding:
+                                                      EdgeInsets.only(left: 8),
+                                                  child: Image.asset(
+                                                    'assets/images/button_icon_continue.png',
+                                                    height: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Color(
+                                                            0xFFEEEEEE)))),
+                                          ),
+                                          flex: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             //就职医院
                             Container(
                               padding: EdgeInsets.only(top: 8),
@@ -465,7 +824,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                 children: <Widget>[
                                   Row(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     //纵轴居中即垂直居中
                                     children: <Widget>[
                                       Text.rich(
@@ -500,9 +859,10 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     color: Color(0xFFCCCCCC),
                                                     fontSize: 12),
                                                 border: InputBorder.none,
-                                                suffix: hospitalSuffixIconIsVisible
-                                                    ? hospitalSuffixIcon
-                                                    : null,
+                                                suffix:
+                                                    hospitalSuffixIconIsVisible
+                                                        ? hospitalSuffixIcon
+                                                        : null,
                                               ),
                                               controller: _uHospitalController,
                                               inputFormatters: [
@@ -565,12 +925,15 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     color: Color(0xFFCCCCCC),
                                                     fontSize: 12),
                                                 border: InputBorder.none,
-                                                suffix: descriptionSuffixIconIsVisible
-                                                    ? descriptionSuffixIcon
-                                                    : null,
-                                                contentPadding: EdgeInsets.all(0),
+                                                suffix:
+                                                    descriptionSuffixIconIsVisible
+                                                        ? descriptionSuffixIcon
+                                                        : null,
+                                                contentPadding:
+                                                    EdgeInsets.all(0),
                                               ),
-                                              controller: _uDescriptionController,
+                                              controller:
+                                                  _uDescriptionController,
                                               maxLines: 5,
                                               inputFormatters: [
                                                 LengthLimitingTextInputFormatter(
@@ -606,7 +969,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                 children: <Widget>[
                                   Row(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     //纵轴居中即垂直居中
                                     children: <Widget>[
                                       Text.rich(
@@ -651,7 +1014,9 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     10),
                                               ],
                                               focusNode: _uPriceFocusNode,
-                                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      decimal: true),
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Color(0xFF333333),
@@ -671,7 +1036,49 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                 ],
                               ),
                             ),
-                            //
+                            //专家认证
+                            Container(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    //纵轴居中即垂直居中
+                                    children: <Widget>[
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: '专家认证  ',
+                                              style: TextStyle(
+                                                  color: Color(0xFF666666)),
+                                            ),
+                                            TextSpan(
+                                              text: '*',
+                                              style: TextStyle(
+                                                  color: Color(0xFFE65D4E)),
+                                            ),
+                                          ],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 105),
+                                    child: Stack(
+                                      children: <Widget>[
+                                        _previewImages(),
+
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -736,8 +1143,10 @@ class _EditInfoPageState extends State<EditInfoPage> {
       ),
     );
   }
+
   //@param label label  @param textData 数据 @param hintText hintText @param onClick 点击事件
-  Container chooseDataContainer(String label,String textData,String hintText,void Function() onClick){
+  Container chooseDataContainer(
+      String label, String textData, String hintText, void Function() onClick) {
     return Container(
       padding: EdgeInsets.only(top: 8),
       height: 50,
@@ -745,8 +1154,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
         alignment: Alignment.centerLeft,
         children: <Widget>[
           Row(
-            crossAxisAlignment:
-            CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             //纵轴居中即垂直居中
             children: <Widget>[
               Text.rich(
@@ -754,8 +1162,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                   children: [
                     TextSpan(
                       text: label,
-                      style: TextStyle(
-                          color: Color(0xFF666666)),
+                      style: TextStyle(color: Color(0xFF666666)),
                     ),
                   ],
                   style: TextStyle(fontSize: 16),
@@ -771,16 +1178,23 @@ class _EditInfoPageState extends State<EditInfoPage> {
                   child: Container(
                     child: Row(
                       children: [
-                        Expanded(child:GestureDetector(
-                          onTap: (){
-                            onClick();
-                          },
-                          child: Text(""==textData?hintText:textData,style: ""==textData?defaultNoDataTextStyle:dataTextStyle,),
-                        ),flex: 1,),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              onClick();
+                            },
+                            child: Text(
+                              "" == textData ? hintText : textData,
+                              style: "" == textData
+                                  ? defaultNoDataTextStyle
+                                  : dataTextStyle,
+                            ),
+                          ),
+                          flex: 1,
+                        ),
                         Container(
                           alignment: Alignment.center,
-                          padding:
-                          EdgeInsets.only(left: 8),
+                          padding: EdgeInsets.only(left: 8),
                           child: Image.asset(
                             'assets/images/button_icon_continue.png',
                             height: 16,
@@ -790,9 +1204,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                     ),
                     decoration: BoxDecoration(
                         border: Border(
-                            bottom: BorderSide(
-                                color: Color(
-                                    0xFFEEEEEE)))),
+                            bottom: BorderSide(color: Color(0xFFEEEEEE)))),
                   ),
                   flex: 1,
                 ),
@@ -803,84 +1215,196 @@ class _EditInfoPageState extends State<EditInfoPage> {
       ),
     );
   }
-  void showDatePicker(){
-    DatePicker.showDatePicker(context,
-      pickerTheme: DateTimePickerTheme(
-        showTitle: true,
-        // title: Text('请选择日期'),
-        confirm: Text('确定'),
-        cancel: Text('取消'),
-        selectionOverlay: Container(
-          decoration: BoxDecoration(
-            border: Border.symmetric(
-              horizontal: BorderSide(color: Color(0xFF009999)),
-            ),
-          ),
-        )
 
-      ),
+  void showDatePicker() {
+    DatePicker.showDatePicker(
+      context,
+      pickerTheme: DateTimePickerTheme(
+          showTitle: true,
+          // title: Text('请选择日期'),
+          confirm: Text('确定'),
+          cancel: Text('取消'),
+          selectionOverlay: Container(
+            decoration: BoxDecoration(
+              border: Border.symmetric(
+                horizontal: BorderSide(color: Color(0xFF009999)),
+              ),
+            ),
+          )),
       maxDateTime: DateTime.now(),
       initialDateTime: _dateTime,
       dateFormat: 'yyyy-MM-dd',
-      locale:DateTimePickerLocale.zh_cn,
-      onCancel: ()=>print('onCancel'),
-      onConfirm: (dateTime,List<int> index){
-      setState(() {
-        print('onConfirm');
-        _dateTime=dateTime;
-        uBirthDate=formatDate(_dateTime!,[yyyy,'-', mm,'-', dd]);
-        print('日期：$uBirthDate');
-        initBirthdayView();
-      });
+      locale: DateTimePickerLocale.zh_cn,
+      onCancel: () => print('onCancel'),
+      onConfirm: (dateTime, List<int> index) {
+        setState(() {
+          print('onConfirm');
+          _dateTime = dateTime;
+          uBirthDate = formatDate(_dateTime!, [yyyy, '-', mm, '-', dd]);
+          print('日期：$uBirthDate');
+        });
       },
     );
   }
 
-  void initBirthdayView() {
-    birthDateContainer=chooseDataContainer('出生日期 ',uBirthDate, '请选择您的出生日期', () {
-      //点击选择出生日期
-      showDatePicker();
-    });
-  }
   // 弹出底部菜单列表模态对话框 职称
   Future<int?> _showDoctorTypeModalBottomSheet() {
     return showModalBottomSheet<int>(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+      ),
       builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: 30,
-          itemExtent: 50,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text("$index"),
-              onTap: () => Navigator.of(context).pop(index),
-            );
-          },
+        return Wrap(
+          children: [
+            ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                    title: Text(
+                      doctorTypeList[index].value!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                    onTap: () => Navigator.of(context).pop(index));
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  height: 1,
+                  color: Color(0xFFEEEEEE),
+                );
+              },
+              itemCount: doctorTypeList.length,
+            )
+          ],
         );
       },
     );
   }
+
   // 弹出底部菜单列表模态对话框 技师资格
   Future<int?> _showTechnicianTypeModalBottomSheet() {
     return showModalBottomSheet<int>(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+      ),
       builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: 30,
-          itemExtent: 50,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text("$index"),
-              onTap: () => Navigator.of(context).pop(index),
-            );
-          },
+        return Wrap(
+          children: [
+            ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                    title: Text(
+                      technicianTypeList[index].value!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                    onTap: () => Navigator.of(context).pop(index));
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  height: 1,
+                  color: Color(0xFFEEEEEE),
+                );
+              },
+              itemCount: technicianTypeList.length,
+            )
+          ],
         );
       },
     );
   }
 
+  Widget _previewImages(){
+    if (_imageFileList != null&&_imageFileList!.length!=0) {
+      return GridView.builder(
+                gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: 80,
+                  crossAxisCount: 4, //每行4列
+                  mainAxisSpacing: 8,//行间距 上一行与下一行的距离
+                  //childAspectRatio: 1.0, //显示区域宽高相等
+                  crossAxisSpacing: 8//列间距 每一列的间距
+                ),
+                itemCount: _imageFileList!.length,
+                physics:NeverScrollableScrollPhysics(),
+                shrinkWrap:true,
+                key: UniqueKey(),
+                itemBuilder: (context, index) {
+                  return Semantics(
+                    label: 'image_picker_example_picked_image',
+                    child: GestureDetector(
+                      child: kIsWeb
+                          ? Image.network(_imageFileList![index].path)
+                          : Image.file(File(_imageFileList![index].path)),
+                      onTap: (){
+                        //点击事件
+                        gotoGallery();
+                      },
+                    ),
+                  );
+                });
+    }else{
+      return  Row(
+        children: <Widget>[
+          GestureDetector(
+            child: Image.asset(
+              'assets/images/picture_default_add.png',
+              fit: BoxFit.cover,
+              width: 80,
+            ),
+            onTap: () {
+              //TODO 去相册选择图片
+              //gotoGallery().then((value) => null);
+              gotoGallery();
+            },
+          ),
+          Expanded(
+            child: Container(
+              alignment: Alignment.centerLeft,
+              padding:
+              EdgeInsets.only(left: 8),
+              child: Text(
+                '请上传医生认证资料图片',
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFFCCCCCC)),
+              ),
+            ),
+            flex: 1,
+          )
+        ],
+      );
+    }
+  }
 
+  List<EnumBean> getDoctorType() {
+    var listDynamic = jsonDecode(Prefs.getDoctorType()!);
+    return (listDynamic as List<dynamic>)
+        .map((e) => EnumBean.fromJson((e as Map<String, dynamic>)))
+        .toList();
+  }
 
+  List<EnumBean> getTechnicianType() {
+    var listDynamic = jsonDecode(Prefs.getTechnicianType()!);
+    return (listDynamic as List<dynamic>)
+        .map((e) => EnumBean.fromJson((e as Map<String, dynamic>)))
+        .toList();
+  }
 
 //TODO 调接口完成保存信息修改
   void onSaveClick() async {
@@ -890,6 +1414,20 @@ class _EditInfoPageState extends State<EditInfoPage> {
       FocusScope.of(context).unfocus();
       //TODO 调接口保存信息
       Navigator.of(context).pop(); //密码修改成功，此页消失。
+    });
+  }
+
+  Future<void> gotoGallery() async {
+    final List<XFile> pickedFileList = await _picker.pickMultiImage(
+      // maxWidth: 80,
+      // maxHeight: 80,
+      // imageQuality: 100,
+
+    );
+    int length=pickedFileList.length;
+    print("长度：$length");
+    setState(() {
+      _imageFileList = pickedFileList;
     });
   }
 }

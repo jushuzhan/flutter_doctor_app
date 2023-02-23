@@ -9,6 +9,7 @@ import '../changebindphone.dart';
 import '../changephone.dart';
 import '../editinfo.dart';
 import '../forgetpassword.dart';
+import '../imagepickerdemo.dart';
 import '../login.dart';
 import '../main.dart';
 import '../modifypassword.dart';
@@ -36,6 +37,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'bind_phone':BindPhonePage(),//定义绑定手机路径
     'set_password':SetPasswordPage(),//定义设置密码路径
     'edit_info':EditInfoPage(),//定义编辑信息路径
+    'image_picker_demo':ImagePickerDemoPage(),//定义demo路径
   };
 
   String routerName = routeBeforeHook(settings);

@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/App.dart';
 import 'color.dart';
+import 'common/Prefs.dart';
+import 'common/net/NetWorkWithoutToken.dart';
 import 'keepalivewrapper.dart';
 import 'common/MyRoutes.dart';
 import 'common/LoginPrefs.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+
 void main() async{
-  String value= await App.init();// await 关键字必须用在异步方法中 await等待异步方法执行完毕 异步方法必须用变量接收
+  String value= await App.init(); // await 关键字必须用在异步方法中 await等待异步方法执行完毕 异步方法必须用变量接收
   if('ok'==value){
     runApp(MyApp());
   }
@@ -55,6 +60,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List tabs = ["已申请", "已同意", "已诊断", "全部"];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -62,9 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("问诊申请",style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFFFFFFFF)
+          title: Text("问诊申请", style: TextStyle(
+              fontSize: 18,
+              color: Color(0xFFFFFFFF)
           ),),
           bottom: TabBar(
             tabs: tabs.map((e) => Tab(text: e)).toList(),
@@ -72,10 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
             labelColor: Color(0xFFFFFFFF),
             unselectedLabelColor: Color(0x99FFFFFF),
             labelStyle: TextStyle(
-              fontSize:16
+                fontSize: 16
             ),
             unselectedLabelStyle: TextStyle(
-              fontSize: 14
+                fontSize: 14
             ),
             indicatorPadding: EdgeInsets.only(top: 10),
             padding: EdgeInsets.only(bottom: 8),
@@ -83,8 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           actions: [
             GestureDetector(
-              onTap: (){
-                Navigator.pushNamed(context, 'personal');//跳转至首页
+              onTap: () {
+                Navigator.pushNamed(context, 'personal'); //跳转至首页
               },
               child: Container(
                 width: 40,
@@ -96,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ],
-          systemOverlayStyle: SystemUiOverlayStyle.light,//状态栏字体为白色
+          systemOverlayStyle: SystemUiOverlayStyle.light, //状态栏字体为白色
         ),
         body: TabBarView(
           //构建
@@ -128,3 +140,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+

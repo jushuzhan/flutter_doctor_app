@@ -7,14 +7,12 @@ class LoadingDialog{
   LoadingDialog({
    required this.buildContext,
   });
-
-
   showLoading(){
     return showDialog(context: buildContext, builder: (buildContext){
-      return UnconstrainedBox(
+      return WillPopScope(child: UnconstrainedBox(
         constrainedAxis: Axis.vertical,
         child: SizedBox(
-          width: 280,
+          width: 200,
           child: AlertDialog(
             backgroundColor: Color(0xFF88000000),
             shape: RoundedRectangleBorder(
@@ -23,14 +21,19 @@ class LoadingDialog{
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                CircularProgressIndicator(value: .8,),
-                Padding(padding: EdgeInsets.only(top: 26.0),child: Text("正在加载，请稍后..."),),
+                Padding(padding: EdgeInsets.only(top: 10),child:  CircularProgressIndicator(backgroundColor: Color(0x55c6c6c6),),),
+                Padding(padding: EdgeInsets.only(top: 5),child: Text("加载中...",style: TextStyle(
+                    color:Color(0xFF9a9b98),
+                    fontSize: 12
+                ),),),
               ],
             ),
           ),
         ),
-      );
-    });
+      ), onWillPop: (){
+        return new Future.value(false);
+      });
+    }, barrierDismissible: false);
   }
 
 }
