@@ -280,6 +280,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "8.1.3"
+  fluwx:
+    dependency: "direct dev"
+    description:
+      name: fluwx
+      sha256: "875fa48b93c15b9d67ec94c70836bb320d6f86834b0ae819ae0c63629e80446a"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.12.2"
   frontend_server_client:
     dependency: transitive
     description:

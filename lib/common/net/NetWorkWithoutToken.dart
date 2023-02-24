@@ -5,8 +5,13 @@ import 'package:dio/src/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_doctor_app/common/constants/constants.dart';
+import 'package:flutter_doctor_app/models/BaseBean.dart';
 import 'package:flutter_doctor_app/models/GetEnum.dart';
+import 'package:flutter_doctor_app/models/GetUserInfoResponse.dart';
 
+import '../../models/GetUserInfoRequest.dart';
+import '../../models/RequestTokenRequest.dart';
+import '../../models/RequestTokenResponse.dart';
 import 'interceptor/TokenInterceptor.dart';
 export 'package:dio/dio.dart' show DioError;
 
@@ -35,11 +40,22 @@ class NetWorkWithoutToken {
   // 获取枚举接口
   Future<GetEnum> getEnum() async {
     var r = await dio.get(
-      "api/Common/GetEnum",
+      GET_ENUM,
     );
     return GetEnum.fromJson(r.data);
   }
-
+  //微信登录接口
+Future<GetUserInfoResponse> wechatLogin(GetUserInfoRequest getUserInfoRequest )async{
+    var r=await dio.post(GET_USER_INFO,data:getUserInfoRequest.toJson());
+    GetUserInfoResponse  response=GetUserInfoResponse.fromJson(BaseBean(r.data).result);
+    return response;
+}
+//请求token接口
+  Future<RequestTokenResponse> requestToken(RequestTokenRequest requestTokenRequest)async{
+    var r=await dio.post(REQUEST_TOKEN,data:requestTokenRequest.toJson());
+    RequestTokenResponse response=RequestTokenResponse.fromJson(BaseBean(r.data).result);
+    return response;
+  }
   // //获取用户项目列表
   // Future<List<Repo>> getRepos({
   //   Map<String, dynamic>? queryParameters, //query参数，用于接收分页信息

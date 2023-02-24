@@ -35,5 +35,8 @@ class LoadingDialog{
       });
     }, barrierDismissible: false);
   }
+  dismissLoading(){
+    Navigator.of(buildContext).pop();
+  }
 
 }

@@ -11,8 +11,15 @@ import 'package:flutter_doctor_app/models/GetEnum.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'common/Prefs.dart';
+import 'common/constants/constants.dart';
+import 'models/BaseBean.dart';
 import 'models/EnumBean.dart';
+import 'models/GetUserInfoRequest.dart';
+import 'models/GetUserInfoResponse.dart';
+import 'models/RequestTokenRequest.dart';
+import 'models/RequestTokenResponse.dart';
 import 'models/Result.dart';
+import 'package:fluwx/fluwx.dart' as fluwx;
 
 class LoginPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -42,10 +49,13 @@ class _LoginPageState extends State<LoginPage> {
   int loginTextColor = 0xFF999999; //登录字体颜色
   int loginBackgroundColor = 0xFFE6E6E6; //登录按钮背景颜色
   bool _isDisable = true; //登录按钮是否可用，默认是不可用
+  late final LoadingDialog loading;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     _uNameController.addListener(() {
       print(_uNameController.text);
       setLoginState();
@@ -336,7 +346,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   print("微信登录");
-                                  //TODO 微信登录
+                                  weChatLogin();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -452,17 +462,53 @@ class _LoginPageState extends State<LoginPage> {
     });
     var e = await getEnum();
     print(e);
+    RequestTokenRequest requestTokenRequest=RequestTokenRequest(clientId: CLIENT_ID,
+        jiguangId: JIGUANGID,
+        phone: _uNameController.text,
+        password: _uPasswordController.text,
+        deviceUUID: JIGUANGID,
+        loginType: LOGIN_TYPE,
+        userRole: USER_ROLE);
+        var result=await requestToken(requestTokenRequest).then((value){
 
-    LoginPrefs.saveToken(_uNameController.text); //保存token (我这里保存的输入框中输入的值)
-    Navigator.of(context).pop(); //登录页消失
-    Navigator.pushNamed(context, 'home'); //跳转至首页
+    });
+  }
+  //微信登录
+  void weChatLogin() async{
+    var installed=await fluwx.isWeChatInstalled;
+    if(!installed){
+      Fluttertoast.showToast(msg: "您还未安装微信客户端");
+      return;
+    }
+    var authCode=await fluwx.sendWeChatAuth(scope: 'snsapi_userinfo',state: 'wechat_sdk_demo_test');
+    if(authCode){
+
+      fluwx.weChatResponseEventHandler.distinct((a, b) => a == b).listen((res) {
+        if (res is fluwx.WeChatAuthResponse) {
+          int? errCode = res.errCode;
+          print('微信登录返回值：ErrCode :$errCode  code:${res.code}');
+          if (errCode == 0) {
+            String? code = res.code;
+            //把微信登录返回的code传给后台，剩下的事就交给后台处理
+            GetUserInfoRequest request=GetUserInfoRequest(code: code,userRole:USER_ROLE ,loginType: LOGIN_TYPE);
+            getUserInfo(request);
+            Fluttertoast.showToast(msg: "用户同意授权成功");
+          } else if (errCode == -4) {
+            Fluttertoast.showToast(msg: "用户拒绝授权");
+          } else if (errCode == -2) {
+            Fluttertoast.showToast(msg: "用户取消授权");
+          }
+        }
+      });
+    }
+
   }
 
   Future <bool> getEnum() async {
     if (Prefs.getDoctorType() != null && Prefs.getDoctorType()!.length != 0) {
       return true;
     }
-    LoadingDialog(buildContext: context).showLoading();
+    loading.showLoading();
     try {
       GetEnum enums = await NetWorkWithoutToken(context).getEnum();
       var json = jsonEncode(enums);
@@ -485,10 +531,70 @@ class _LoginPageState extends State<LoginPage> {
     } on DioError catch (e) {
       //Fluttertoast.showToast(msg: e.toString());
     } finally {
-      Navigator.of(context).pop();
+      loading.dismissLoading();
       //隐藏loading框
     }
     return true;
+  }
+
+  Future <void> getUserInfo(GetUserInfoRequest getUserInfoRequest)async{
+    GetUserInfoResponse response=await NetWorkWithoutToken(context).wechatLogin(getUserInfoRequest);
+    var json = jsonEncode(response);
+    print(json);
+    if(response!=null){
+      String? unionid=response.unionid;
+      String?userId=response.userId;
+      String?openid=response.openid;
+      String?nickname=response.nickname;
+      int?sex=response.sex;
+      if(unionid!=null){
+        //保存至sp
+      }
+      if(response.phoneBinded){
+        //如果绑定了手机号 去查看是否设置了密码
+        if(response.setPassword){
+          //如果需要设置密码则跳转至设置密码界面
+          //set_password
+        }else{
+          //不需要设置密码则请求token 请求token的时候需要极光id
+        }
+      }else{
+        //如果没有绑定手机号跳转至绑定手机号的界面，把必要信息带过去
+       // bind_phone
+      }
+    }
+
+
+  }
+  Future <void> requestToken(RequestTokenRequest requestTokenRequest)async{
+   RequestTokenResponse tokenResponse=await NetWorkWithoutToken(context).requestToken(requestTokenRequest);
+    var json = jsonEncode(tokenResponse);
+    print(json);
+    if(tokenResponse!=null){
+      bool? success=tokenResponse.success;
+      if(success!=null&&!success){
+        Fluttertoast.showToast(msg: tokenResponse.msg!);
+        return;
+      }
+      bool setPassword=tokenResponse.setPassword!;
+      String userId=tokenResponse.userId!;
+      String accessToken=tokenResponse.accessToken!;
+      int expiresIn=tokenResponse.expiresIn!;
+      String phone=requestTokenRequest.phone!;
+      if(setPassword){
+        //携带参数userid和phone跳转至设置密码界面
+        Navigator.pushNamed(context, 'set_password',arguments:{"userId":"$userId","phone":"$phone"} );
+      }else{
+        //不需要设置密码
+        LoginPrefs.login(accessToken, expiresIn, userId);
+        Navigator.of(context).pop(); //登录页消失
+        Navigator.pushNamed(context, 'home'); //跳转至首页
+      }
+    }else{
+      Fluttertoast.showToast(msg: "服务器错误，请稍候再试");
+    }
+
+
   }
 
 

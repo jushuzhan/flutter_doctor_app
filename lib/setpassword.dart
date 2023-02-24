@@ -44,7 +44,9 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   int sureTextColor = 0xFF999999; //注册字体颜色
   int sureBackgroundColor = 0xFFE6E6E6; //注册按钮背景颜色
   bool _isDisable = true; //确认按钮是否可用，默认是不可用
-
+  late final arguments;
+  late final String phone;
+  late final String userId;
 
 
   @override
@@ -81,6 +83,12 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   }
   @override
   Widget build(BuildContext context) {
+    arguments = ModalRoute.of(context)!.settings.arguments;
+    print("arguments==$arguments");
+    phone=arguments["phone"];
+    print("phone==$phone");
+    userId=arguments["userId"];
+    print("userId==$userId");
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //

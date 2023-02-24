@@ -4,11 +4,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'net/NetWorkWithToken.dart';
 import 'net/NetWorkWithoutToken.dart';
+import 'package:fluwx/fluwx.dart';
 class App{
   static  late SharedPreferences _prefs;//延迟初始化
   static  late PackageInfo _packageInfo;//延迟初始化
   static Future<String> init() async {
     WidgetsFlutterBinding.ensureInitialized();
+    registerWxApi(appId: "wx19013019320318b1");
     _packageInfo = await PackageInfo.fromPlatform();
     _prefs = await SharedPreferences.getInstance();
     //初始化网络请求相关配置
