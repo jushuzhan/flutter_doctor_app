@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +11,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:date_format/date_format.dart';
 import 'package:image_picker/image_picker.dart';
-
 
 class EditInfoPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -82,6 +80,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
 
   DateTime? _dateTime;
 
+  late List<String> headList = [];
   late List<EnumBean> doctorTypeList;
   late List<EnumBean> technicianTypeList;
 
@@ -93,7 +92,9 @@ class _EditInfoPageState extends State<EditInfoPage> {
     });
   }
 
-  List<XFile>? _imageFileList;
+  XFile? _headFile; //头像
+  List<XFile>? _imageFileList; //专家认证
+
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -104,6 +105,9 @@ class _EditInfoPageState extends State<EditInfoPage> {
   }
 
   void initView() {
+    headList.add("现在拍照");
+    headList.add("相册选择");
+    headList.add("取消");
     doctorTypeList = getDoctorType();
     doctorTypeList.add(EnumBean(key: "", value: "取消"));
     technicianTypeList = getTechnicianType();
@@ -284,23 +288,42 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                   Spacer(
                                     flex: 1,
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                            'assets/images/info_image_portrait.png'),
-                                        width: 56,
-                                        alignment: Alignment.center,
-                                      ),
-                                      Container(
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.only(left: 8),
-                                        child: Image.asset(
-                                          'assets/images/button_icon_continue.png',
-                                          height: 16,
+                                  GestureDetector(
+                                    onTap: () {
+                                      _showHeadBottomSheet().then((index) {
+                                        switch (index) {
+                                          case 0:
+                                            gotoCamera();
+                                            break;
+                                          case 1:
+                                            gotoGallery();
+                                            break;
+                                        }
+                                      });
+                                    },
+                                    child: Row(
+                                      children: <Widget>[
+                                         ClipOval(
+                                            child: _headFile == null
+                                                ? Image.asset(
+                                                    'assets/images/info_image_portrait.png',fit: BoxFit.cover,width: 56,height: 56,)
+                                                : kIsWeb
+                                                    ? Image.network(
+                                                        _headFile!.path,fit: BoxFit.cover,width: 56,height: 56,)
+                                                    : Image.file(
+                                                        File(_headFile!.path),fit: BoxFit.cover,width: 56,height: 56,),
+                                          ),
+
+                                        Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.only(left: 8),
+                                          child: Image.asset(
+                                            'assets/images/button_icon_continue.png',
+                                            height: 16,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
@@ -1071,8 +1094,6 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                     child: Stack(
                                       children: <Widget>[
                                         _previewImages(),
-
-
                                       ],
                                     ),
                                   ),
@@ -1143,79 +1164,6 @@ class _EditInfoPageState extends State<EditInfoPage> {
       ),
     );
   }
-
-  //@param label label  @param textData 数据 @param hintText hintText @param onClick 点击事件
-  Container chooseDataContainer(
-      String label, String textData, String hintText, void Function() onClick) {
-    return Container(
-      padding: EdgeInsets.only(top: 8),
-      height: 50,
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            //纵轴居中即垂直居中
-            children: <Widget>[
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: label,
-                      style: TextStyle(color: Color(0xFF666666)),
-                    ),
-                  ],
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 105),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              onClick();
-                            },
-                            child: Text(
-                              "" == textData ? hintText : textData,
-                              style: "" == textData
-                                  ? defaultNoDataTextStyle
-                                  : dataTextStyle,
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.only(left: 8),
-                          child: Image.asset(
-                            'assets/images/button_icon_continue.png',
-                            height: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(color: Color(0xFFEEEEEE)))),
-                  ),
-                  flex: 1,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void showDatePicker() {
     DatePicker.showDatePicker(
       context,
@@ -1243,6 +1191,47 @@ class _EditInfoPageState extends State<EditInfoPage> {
           uBirthDate = formatDate(_dateTime!, [yyyy, '-', mm, '-', dd]);
           print('日期：$uBirthDate');
         });
+      },
+    );
+  }
+
+  // 弹出底部菜单列表模态对话框 头像
+  Future<int?> _showHeadBottomSheet() {
+    return showModalBottomSheet<int>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Wrap(
+          children: [
+            ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                    title: Text(
+                      headList![index],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                    onTap: () => Navigator.of(context).pop(index));
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  height: 1,
+                  color: Color(0xFFEEEEEE),
+                );
+              },
+              itemCount: headList.length,
+            )
+          ],
+        );
       },
     );
   }
@@ -1329,37 +1318,36 @@ class _EditInfoPageState extends State<EditInfoPage> {
     );
   }
 
-  Widget _previewImages(){
-    if (_imageFileList != null&&_imageFileList!.length!=0) {
+  Widget _previewImages() {
+    if (_imageFileList != null && _imageFileList!.length != 0) {
       return GridView.builder(
-                gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 80,
-                  crossAxisCount: 4, //每行4列
-                  mainAxisSpacing: 8,//行间距 上一行与下一行的距离
-                  //childAspectRatio: 1.0, //显示区域宽高相等
-                  crossAxisSpacing: 8//列间距 每一列的间距
-                ),
-                itemCount: _imageFileList!.length,
-                physics:NeverScrollableScrollPhysics(),
-                shrinkWrap:true,
-                key: UniqueKey(),
-                itemBuilder: (context, index) {
-                  return Semantics(
-                    label: 'image_picker_example_picked_image',
-                    child: GestureDetector(
-                      child: kIsWeb
-                          ? Image.network(_imageFileList![index].path)
-                          : Image.file(File(_imageFileList![index].path)),
-                      onTap: (){
-                        //点击事件
-                        gotoGallery();
-                      },
-                    ),
-                  );
-                });
-    }else{
-      return  Row(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              mainAxisExtent: 80,
+              crossAxisCount: 4, //每行4列
+              mainAxisSpacing: 8, //行间距 上一行与下一行的距离
+              //childAspectRatio: 1.0, //显示区域宽高相等
+              crossAxisSpacing: 8 //列间距 每一列的间距
+              ),
+          itemCount: _imageFileList!.length,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          key: UniqueKey(),
+          itemBuilder: (context, index) {
+            return Semantics(
+              label: 'image_picker_example_picked_image',
+              child: GestureDetector(
+                child: kIsWeb
+                    ? Image.network(_imageFileList![index].path)
+                    : Image.file(File(_imageFileList![index].path)),
+                onTap: () {
+                  //点击事件
+                  gotoGalleryMultiImage();
+                },
+              ),
+            );
+          });
+    } else {
+      return Row(
         children: <Widget>[
           GestureDetector(
             child: Image.asset(
@@ -1370,19 +1358,16 @@ class _EditInfoPageState extends State<EditInfoPage> {
             onTap: () {
               //TODO 去相册选择图片
               //gotoGallery().then((value) => null);
-              gotoGallery();
+              gotoGalleryMultiImage();
             },
           ),
           Expanded(
             child: Container(
               alignment: Alignment.centerLeft,
-              padding:
-              EdgeInsets.only(left: 8),
+              padding: EdgeInsets.only(left: 8),
               child: Text(
                 '请上传医生认证资料图片',
-                style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFFCCCCCC)),
+                style: TextStyle(fontSize: 12, color: Color(0xFFCCCCCC)),
               ),
             ),
             flex: 1,
@@ -1417,17 +1402,35 @@ class _EditInfoPageState extends State<EditInfoPage> {
     });
   }
 
-  Future<void> gotoGallery() async {
+  Future<void> gotoGalleryMultiImage() async {
     final List<XFile> pickedFileList = await _picker.pickMultiImage(
-      // maxWidth: 80,
-      // maxHeight: 80,
-      // imageQuality: 100,
+        // maxWidth: 80,
+        // maxHeight: 80,
+        // imageQuality: 100,
 
-    );
-    int length=pickedFileList.length;
+        );
+    int length = pickedFileList.length;
     print("长度：$length");
     setState(() {
       _imageFileList = pickedFileList;
+    });
+  }
+
+  Future<void> gotoCamera() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
+    setState(() {
+      _headFile = pickedFile;
+    });
+  }
+
+  Future<void> gotoGallery() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    setState(() {
+      _headFile = pickedFile;
     });
   }
 }
