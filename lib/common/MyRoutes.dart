@@ -13,6 +13,7 @@ import '../imagepickerdemo.dart';
 import '../login.dart';
 import '../main.dart';
 import '../modifypassword.dart';
+import '../orderList.dart';
 import '../personal.dart';
 import '../privacypolicy.dart';
 import '../setpassword.dart';
@@ -38,6 +39,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'set_password':SetPasswordPage(),//定义设置密码路径
     'edit_info':EditInfoPage(),//定义编辑信息路径
     'image_picker_demo':ImagePickerDemoPage(),//定义demo路径
+    'order_list':OrderListPage(),//定义订单列表路径
   };
 
   String routerName = routeBeforeHook(settings);
@@ -65,7 +67,7 @@ String routeBeforeHook(RouteSettings settings) {
   return settings.name!;
 }
 bool checkToken() {
-  String token = LoginPrefs.getToken()??'';
+  String token = LoginPrefs.getAccessToken()??'';
   if ('' != token) return true;
     return false;
 }

@@ -3,7 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/common/constants/constants.dart';
+
+import '../../generated/json/get_paged_order_response_entity_helper.dart';
+import '../../models/BaseBean.dart';
+import '../../models/get_paged_order_response_entity.dart';
+import 'interceptor/TokenInterceptor.dart';
 export 'package:dio/dio.dart' show DioError;
 
 class NetWorkWithToken {
@@ -11,6 +17,7 @@ class NetWorkWithToken {
   // 打开一个新路由，而打开新路由需要context信息。
   NetWorkWithToken([this.context]) {
     _options = Options(extra: {"context": context});
+
   }
 
   BuildContext? context;
@@ -22,11 +29,12 @@ class NetWorkWithToken {
     },
   ));
 
-  static void init() {
+  static void init() async{
     // 添加缓存插件
-    // dio.interceptors.add(Global.netCache);
+     dio.interceptors.add(TokenInterceptor(dio,));
     // 设置用户token（可能为null，代表未登录）
-    dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer ';
+    //String? token=await LoginPrefs(context: context).getToken();
+    dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer '+LoginPrefs.getAccessToken()!;
 
   }
 
@@ -62,4 +70,12 @@ class NetWorkWithToken {
   //   );
   //   return r.data!.map((e) => Repo.fromJson(e)).toList();
   // }
+Future <GetPagedOrderResponseEntity> getPagedOrdersByCurrentDoctor({
+  Map<String, dynamic>? queryParameters, //query参数，用于接收分页信息
+  refresh = false,
+}) async{
+     var r=await dio.get(GETPAGED_ORDERS_BY_CURRENT_DOCTOR,queryParameters: queryParameters,options: _options);
+     print(r.data['result'].toString());
+     return getPagedOrderResponseEntityFromJson(GetPagedOrderResponseEntity(),BaseBean(r.data).result);
+}
 }

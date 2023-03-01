@@ -5,4 +5,7 @@ const String CLIENT_ID = "app_doctor_client";
 const String GET_ENUM="api/Common/GetEnum";
 const String GET_USER_INFO="external/WechatAuth/GetUserInfo";
 const String REQUEST_TOKEN = "external/Login/RequestToken";
+const String REFRESH_TOKEN = "external/Login/RefreshToken";
+const String GETPAGED_ORDERS_BY_CURRENT_DOCTOR = "doctor/Order/GetPagedOrdersByCurrentDoctor";
+const String LOGOUT_THIS_DEVICE = "external/Login/LogoutThisDevice";//账号其它设备登陆后本地不再进行登陆
 const String JIGUANGID = "190e35f7e0a2b54243d";

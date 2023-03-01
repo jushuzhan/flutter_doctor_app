@@ -18,7 +18,7 @@ void main() async{
     runApp(MyApp());
   }
 }
-
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       //去除右上角的Debug标签
       theme: ThemeData(

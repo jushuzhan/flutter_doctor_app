@@ -44,9 +44,7 @@ class _PersonalPageState extends State<PersonalPage> {
         : personalInfo = notEditedContainer();
     horizontalLine = getHorizontalLine();
     onOrderListClick = () => {
-          //Navigator.pushNamed(context, 'personal'),//跳转至首页
-          //TODO 之后跳转至订单列表界面
-          //Navigator.of(context).pop(),
+          Navigator.pushNamed(context, 'order_list'),//跳转至订单列表界面
         };
     onEditInfoClick = () => {
 

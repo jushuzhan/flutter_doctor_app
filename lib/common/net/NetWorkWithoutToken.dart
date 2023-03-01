@@ -9,10 +9,13 @@ import 'package:flutter_doctor_app/models/BaseBean.dart';
 import 'package:flutter_doctor_app/models/GetEnum.dart';
 import 'package:flutter_doctor_app/models/GetUserInfoResponse.dart';
 
+import '../../generated/json/logout_this_device_request_entity_helper.dart';
 import '../../models/GetUserInfoRequest.dart';
+import '../../models/RefreshTokenRequest.dart';
+import '../../models/RefreshTokenResponse.dart';
 import '../../models/RequestTokenRequest.dart';
 import '../../models/RequestTokenResponse.dart';
-import 'interceptor/TokenInterceptor.dart';
+import '../../models/logout_this_device_request_entity.dart';
 export 'package:dio/dio.dart' show DioError;
 
 class NetWorkWithoutToken {
@@ -32,7 +35,6 @@ class NetWorkWithoutToken {
   ));
 
   static void init() {
-     dio.interceptors.add(TokenInterceptor());
     dio.options.contentType="application/json; charset=utf-8";
 
   }
@@ -56,6 +58,18 @@ Future<GetUserInfoResponse> wechatLogin(GetUserInfoRequest getUserInfoRequest )a
     RequestTokenResponse response=RequestTokenResponse.fromJson(BaseBean(r.data).result);
     return response;
   }
+//刷新token接口
+  Future<RefreshTokenResponse> refreshToken(RefreshTokenRequest refreshTokenRequest)async{
+    var r=await dio.post(REFRESH_TOKEN,data:refreshTokenRequest.toJson());
+    RefreshTokenResponse response=RefreshTokenResponse.fromJson(BaseBean(r.data).result);
+    return response;
+  }
+  //退出登录
+Future<BaseBean> logoutThisDevice(LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity) async{
+    var r= await  dio.post(LOGOUT_THIS_DEVICE,data:logoutThisDeviceRequestEntityToJson(logoutThisDeviceRequestEntity));
+    BaseBean baseBean=BaseBean(r.data);
+    return baseBean;
+}
   // //获取用户项目列表
   // Future<List<Repo>> getRepos({
   //   Map<String, dynamic>? queryParameters, //query参数，用于接收分页信息
