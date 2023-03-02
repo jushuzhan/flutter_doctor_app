@@ -21,9 +21,7 @@ getPagedExamVisitForDoctorInputEntityFromJson(GetPagedExamVisitForDoctorInputEnt
 
 Map<String, dynamic> getPagedExamVisitForDoctorInputEntityToJson(GetPagedExamVisitForDoctorInputEntity entity) {
 	final Map<String, dynamic> data = new Map<String, dynamic>();
-	if(entity.examVisitStatus!=null){
-		data['examVisitStatus'] = entity.examVisitStatus;
-	}
+	data['examVisitStatus'] = entity.examVisitStatus;
 	data['maxResultCount'] = entity.maxResultCount;
 	data['skipCount'] = entity.skipCount;
 	return data;

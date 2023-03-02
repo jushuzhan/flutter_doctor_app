@@ -31,4 +31,5 @@ class PagedResultDtoResponseItems with JsonConvert<PagedResultDtoResponseItems> 
 	String? deletionTime;
 	bool? isDeleted;
 	int? id;
+	bool isExpanded=false;
 }

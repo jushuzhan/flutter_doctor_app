@@ -119,6 +119,9 @@ pagedResultDtoResponseItemsFromJson(PagedResultDtoResponseItems data, Map<String
 				? int.tryParse(json['id'])
 				: json['id'].toInt();
 	}
+	if (json['isExpanded'] != null) {
+		data.isExpanded = json['isExpanded'];
+	}
 	return data;
 }
 
@@ -149,5 +152,6 @@ Map<String, dynamic> pagedResultDtoResponseItemsToJson(PagedResultDtoResponseIte
 	data['deletionTime'] = entity.deletionTime;
 	data['isDeleted'] = entity.isDeleted;
 	data['id'] = entity.id;
+	data['isExpanded'] = entity.isExpanded;
 	return data;
 }

@@ -173,15 +173,23 @@ Page resource error:
                   child: Text('描述:', style: grey12TextStyle),
                 ),
                 Expanded(
-                  child: Text(
-                    widget.examVisitItem.question != null
-                        ? widget.examVisitItem.question!
-                        : "",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF333333),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        widget.examVisitItem.isExpanded=!widget.examVisitItem.isExpanded;
+                      });
+
+                    },
+                    child: Text(
+                      widget.examVisitItem.question != null
+                          ? widget.examVisitItem.question!
+                          : "",
+                      maxLines: widget.examVisitItem.isExpanded?null:2,
+                      overflow: widget.examVisitItem.isExpanded?null:TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF333333),
+                      ),
                     ),
                   ),
                   flex: 1,
