@@ -1,9 +1,18 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:date_format/date_format.dart';
+import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 
+import 'common/constants/constants.dart';
 import 'models/paged_result_dto_response_entity.dart';
+
+import 'package:webview_flutter/webview_flutter.dart';
+
+// Import for Android features.
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+
+// Import for iOS features.
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 class ExamVisitItemPage extends StatefulWidget {
   ExamVisitItemPage(this.examVisitItem)
@@ -20,6 +29,87 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     fontSize: 12,
     color: Color(0xFF999999),
   );
+
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // #docregion platform_features
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+
+    final WebViewController controller =
+        WebViewController.fromPlatformCreationParams(params);
+    // #enddocregion platform_features
+
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            debugPrint('WebView is loading (progress : $progress%)');
+          },
+          onPageStarted: (String url) {
+            debugPrint('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            debugPrint('Page finished loading: $url');
+            String accessToken = LoginPrefs(context).getAccessToken()!;
+            controller.runJavaScriptReturningResult(
+                "javascript:setH5Token({token:'" + accessToken + "'})");
+            controller.runJavaScriptReturningResult(
+                "javascript:" + "reloadPage" + "()");
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('''
+Page resource error:
+  code: ${error.errorCode}
+  description: ${error.description}
+  errorType: ${error.errorType}
+  isForMainFrame: ${error.isForMainFrame}
+          ''');
+          },
+          // onNavigationRequest: (NavigationRequest request) {
+          //   if (request.url.startsWith('https://www.youtube.com/')) {
+          //     debugPrint('blocking navigation to ${request.url}');
+          //     return NavigationDecision.prevent;
+          //   }
+          //   debugPrint('allowing navigation to ${request.url}');
+          //   return NavigationDecision.navigate;
+          // },
+        ),
+      )
+      ..addJavaScriptChannel(
+        'jsInterface',
+        onMessageReceived: (JavaScriptMessage message) {
+          print('message:' + message.message);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message.message)),
+          );
+        },
+      );
+
+    // #docregion platform_features
+    if (controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (controller.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
+    controller.loadRequest(
+        Uri.parse(LOAD_URL + widget.examVisitItem.examRecordId.toString()));
+    // #enddocregion platform_features
+    _controller = controller;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +168,15 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
             padding: EdgeInsets.only(top: 8, bottom: 8, left: 27, right: 15),
             child: Row(
               children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 4),child: Text('描述:', style: grey12TextStyle),),
+                Padding(
+                  padding: EdgeInsets.only(right: 4),
+                  child: Text('描述:', style: grey12TextStyle),
+                ),
                 Expanded(
                   child: Text(
-                    widget.examVisitItem.question!=null?widget.examVisitItem.question!:"",
+                    widget.examVisitItem.question != null
+                        ? widget.examVisitItem.question!
+                        : "",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -158,13 +253,15 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
 
     return widgets;
   }
-  Divider horizontalLine(){
+
+  Divider horizontalLine() {
     return Divider(
       height: 1,
       color: Color(0xFFEEEEEE),
     );
   }
-  Container verticalLine(){
+
+  Container verticalLine() {
     return Container(
       height: 24,
       width: 1,
@@ -179,193 +276,264 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     if (examVisitStatus != null) {
       switch (examVisitStatus) {
         case 1: //已申请
-        widgets.add(horizontalLine());
-        widgets.add(Row(
-          crossAxisAlignment: CrossAxisAlignment.center,//垂直居中
-          children: <Widget>[
-            Expanded(child: GestureDetector(
-              child: Container(
-                height: 40,
-                alignment: Alignment.center,
-                child: Text('拒绝申请',style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF009999),
-                ),),
+          widgets.add(horizontalLine());
+          widgets.add(Row(
+            crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
+            children: <Widget>[
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '拒绝申请',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 调接口，拒绝申请
+                  },
+                ),
+                flex: 1,
               ),
-              onTap: (){
-                //TODO 调接口，拒绝申请
-              },
-            ),flex: 1,),
-            verticalLine(),
-            Expanded(child: GestureDetector(
-              child: Container(
-                height: 40,
-                alignment: Alignment.center,
-                child: Text('检查记录',style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF009999),
-                ),),
+              verticalLine(),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '检查记录',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至检查记录界面
+                    checkRecordClick();
+                  },
+                ),
+                flex: 1,
               ),
-              onTap: (){
-                //TODO 跳转至检查记录界面
-              },
-            ),flex: 1,),
-            verticalLine(),
-            Expanded(child: GestureDetector(
-              child: Container(
-                height: 40,
-                alignment: Alignment.center,
-                child: Text('同意申请',style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF009999),
-                ),),
+              verticalLine(),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '同意申请',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 调接口，同意申请
+                  },
+                ),
+                flex: 1,
               ),
-              onTap: (){
-                //TODO 调接口，同意申请
-              },
-            ),flex: 1,),
-          ],
-        ));
+            ],
+          ));
           break;
         case 2: //超时，未回复
           break;
         case 3: //拒绝
           widgets.add(horizontalLine());
           widgets.add(Row(
-            crossAxisAlignment: CrossAxisAlignment.center,//垂直居中
+            crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
             children: <Widget>[
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('检查记录',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '检查记录',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至检查记录界面
+                    checkRecordClick();
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至检查记录界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
             ],
           ));
           break;
         case 4: //同意
           widgets.add(horizontalLine());
           widgets.add(Row(
-            crossAxisAlignment: CrossAxisAlignment.center,//垂直居中
+            crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
             children: <Widget>[
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('检查记录',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '检查记录',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至检查记录界面
+                    checkRecordClick();
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至检查记录界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
               verticalLine(),
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('继续对话',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '继续对话',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至聊天界面
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至聊天界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
               verticalLine(),
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('填写结论',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '填写结论',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至填写结论界面
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至填写结论界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
             ],
           ));
           break;
         case 5: //已解决
           widgets.add(horizontalLine());
           widgets.add(Row(
-            crossAxisAlignment: CrossAxisAlignment.center,//垂直居中
+            crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
             children: <Widget>[
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('检查记录',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '检查记录',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至检查记录界面
+                    checkRecordClick();
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至检查记录界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
               verticalLine(),
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('查看结论',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '查看结论',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至查看结论界面
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至查看结论界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
             ],
           ));
           break;
         case 6: //诊断超时
           widgets.add(horizontalLine());
           widgets.add(Row(
-            crossAxisAlignment: CrossAxisAlignment.center,//垂直居中
+            crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
             children: <Widget>[
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('检查记录',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '检查记录',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至检查记录界面
+                    checkRecordClick();
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至检查记录界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
               verticalLine(),
-              Expanded(child: GestureDetector(
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Text('查看对话',style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF009999),
-                  ),),
+              Expanded(
+                child: GestureDetector(
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '查看对话',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF009999),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //TODO 跳转至聊天界面
+                  },
                 ),
-                onTap: (){
-                  //TODO 跳转至聊天界面
-                },
-              ),flex: 1,),
+                flex: 1,
+              ),
             ],
           ));
           break;
@@ -375,6 +543,77 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     }
 
     return widgets;
+  }
+
+  void checkRecordClick() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return contentColumn();
+        },
+        barrierDismissible: false);
+  }
+
+  Column contentColumn() {
+    return Column(
+      children: <Widget>[
+        //第一行标题
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 44,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+            color: Colors.white,
+          ),
+          child: Text(
+            '检查记录',
+            style: TextStyle(
+                fontSize: 18,
+                color: Color(0xFF333333),
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        //第二行
+        Divider(
+          height: 1,
+          color: Color(0xFFEEEEEE),
+        ),
+        //第三行
+        Expanded(
+          child: WebViewWidget(
+            controller: _controller,
+          ),
+          flex: 1,
+        ),
+        //第四行
+        Divider(
+          height: 1,
+          color: Color(0xFFEEEEEE),
+        ),
+        //第五行
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Container(
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+            height: 49,
+            alignment: Alignment.center,
+            child: Image(
+              image: AssetImage(
+                'assets/images/icon_close.png',
+              ),
+              width: 32,
+            ),
+          ),
+        )
+      ],
+    );
   }
 
   DateTime? getDateTime(String time) {

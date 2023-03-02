@@ -65,7 +65,7 @@ class TokenInterceptor extends Interceptor{
           print("刷新token成功，用新token重新发送请求");
           LoginPrefs(context).setAccessToken(refreshTokenResponse.accessToken!);
           Response<dynamic> response=await _retry(err, handler, refreshTokenResponse.accessToken!);
-          if(response.statusCode==401){
+          if(response.statusCode!=200){
             handler.reject(err);
           }
           handler.resolve(response);

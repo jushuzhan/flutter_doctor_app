@@ -121,19 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
           //构建
           children: tabs.map((e) {
             return KeepAliveWrapper(
-              // child:ConstrainedBox(//通过ConstrainedBox来确保Stack占满屏幕
-              //     constraints: BoxConstraints.expand(),
-              //     child: Stack(
-              //       alignment: Alignment.center,//指定未定位或部分定位widget的对齐方式
-              //       fit: StackFit.expand,//未定位widget占满Stack整个空间
-              //       children: <Widget>[
-              //         Container(
-              //           child:Text(e,textScaleFactor: 1.5,style: TextStyle(color: createMaterialColor(Color(0xFF999999))),textAlign: TextAlign.center,),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-
               child: ExamVisitListPage(e),
             );
           }).toList(),

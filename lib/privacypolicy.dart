@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'color.dart';
+import 'PrivacypolicyItem.dart';
 import 'keepalivewrapper.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-// Import for Android features.
-import 'package:webview_flutter_android/webview_flutter_android.dart';
-// Import for iOS features.
-import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 class PrivacyPolicyPage extends StatefulWidget {
   @override
   _PrivacyPolicyPageState createState() {
@@ -16,96 +11,12 @@ class PrivacyPolicyPage extends StatefulWidget {
 
 class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> with SingleTickerProviderStateMixin{
   List<String> tabs = ["用户协议", "隐私政策"];
-  late final WebViewController user_controller;
-  late final WebViewController privacy_controller;
-  late TabController _tabController;
-  //late WebViewController controller;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // #docregion platform_features
-    // #enddocregion platform_features
-    user_controller = initWebView('assets/files/yonghuxieyi.html');
-    privacy_controller = initWebView('assets/files/yinsizhengce.html');
-    //controller=user_controller;
-    _tabController=_tabController = TabController(vsync:this,length: tabs.length,);
-    _tabController.addListener((){
-      print("当前的index:");
-      print(_tabController.index);
-      //loadHtml();
 
-    });
-  }
-  // void loadHtml () {
-  //   setState(() {
-  //     if(_tabController.index==0){
-  //       controller=user_controller;
-  //       controller.loadFlutterAsset('assets/files/yonghuxieyi.html');
-  //     }else{
-  //       controller=privacy_controller;
-  //       controller.loadFlutterAsset('assets/files/yinsizhengce.html');
-  //     }
-  //   });
-  // }
-
-  WebViewController initWebView(String load) {
-    // #docregion platform_features
-    late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
-    }
-
-    final WebViewController controller =
-    WebViewController.fromPlatformCreationParams(params);
-    // #enddocregion platform_features
-
-    controller
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            debugPrint('WebView is loading (progress : $progress%)');
-          },
-          onPageStarted: (String url) {
-            debugPrint('Page started loading: $url');
-          },
-          onPageFinished: (String url) {
-            debugPrint('Page finished loading: $url');
-          },
-          onWebResourceError: (WebResourceError error) {
-            debugPrint('''
-    Page resource error:
-      code: ${error.errorCode}
-      description: ${error.description}
-      errorType: ${error.errorType}
-      isForMainFrame: ${error.isForMainFrame}
-          ''');
-          },
-
-        ),
-      )
-    ..loadFlutterAsset(load);
-      // ..loadRequest(Uri.parse('https://flutter.cn'));
-
-    // #docregion platform_features
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
-    // #enddocregion platform_features
-    return controller;
-  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color(0xFFFFFFFF),
@@ -123,7 +34,6 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> with SingleTicker
                 Navigator.of(context).pop();
               }),
           bottom: TabBar(
-            controller: _tabController,
             tabs: tabs.map((e) => Tab(text: e)).toList(),
             labelColor: Color(0xFF333333),
             labelStyle: TextStyle(
@@ -143,12 +53,14 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> with SingleTicker
           elevation: 0,
         ),
         body: TabBarView(
-          controller: _tabController,
-          children: [
-            WebViewWidget(controller: user_controller!),
-            WebViewWidget(controller: privacy_controller!),
-          ],
+          //构建
+          children: tabs.map((e) {
+            return KeepAliveWrapper(
+              child: PrivacyPolicyItemPage(e),
+            );
+          }).toList(),
         ),
+      ),
     );
   }
 }
