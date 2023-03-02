@@ -4,7 +4,6 @@ import 'models/get_paged_order_response_entity.dart';
 import 'package:date_format/date_format.dart';
 
 class OrderItemPage extends StatefulWidget {
-  // 将`repo.id`作为RepoItem的默认key
   OrderItemPage(this.orderItem) : super(key: ValueKey(orderItem.order.orderNumber));
 
   final GetPagedOrderResponseItems orderItem;

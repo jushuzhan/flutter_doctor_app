@@ -67,7 +67,8 @@ String routeBeforeHook(RouteSettings settings) {
   return settings.name!;
 }
 bool checkToken() {
-  String token = LoginPrefs.getAccessToken()??'';
+  BuildContext context=navigatorKey.currentState!.context;
+  String token = LoginPrefs(context).getAccessToken()??'';
   if ('' != token) return true;
     return false;
 }

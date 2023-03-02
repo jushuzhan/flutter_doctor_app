@@ -1,76 +1,78 @@
 import 'package:flutter/cupertino.dart';
 
+import '../main.dart';
+import '../models/BaseBean.dart';
 import '../models/RefreshTokenRequest.dart';
 import '../models/RefreshTokenResponse.dart';
+import '../models/logout_this_device_request_entity.dart';
 import 'App.dart';
 import 'constants/constants.dart';
 import 'net/NetWorkWithoutToken.dart';
 class LoginPrefs {
-  BuildContext? context;
-
-  LoginPrefs({required this.context});
-
+  late
+  BuildContext context;
+  LoginPrefs(this.context);
   static const String USER_ID = "USER_ID"; //用户ID
   static const String TOKEN = "TOKEN"; //token
   static const String EXPIRESIN = "EXPIRESIN"; //EXPIRESIN
   static const String LAST_GET_TOKEN_TIME = "lastgettokentime";
   static const String HEAD_ICON = "HEAD_ICON"; //头像
-  static void setUserId(String userId) {
+   void setUserId(String userId) {
     App.prefs.setString(USER_ID, userId);
   }
 
-  static String? getUserId() {
+   String? getUserId() {
     return App.prefs.getString(USER_ID);
   }
 
-  static void setAccessToken(String token) {
+   void setAccessToken(String token) {
     App.prefs.setString(TOKEN, token);
   }
 
-  static String? getAccessToken() {
+   String? getAccessToken() {
     return App.prefs.getString(TOKEN);
   }
 
-  static void removeUserId() {
+   void removeUserId() {
     App.prefs.remove(USER_ID);
   }
 
-  static void removeToken() {
+   void removeToken() {
     App.prefs.remove(TOKEN);
   }
 
   // static Future<bool>clearLogin() async{
   //  return  App.prefs.clear();
   // }
-  static void clearLogin() {
+   void clearLogin() {
     App.prefs.clear();
   }
 
-  static void setExpiresIn(int? expiresIn) {
+   void setExpiresIn(int? expiresIn) {
     App.prefs.setInt(EXPIRESIN, expiresIn!);
   }
 
-  static int? getExpiresIn() {
+   int? getExpiresIn() {
     return App.prefs.getInt(EXPIRESIN);
   }
 
-  static void setLastGetTokenTime(double lastTokenTime) {
+   void setLastGetTokenTime(double lastTokenTime) {
     App.prefs.setDouble(LAST_GET_TOKEN_TIME, lastTokenTime);
   }
 
-  static double? getLastGetTokenTime() {
+   double? getLastGetTokenTime() {
     return App.prefs.getDouble(LAST_GET_TOKEN_TIME);
   }
 
-  static void setHeadIcon(String headIcon) {
+   void setHeadIcon(String headIcon) {
     App.prefs.setString(HEAD_ICON, headIcon);
   }
 
-  static String? getHeadIcon() {
+   String? getHeadIcon() {
     return App.prefs.getString(HEAD_ICON);
   }
 
-  static void logout() {
+   void logout() {
     setAccessToken("");
     setExpiresIn(-1);
     setLastGetTokenTime(-1);
@@ -78,7 +80,7 @@ class LoginPrefs {
     setHeadIcon("");
   }
 
-  static void login(String accessToken, int expiresIn, String userId) {
+   void login(String accessToken, int expiresIn, String userId) {
     setAccessToken(accessToken);
     setExpiresIn(expiresIn);
     setUserId(userId);
@@ -115,6 +117,7 @@ class LoginPrefs {
     if ((currentTime - lastGetTokenTime!) < expiresIn!) {
       //token在有效期内，不需要特殊处理，直接返回token即可
       print("token在有效期内，不需要特殊处理，直接返回token即可");
+      return token;
     } else {
       //根据 refreshToken 刷新 token，获得最新 token
       //⚠️需要使用同步请求
@@ -122,15 +125,29 @@ class LoginPrefs {
       if (userId == null || userId!.isEmpty) {
         print("本地存储的userId为空");
         token = "";
-        // toLogin();展示登录弹窗
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
       } else {
+
         RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest(
             clientId: CLIENT_ID, userId: userId, deviceUUID: JIGUANGID);
+
         Future<RefreshTokenResponse> refreshTokenResponse = NetWorkWithoutToken(
             context).refreshToken(refreshTokenRequest);
         refreshTokenResponse.then((RefreshTokenResponse value) {
           if (value == null) {
-            //toLogin();
+            LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity=LogoutThisDeviceRequestEntity();
+            logoutThisDeviceRequestEntity.userId=userId!;
+            logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
+            logoutThisDeviceRequestEntity.clientId=CLIENT_ID;
+            logoutThisDeviceRequestEntity.deviceUUID=JIGUANGID;
+            Future<BaseBean> baseBean=NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
+            baseBean.then((value) {
+              print(value.success);
+              logout();
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  "login", ModalRoute.withName("login"));
+            });
           } else {
             if (value.success != null && value.success == true &&
                 value.accessToken != null && value.expiresIn != null) {
@@ -146,17 +163,27 @@ class LoginPrefs {
             } else {
               print("UserUtil刷新token失败");
               token = "";
-              //toLogin();
+              LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity=LogoutThisDeviceRequestEntity();
+              logoutThisDeviceRequestEntity.userId=userId!;
+              logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
+              logoutThisDeviceRequestEntity.clientId=CLIENT_ID;
+              logoutThisDeviceRequestEntity.deviceUUID=JIGUANGID;
+              Future<BaseBean> baseBean=NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
+              baseBean.then((value) {
+                print(value.success);
+                logout();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    "login", ModalRoute.withName("login"));
+              });
             }
           }
         });
       }
       return token;
     }
-    return "";
   }
 
-  int getCurrentTime() {
+   int getCurrentTime() {
     return DateTime
         .now()
         .millisecondsSinceEpoch;

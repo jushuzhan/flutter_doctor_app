@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 
+import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithoutToken.dart';
 import 'common/view/ExitBottomDialog.dart';
+import 'models/BaseBean.dart';
+import 'models/logout_this_device_request_entity.dart';
 
 class PersonalPage extends StatefulWidget {
   @override
@@ -389,8 +393,17 @@ class _PersonalPageState extends State<PersonalPage> {
   //点击退出登录 TODO 需要调接口
   void onExitLoginClick() async{
     print("退出");
-    LoginPrefs.clearLogin();
-    Navigator.of(context).pushNamedAndRemoveUntil(
-    "login", ModalRoute.withName("login"));
+    LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity=LogoutThisDeviceRequestEntity();
+    logoutThisDeviceRequestEntity.userId=LoginPrefs(context).getUserId()!;
+    logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
+    logoutThisDeviceRequestEntity.clientId=CLIENT_ID;
+    logoutThisDeviceRequestEntity.deviceUUID=JIGUANGID;
+    Future<BaseBean> baseBean=NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
+    baseBean.then((value) {
+      print(value.success);
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+    });
   }
 }

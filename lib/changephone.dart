@@ -489,7 +489,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: ()  {
-                        LoginPrefs.clearLogin();
+                        LoginPrefs(context).clearLogin();
                         Navigator.of(context).pushNamedAndRemoveUntil(
                               "login", ModalRoute.withName("login"));
                       },

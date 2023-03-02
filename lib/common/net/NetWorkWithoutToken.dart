@@ -29,6 +29,7 @@ class NetWorkWithoutToken {
   late Options _options;
   static Dio dio = new Dio(BaseOptions(
     baseUrl: baseUrl,
+    contentType: 'application/json',
     headers: {
       HttpHeaders.acceptHeader: "*",
     },

@@ -6,9 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/common/constants/constants.dart';
 
+import '../../generated/json/get_paged_exam_visit_for_doctor_input_entity_helper.dart';
 import '../../generated/json/get_paged_order_response_entity_helper.dart';
+import '../../generated/json/paged_result_dto_response_entity_helper.dart';
 import '../../models/BaseBean.dart';
+import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import '../../models/get_paged_order_response_entity.dart';
+import '../../models/paged_result_dto_response_entity.dart';
 import 'interceptor/TokenInterceptor.dart';
 export 'package:dio/dio.dart' show DioError;
 
@@ -24,6 +28,7 @@ class NetWorkWithToken {
   late Options _options;
   static Dio dio = new Dio(BaseOptions(
     baseUrl: baseUrl,
+    contentType: 'application/json',
     headers: {
       HttpHeaders.acceptHeader: "*",
     },
@@ -33,8 +38,8 @@ class NetWorkWithToken {
     // 添加缓存插件
      dio.interceptors.add(TokenInterceptor(dio,));
     // 设置用户token（可能为null，代表未登录）
-    //String? token=await LoginPrefs(context: context).getToken();
-    dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer '+LoginPrefs.getAccessToken()!;
+    String? token=await LoginPrefs(dio.options.extra['context']).getToken();
+    dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer '+token!;
 
   }
 
@@ -70,6 +75,7 @@ class NetWorkWithToken {
   //   );
   //   return r.data!.map((e) => Repo.fromJson(e)).toList();
   // }
+  //获取订单列表
 Future <GetPagedOrderResponseEntity> getPagedOrdersByCurrentDoctor({
   Map<String, dynamic>? queryParameters, //query参数，用于接收分页信息
   refresh = false,
@@ -78,4 +84,11 @@ Future <GetPagedOrderResponseEntity> getPagedOrdersByCurrentDoctor({
      print(r.data['result'].toString());
      return getPagedOrderResponseEntityFromJson(GetPagedOrderResponseEntity(),BaseBean(r.data).result);
 }
+//专家端获取自己各种状态下的咨询记录
+Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisitForDoctorInputEntity visitForDoctorInputEntity) async{
+    var r=await dio.post(GET_PAGE_EXAM_VISIT_FOR_DOCTOR,data:getPagedExamVisitForDoctorInputEntityToJson(visitForDoctorInputEntity));
+    print(r.data);
+    return pagedResultDtoResponseEntityFromJson(PagedResultDtoResponseEntity() ,BaseBean(r.data).result);
+}
+
 }

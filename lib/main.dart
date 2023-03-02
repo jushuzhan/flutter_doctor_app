@@ -3,13 +3,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/App.dart';
+import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
 import 'color.dart';
 import 'common/Prefs.dart';
 import 'common/net/NetWorkWithoutToken.dart';
+import 'examVisitList.dart';
 import 'keepalivewrapper.dart';
 import 'common/MyRoutes.dart';
 import 'common/LoginPrefs.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+import 'models/get_paged_exam_visit_for_doctor_input_entity.dart';
+import 'models/paged_result_dto_response_entity.dart';
 
 
 void main() async{
@@ -61,6 +66,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List tabs = ["已申请", "已同意", "已诊断", "全部"];
+  List<PagedResultDtoResponseItems>? items=[];
 
   @override
   void initState() {
@@ -115,31 +121,27 @@ class _MyHomePageState extends State<MyHomePage> {
           //构建
           children: tabs.map((e) {
             return KeepAliveWrapper(
-              child: Container(
-                alignment: Alignment.center,
-                child: Text("目前还没有申请\n点击刷新",
-                    textScaleFactor: 1.5,
-                    style: TextStyle(
-                        color: createMaterialColor(Color(0xFF999999)))),
-                // child:ConstrainedBox(//通过ConstrainedBox来确保Stack占满屏幕
-                //   constraints: BoxConstraints.expand(),
-                //   child: Stack(
-                //     alignment: Alignment.center,//指定未定位或部分定位widget的对齐方式
-                //     fit: StackFit.expand,//未定位widget占满Stack整个空间
-                //     children: <Widget>[
-                //       Container(
-                //         child:Text(e,textScaleFactor: 1.5,style: TextStyle(color: createMaterialColor(Color(0xFF999999))),textAlign: TextAlign.center,),
-                //       )
-                //     ],
-                //   ),
-                // ),
-              ),
+              // child:ConstrainedBox(//通过ConstrainedBox来确保Stack占满屏幕
+              //     constraints: BoxConstraints.expand(),
+              //     child: Stack(
+              //       alignment: Alignment.center,//指定未定位或部分定位widget的对齐方式
+              //       fit: StackFit.expand,//未定位widget占满Stack整个空间
+              //       children: <Widget>[
+              //         Container(
+              //           child:Text(e,textScaleFactor: 1.5,style: TextStyle(color: createMaterialColor(Color(0xFF999999))),textAlign: TextAlign.center,),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+
+              child: ExamVisitListPage(e),
             );
           }).toList(),
         ),
       ),
     );
   }
+
 }
 
 

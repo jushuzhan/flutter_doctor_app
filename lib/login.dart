@@ -469,9 +469,7 @@ class _LoginPageState extends State<LoginPage> {
         deviceUUID: JIGUANGID,
         loginType: LOGIN_TYPE,
         userRole: USER_ROLE);
-        var result=await requestToken(requestTokenRequest).then((value){
-
-    });
+        var result=await requestToken(requestTokenRequest);
   }
   //微信登录
   void weChatLogin() async{
@@ -586,7 +584,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushNamed(context, 'set_password',arguments:{"userId":"$userId","phone":"$phone"} );
       }else{
         //不需要设置密码
-        LoginPrefs.login(accessToken, expiresIn, userId);
+        LoginPrefs(context).login(accessToken, expiresIn, userId);
         Navigator.of(context).pop(); //登录页消失
         Navigator.pushNamed(context, 'home'); //跳转至首页
       }
