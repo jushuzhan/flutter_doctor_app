@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_doctor_app/callback/TabListener.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
 
@@ -13,18 +14,13 @@ import 'models/get_paged_order_response_entity.dart';
 import 'models/paged_result_dto_response_entity.dart';
 
 class ExamVisitListPage extends StatefulWidget {
-
-  ExamVisitListPage(this.tabItemStrings);
-  final String tabItemStrings;
-
-
-
+  ExamVisitListPage(this.tabItemString);
+  final String tabItemString;
   @override
   _ExamVisitListPageState createState() {
     return _ExamVisitListPageState();
   }
 }
-
 class _ExamVisitListPageState extends State<ExamVisitListPage> {
 
   ScrollController _scrollController = ScrollController(); //listview 的控制器
@@ -40,6 +36,8 @@ class _ExamVisitListPageState extends State<ExamVisitListPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    String tab=widget.tabItemString;
+    print('tab==$tab');
     _scrollController.addListener(() {
       if (!this.isLoading&&this._scrollController.position.pixels >=
           this._scrollController.position.maxScrollExtent) {
@@ -175,7 +173,7 @@ class _ExamVisitListPageState extends State<ExamVisitListPage> {
     GetPagedExamVisitForDoctorInputEntity  _pagedExamVisitForDoctorInputEntity=GetPagedExamVisitForDoctorInputEntity();
     _pagedExamVisitForDoctorInputEntity.maxResultCount=MAXRESULTCOUNT;
     _pagedExamVisitForDoctorInputEntity.skipCount=(currentPage - 1) * MAXRESULTCOUNT;
-    switch(widget.tabItemStrings){
+    switch(widget.tabItemString){
       case '已申请':
         _pagedExamVisitForDoctorInputEntity.examVisitStatus=1;
         break;
@@ -207,5 +205,4 @@ class _ExamVisitListPageState extends State<ExamVisitListPage> {
       });
     });
   }
-
 }

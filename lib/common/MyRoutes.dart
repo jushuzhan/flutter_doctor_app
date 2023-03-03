@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/register.dart';
 import '../about.dart';
+import '../auditRecord.dart';
 import '../bindphone.dart';
 import '../changebindphone.dart';
 import '../changephone.dart';
 import '../editinfo.dart';
+import '../fillinconclusion.dart';
 import '../forgetpassword.dart';
 import '../imagepickerdemo.dart';
 import '../login.dart';
@@ -40,6 +42,8 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'edit_info':EditInfoPage(),//定义编辑信息路径
     'image_picker_demo':ImagePickerDemoPage(),//定义demo路径
     'order_list':OrderListPage(),//定义订单列表路径
+    'conclusion':FillInConclusionPage(),//定义填写结论路径
+    'auditRecord':AuditRecordPage(),//定义检查记录路径
   };
 
   String routerName = routeBeforeHook(settings);
@@ -48,7 +52,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
   routes.forEach((key, v) {
     if (key == routerName) {
       mathMap = true;
-      mathWidget = MaterialPageRoute(builder: (BuildContext context) => v);
+      mathWidget = MaterialPageRoute(settings:settings,builder: (BuildContext context) => v);
     }
   });
 

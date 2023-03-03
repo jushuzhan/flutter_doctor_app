@@ -64,13 +64,14 @@ class TokenInterceptor extends Interceptor{
         if(refreshTokenResponse.success!=null&&refreshTokenResponse.success==true&&refreshTokenResponse.accessToken!=null&&refreshTokenResponse.accessToken!.isNotEmpty){
           print("刷新token成功，用新token重新发送请求");
           LoginPrefs(context).setAccessToken(refreshTokenResponse.accessToken!);
-          Response<dynamic> response=await _retry(err, handler, refreshTokenResponse.accessToken!);
-          if(response.statusCode!=200){
-            // handler.reject(err);
-            handler.next(err);
-            return;
-          }
-          handler.resolve(response);
+          //Response<dynamic> response=await _retry(err, handler, refreshTokenResponse.accessToken!);
+          // if(response.statusCode!=200){
+          //    handler.reject(err);
+          //   //handler.next(err);
+          //   return;
+          // }
+          // handler.resolve(response);
+          handler.next(err);
         }else{
           //直接跳登录
           print("刷新token也失败了");

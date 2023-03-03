@@ -48,16 +48,13 @@ class _PersonalPageState extends State<PersonalPage> {
         : personalInfo = notEditedContainer();
     horizontalLine = getHorizontalLine();
     onOrderListClick = () => {
-          Navigator.pushNamed(context, 'order_list'),//跳转至订单列表界面
+      skipPage('order_list'),//跳转至订单列表界面
         };
     onEditInfoClick = () => {
-
-          //TODO 之后跳转至编辑信息界面
-       Navigator.pushNamed(context, 'edit_info'),//跳转至编辑信息
+      skipPage('edit_info'),//跳转至编辑信息
         };
     onSetClick = () => {
-          Navigator.pushNamed(context, 'setting'),//跳转至设置
-
+      skipPage('setting'),//跳转至设置
         };
     orderListDetector = getDetector('订单列表', onOrderListClick);
     editInfoDetector = getDetector('编辑信息', onEditInfoClick);
@@ -65,6 +62,9 @@ class _PersonalPageState extends State<PersonalPage> {
     // onExitLoginClick=()=>{
     //
     // };
+  }
+  void skipPage(String routName){
+    Navigator.pushNamed(context, routName);
   }
 
   @override

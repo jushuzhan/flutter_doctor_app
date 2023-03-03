@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:date_format/date_format.dart';
-import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
-
-import 'common/constants/constants.dart';
 import 'models/paged_result_dto_response_entity.dart';
-
-import 'package:webview_flutter/webview_flutter.dart';
-
-// Import for Android features.
-import 'package:webview_flutter_android/webview_flutter_android.dart';
-
-// Import for iOS features.
-import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-
 import 'models/update_exam_visit_status_input_request_entity.dart';
-import 'models/update_exam_visit_status_input_response_entity_entity.dart';
+import 'models/common_input_response_entity.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-typedef RefreshDataCallBack = void Function();//接口回调 item点击了拒绝申请
+typedef RefreshDataCallBack = void Function();//接口回调 item点击了拒绝申请或是同意申请
 class ExamVisitItemPage extends StatefulWidget {
 
   final RefreshDataCallBack refreshDataCallBack;
@@ -34,87 +22,6 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     fontSize: 12,
     color: Color(0xFF999999),
   );
-
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // #docregion platform_features
-    late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
-    }
-
-    final WebViewController controller =
-        WebViewController.fromPlatformCreationParams(params);
-    // #enddocregion platform_features
-
-    controller
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            debugPrint('WebView is loading (progress : $progress%)');
-          },
-          onPageStarted: (String url) {
-            debugPrint('Page started loading: $url');
-          },
-          onPageFinished: (String url) {
-            debugPrint('Page finished loading: $url');
-            String accessToken = LoginPrefs(context).getAccessToken()!;
-            controller.runJavaScriptReturningResult(
-                "javascript:setH5Token({token:'" + accessToken + "'})");
-            controller.runJavaScriptReturningResult(
-                "javascript:" + "reloadPage" + "()");
-          },
-          onWebResourceError: (WebResourceError error) {
-            debugPrint('''
-Page resource error:
-  code: ${error.errorCode}
-  description: ${error.description}
-  errorType: ${error.errorType}
-  isForMainFrame: ${error.isForMainFrame}
-          ''');
-          },
-          // onNavigationRequest: (NavigationRequest request) {
-          //   if (request.url.startsWith('https://www.youtube.com/')) {
-          //     debugPrint('blocking navigation to ${request.url}');
-          //     return NavigationDecision.prevent;
-          //   }
-          //   debugPrint('allowing navigation to ${request.url}');
-          //   return NavigationDecision.navigate;
-          // },
-        ),
-      )
-      ..addJavaScriptChannel(
-        'jsInterface',
-        onMessageReceived: (JavaScriptMessage message) {
-          print('message:' + message.message);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
-        },
-      );
-
-    // #docregion platform_features
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
-    controller.loadRequest(
-        Uri.parse(LOAD_URL + widget.examVisitItem.examRecordId.toString()));
-    // #enddocregion platform_features
-    _controller = controller;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +214,6 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 调接口，拒绝申请
                     rejectApplyClick();
                   },
                 ),
@@ -328,7 +234,6 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 跳转至检查记录界面
                     checkRecordClick();
                   },
                 ),
@@ -349,7 +254,6 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 调接口，同意申请
                     agreeApplyClick();
                   },
                 ),
@@ -379,7 +283,6 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 跳转至检查记录界面
                     checkRecordClick();
                   },
                 ),
@@ -407,7 +310,6 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 跳转至检查记录界面
                     checkRecordClick();
                   },
                 ),
@@ -448,7 +350,7 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 跳转至填写结论界面
+                    fillInOrLookConclusionClick();
                   },
                 ),
                 flex: 1,
@@ -475,7 +377,6 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 跳转至检查记录界面
                     checkRecordClick();
                   },
                 ),
@@ -496,7 +397,7 @@ Page resource error:
                     ),
                   ),
                   onTap: () {
-                    //TODO 跳转至查看结论界面
+                    fillInOrLookConclusionClick();
                   },
                 ),
                 flex: 1,
@@ -561,12 +462,9 @@ Page resource error:
   }
 
   void checkRecordClick() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return contentColumn();
-        },
-        barrierDismissible: false);
+    int? examRecordId=widget.examVisitItem. examRecordId;
+    Map<String, dynamic> arguments = {'examRecordId': examRecordId,};
+    Navigator.pushNamed(context, 'auditRecord',arguments:arguments);
   }
   void rejectApplyClick()async{
     bool isSuccess=await isUpdateExamVisitStatusSuccess(3);
@@ -580,11 +478,24 @@ Page resource error:
       widget.refreshDataCallBack();
     }
   }
+  void fillInOrLookConclusionClick()async{
+    int? id=widget.examVisitItem.id;
+    String? patientName=widget.examVisitItem.patientName==null?"":widget.examVisitItem.patientName;
+    String? conclusion=widget.examVisitItem.conclusion==null?"":widget.examVisitItem.conclusion;
+    Map<String, dynamic> arguments = {'id': id,'patientName':patientName,'conclusion':conclusion};
+    var result= await Navigator.pushNamed(context, 'conclusion',arguments:arguments);
+    print('返回值：$result');
+    if(result!=null){
+      //通知列表界面刷新
+      widget.refreshDataCallBack();
+    }
+
+  }
   Future<bool> isUpdateExamVisitStatusSuccess(int examVisitStatus) async{
     UpdateExamVisitStatusInputRequestEntity updateExamVisitStatusInputRequestEntity=UpdateExamVisitStatusInputRequestEntity();
     updateExamVisitStatusInputRequestEntity.id=widget.examVisitItem.id;
     updateExamVisitStatusInputRequestEntity.examVisitStatus=examVisitStatus;
-    UpdateExamVisitStatusInputResponseEntityEntity updateExamVisitStatus=await NetWorkWithToken(context).updateExamVisitStatus(updateExamVisitStatusInputRequestEntity);
+    CommonInputResponseEntity updateExamVisitStatus=await NetWorkWithToken(context).updateExamVisitStatus(updateExamVisitStatusInputRequestEntity);
     if(updateExamVisitStatus.successed!=null&&updateExamVisitStatus.successed==true){
       if(updateExamVisitStatus.msg!=null){
         Fluttertoast.showToast(msg: updateExamVisitStatus.msg!);
@@ -596,68 +507,6 @@ Page resource error:
       }
       return false;
     }
-  }
-
-  Column contentColumn() {
-    return Column(
-      children: <Widget>[
-        //第一行标题
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-            color: Colors.white,
-          ),
-          child: Text(
-            '检查记录',
-            style: TextStyle(
-                fontSize: 18,
-                color: Color(0xFF333333),
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-        //第二行
-        Divider(
-          height: 1,
-          color: Color(0xFFEEEEEE),
-        ),
-        //第三行
-        Expanded(
-          child: WebViewWidget(
-            controller: _controller,
-          ),
-          flex: 1,
-        ),
-        //第四行
-        Divider(
-          height: 1,
-          color: Color(0xFFEEEEEE),
-        ),
-        //第五行
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            color: Colors.white,
-            width: MediaQuery.of(context).size.width,
-            height: 49,
-            alignment: Alignment.center,
-            child: Image(
-              image: AssetImage(
-                'assets/images/icon_close.png',
-              ),
-              width: 32,
-            ),
-          ),
-        )
-      ],
-    );
   }
 
   DateTime? getDateTime(String time) {

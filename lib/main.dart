@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_doctor_app/callback/TabListener.dart';
 import 'package:flutter_doctor_app/common/App.dart';
 import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
 import 'color.dart';
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+typedef RefreshDataCallBack = void Function();//接口回调 tab切换 点击或是滑动
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() {
@@ -64,21 +65,26 @@ class MyHomePage extends StatefulWidget {
   }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List tabs = ["已申请", "已同意", "已诊断", "全部"];
   List<PagedResultDtoResponseItems>? items=[];
+  late TabController _tabController;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _tabController = TabController(vsync: this, length: tabs.length);
+    //监听tab切换的回调
+    _tabController.addListener(() {
+      var index=_tabController.index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: tabs.length,
-      child: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text("问诊申请", style: TextStyle(
@@ -86,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color(0xFFFFFFFF)
           ),),
           bottom: TabBar(
+            controller: _tabController,
             tabs: tabs.map((e) => Tab(text: e)).toList(),
             indicatorSize: TabBarIndicatorSize.label,
             labelColor: Color(0xFFFFFFFF),
@@ -118,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
           systemOverlayStyle: SystemUiOverlayStyle.light, //状态栏字体为白色
         ),
         body: TabBarView(
+          controller: _tabController,
           //构建
           children: tabs.map((e) {
             return KeepAliveWrapper(
@@ -125,9 +133,16 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           }).toList(),
         ),
-      ),
-    );
+      );
+
   }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _tabController.dispose();
+  }
+
 
 }
 
