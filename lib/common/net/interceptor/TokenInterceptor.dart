@@ -66,7 +66,9 @@ class TokenInterceptor extends Interceptor{
           LoginPrefs(context).setAccessToken(refreshTokenResponse.accessToken!);
           Response<dynamic> response=await _retry(err, handler, refreshTokenResponse.accessToken!);
           if(response.statusCode!=200){
-            handler.reject(err);
+            // handler.reject(err);
+            handler.next(err);
+            return;
           }
           handler.resolve(response);
         }else{

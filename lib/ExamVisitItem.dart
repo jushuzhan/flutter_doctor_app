@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
 
 import 'common/constants/constants.dart';
 import 'models/paged_result_dto_response_entity.dart';
@@ -14,11 +15,15 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 // Import for iOS features.
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
+import 'models/update_exam_visit_status_input_request_entity.dart';
+import 'models/update_exam_visit_status_input_response_entity_entity.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+typedef RefreshDataCallBack = void Function();//接口回调 item点击了拒绝申请
 class ExamVisitItemPage extends StatefulWidget {
-  ExamVisitItemPage(this.examVisitItem)
-      : super(key: ValueKey(examVisitItem.creationTime));
 
+  final RefreshDataCallBack refreshDataCallBack;
   final PagedResultDtoResponseItems examVisitItem;
+   ExamVisitItemPage({required this.examVisitItem,required this.refreshDataCallBack,}) : super(key: ValueKey(examVisitItem.creationTime));
 
   @override
   _ExamVisitItemPageState createState() => _ExamVisitItemPageState();
@@ -303,6 +308,7 @@ Page resource error:
                   ),
                   onTap: () {
                     //TODO 调接口，拒绝申请
+                    rejectApplyClick();
                   },
                 ),
                 flex: 1,
@@ -344,6 +350,7 @@ Page resource error:
                   ),
                   onTap: () {
                     //TODO 调接口，同意申请
+                    agreeApplyClick();
                   },
                 ),
                 flex: 1,
@@ -560,6 +567,35 @@ Page resource error:
           return contentColumn();
         },
         barrierDismissible: false);
+  }
+  void rejectApplyClick()async{
+    bool isSuccess=await isUpdateExamVisitStatusSuccess(3);
+    if(isSuccess){
+      widget.refreshDataCallBack();
+    }
+  }
+  void agreeApplyClick()async{
+    bool isSuccess=await isUpdateExamVisitStatusSuccess(4);
+    if(isSuccess){
+      widget.refreshDataCallBack();
+    }
+  }
+  Future<bool> isUpdateExamVisitStatusSuccess(int examVisitStatus) async{
+    UpdateExamVisitStatusInputRequestEntity updateExamVisitStatusInputRequestEntity=UpdateExamVisitStatusInputRequestEntity();
+    updateExamVisitStatusInputRequestEntity.id=widget.examVisitItem.id;
+    updateExamVisitStatusInputRequestEntity.examVisitStatus=examVisitStatus;
+    UpdateExamVisitStatusInputResponseEntityEntity updateExamVisitStatus=await NetWorkWithToken(context).updateExamVisitStatus(updateExamVisitStatusInputRequestEntity);
+    if(updateExamVisitStatus.successed!=null&&updateExamVisitStatus.successed==true){
+      if(updateExamVisitStatus.msg!=null){
+        Fluttertoast.showToast(msg: updateExamVisitStatus.msg!);
+      }
+      return true;
+    }else{
+      if(updateExamVisitStatus.msg!=null){
+        Fluttertoast.showToast(msg: updateExamVisitStatus.msg!);
+      }
+      return false;
+    }
   }
 
   Column contentColumn() {

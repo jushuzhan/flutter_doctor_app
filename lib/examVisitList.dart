@@ -97,7 +97,7 @@ class _ExamVisitListPageState extends State<ExamVisitListPage> {
         itemBuilder: (context, index) {
           //显示列表项
           if(index<_items.length){
-            return ExamVisitItemPage(_items[index]);
+            return ExamVisitItemPage(examVisitItem:_items[index],refreshDataCallBack:refreshData,);
           }else{
             return renderBottom();
           }

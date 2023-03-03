@@ -9,10 +9,14 @@ import 'package:flutter_doctor_app/common/constants/constants.dart';
 import '../../generated/json/get_paged_exam_visit_for_doctor_input_entity_helper.dart';
 import '../../generated/json/get_paged_order_response_entity_helper.dart';
 import '../../generated/json/paged_result_dto_response_entity_helper.dart';
+import '../../generated/json/update_exam_visit_status_input_request_entity_helper.dart';
+import '../../generated/json/update_exam_visit_status_input_response_entity_entity_helper.dart';
 import '../../models/BaseBean.dart';
 import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import '../../models/get_paged_order_response_entity.dart';
 import '../../models/paged_result_dto_response_entity.dart';
+import '../../models/update_exam_visit_status_input_request_entity.dart';
+import '../../models/update_exam_visit_status_input_response_entity_entity.dart';
 import 'interceptor/TokenInterceptor.dart';
 export 'package:dio/dio.dart' show DioError;
 
@@ -90,5 +94,11 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
     print(r.data);
     return pagedResultDtoResponseEntityFromJson(PagedResultDtoResponseEntity() ,BaseBean(r.data).result);
 }
+//专家修改咨询记录的状态
+  Future<UpdateExamVisitStatusInputResponseEntityEntity> updateExamVisitStatus(UpdateExamVisitStatusInputRequestEntity updateExamVisitStatusInputRequestEntity) async{
+    var r=await dio.post(UPDATE_EXAMVISIT_STATUS,data:updateExamVisitStatusInputRequestEntityToJson(updateExamVisitStatusInputRequestEntity));
+    print(r.data);
+    return updateExamVisitStatusInputResponseEntityEntityFromJson(UpdateExamVisitStatusInputResponseEntityEntity() ,BaseBean(r.data).result);
+  }
 
 }
