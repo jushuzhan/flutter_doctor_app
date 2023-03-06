@@ -42,39 +42,38 @@ class TokenInterceptor extends Interceptor{
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     // TODO: implement onError
     //print('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
-    print('ERROR');
-    print('${err.response?.statusCode}');
+    print('Interceptor:ERROR');
+    print('Interceptor:${err.response?.statusCode}');
     //BuildContext context= err.requestOptions.extra['context'];
     BuildContext context=navigatorKey.currentState!.context;
     if(err.response!=null&&err.response!.statusCode==401){
       //401代表token过期
       String? userId = LoginPrefs(context).getUserId();
       if (userId==null||userId.isEmpty) {
-        print("sp取到的userId为空");
+        print("Interceptor:sp取到的userId为空");
+        handler.reject(err);
         //如果sp取到userid为空，可以直接认为用户没有登录过，直接提示登录即可
-        print("刷新token也失败了");
         Navigator.of(context).pushNamedAndRemoveUntil(
             "login", ModalRoute.withName("login"));
-        handler.next(err);
+
+        return;
       }
 
       RefreshTokenRequest refreshTokenRequest=RefreshTokenRequest(clientId: CLIENT_ID, userId: userId, deviceUUID: JIGUANGID);
       RefreshTokenResponse refreshTokenResponse =await NetWorkWithoutToken(
           context).refreshToken(refreshTokenRequest);
         if(refreshTokenResponse.success!=null&&refreshTokenResponse.success==true&&refreshTokenResponse.accessToken!=null&&refreshTokenResponse.accessToken!.isNotEmpty){
-          print("刷新token成功，用新token重新发送请求");
+          print("Interceptor:刷新token成功，用新token重新发送请求");
+          print('Interceptor:${refreshTokenResponse.accessToken!}');
           LoginPrefs(context).setAccessToken(refreshTokenResponse.accessToken!);
-          //Response<dynamic> response=await _retry(err, handler, refreshTokenResponse.accessToken!);
-          // if(response.statusCode!=200){
-          //    handler.reject(err);
-          //   //handler.next(err);
-          //   return;
+          Response<dynamic> response=await _retry(err.requestOptions);
+          // if(err.response?.statusCode!=200){
+          //   handler.reject(err);
           // }
-          // handler.resolve(response);
-          handler.next(err);
+
         }else{
           //直接跳登录
-          print("刷新token也失败了");
+          print("Interceptor:刷新token也失败了");
           LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity=LogoutThisDeviceRequestEntity();
           logoutThisDeviceRequestEntity.userId=userId!;
           logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
@@ -82,32 +81,46 @@ class TokenInterceptor extends Interceptor{
           logoutThisDeviceRequestEntity.deviceUUID=JIGUANGID;
           Future<BaseBean> baseBean=NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
           baseBean.then((value) {
-            print(value.success);
+            handler.reject(err);
+            print('Interceptor:退出设备${value.success}');
             LoginPrefs(context).logout();
             Navigator.of(context).pushNamedAndRemoveUntil(
                 "login", ModalRoute.withName("login"));
+
           });
 
         }
-        handler.next(err);
+        //handler.next(err);
 
 
       // queue.add(_getTokenData(err,handler).then((value) => null));
-
+      return handler.next(err);
 
     }else{
-      handler.next(err);
+     return handler.next(err);
     }
   }
 
-  /// 重发请求
-  Future<Response<dynamic>> _retry(DioError err,ErrorInterceptorHandler handler,String accessToken) {
-    RequestOptions options = err.requestOptions;
-    options.headers[HttpHeaders.authorizationHeader]= 'Bearer '+accessToken!;
-    if('GET'==options.method){//如果是get请求那就使用get 其它用post请求
-      return _dio.get(options.path, data: options.data,queryParameters: options.queryParameters);
-    }
-    return _dio.post(options.path, data: options.data,queryParameters: options.queryParameters);
+  // /// 重发请求
+  // Future<Response<dynamic>> _retry(DioError err,ErrorInterceptorHandler handler,String accessToken) {
+  //   RequestOptions options = err.requestOptions;
+  //   options.headers[HttpHeaders.authorizationHeader]= 'Bearer '+accessToken!;
+  //   if('GET'==options.method){//如果是get请求那就使用get 其它用post请求
+  //     return _dio.get(options.path, data: options.data,queryParameters: options.queryParameters);
+  //   }
+  //   return _dio.post(options.path, data: options.data,queryParameters: options.queryParameters);
+  // }
+
+  /// For retrying request with new token
+  ///
+  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+    final options = Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+    return _dio.request<dynamic>(requestOptions.path,
+        data: requestOptions.data,
+        queryParameters: requestOptions.queryParameters,
+        options: options);
   }
-  
 }

@@ -44,6 +44,7 @@ dev_dependencies:
   json_annotation: ^4.7.0
   image_picker: ^0.8.6+3
   fluwx: ^3.12.2    #微信sdk
+  event_bus: ^2.0.0 #event_bus
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

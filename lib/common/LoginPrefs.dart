@@ -89,10 +89,13 @@ class LoginPrefs {
         .millisecondsSinceEpoch / 1000);
   }
 
-  // static Iterable<Future<String>> getToken() sync *{
-  //   return "";
-  //
-  // }
+  bool isLogin() {
+    String? token = getAccessToken();
+    int?expiresIn = getExpiresIn();
+    String? userId = getUserId();
+
+    return token!=null&&token.isNotEmpty && expiresIn!=null&&expiresIn >= 0 && userId!=null&&userId.isNotEmpty;
+  }
 
   Future<String?> getToken() async {
     String? token = getAccessToken();

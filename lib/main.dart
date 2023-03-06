@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/callback/TabListener.dart';
 import 'package:flutter_doctor_app/common/App.dart';
 import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
+import 'package:flutter_doctor_app/common/view/LoadingDialog.dart';
 import 'color.dart';
 import 'common/Prefs.dart';
 import 'common/net/NetWorkWithoutToken.dart';
@@ -14,6 +16,7 @@ import 'common/MyRoutes.dart';
 import 'common/LoginPrefs.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'models/doctor_extend_by_doctor_id_response_entity.dart';
 import 'models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import 'models/paged_result_dto_response_entity.dart';
 
@@ -69,17 +72,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List tabs = ["已申请", "已同意", "已诊断", "全部"];
   List<PagedResultDtoResponseItems>? items=[];
   late TabController _tabController;
+  ImageProvider backgroundImage=AssetImage('assets/images/info_image_portrait.png');
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      getDoctorExtendInfo();
+    });
+
     _tabController = TabController(vsync: this, length: tabs.length);
     //监听tab切换的回调
     _tabController.addListener(() {
       var index=_tabController.index;
     });
+
   }
 
   @override
@@ -110,15 +119,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           actions: [
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, 'personal'); //跳转至首页
+                skipPersonalCenter();
               },
-              child: Container(
-                width: 40,
-                //TODO 之后需要改变头像的路径
-                child: Image.asset(
-                  'assets/images/info_image_portrait.png',
+              child:Padding(
+                padding: EdgeInsets.only(right: 15.0),
+                child: CircleAvatar(
+                  backgroundImage:  backgroundImage,
                 ),
-                margin: EdgeInsets.fromLTRB(0.0, 0.0, 30.0, 0.0),
               ),
             ),
           ],
@@ -141,6 +148,125 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     // TODO: implement dispose
     super.dispose();
     _tabController.dispose();
+  }
+  void getDoctorExtendInfo(){
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
+    getDoctorExtendByDoctorId();
+  }
+  getDoctorExtendByDoctorId()async{
+    DoctorExtendByDoctorIdResponseEntity doctor=await NetWorkWithToken(context).getDoctorExtendByDoctorId(LoginPrefs(context).getUserId());
+    if(doctor!=null){
+      //更新头像
+      setState(() {
+        if( doctor.headimgurl!=null){
+          backgroundImage=NetworkImage(doctor.headimgurl!);
+        }
+
+      });
+
+    }else{
+      //TODO 弹窗提示去认证
+      _alertDialog();
+    }
+
+  }
+
+  _alertDialog() async {
+    var alertDialogs = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("您还未添加认证信息",textAlign: TextAlign.center,style: TextStyle(
+              fontSize: 18,color: Color(0xFF333333),fontWeight: FontWeight.bold
+            ),),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text("请先添加您的认证信息",textAlign: TextAlign.center,style: TextStyle(
+                    fontSize: 14,color: Color(0xFF999999)
+                ),),
+                Divider(
+                  height: 1.0,
+                  color: Color(0xFFE6E6E6),
+                )
+              ],
+            ),
+            actions: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
+                children: <Widget>[
+                  Expanded(
+                    child: GestureDetector(
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.center,
+                        child: Text(
+                          '取消',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF009999),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    flex: 1,
+                  ),
+                  verticalLine(),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.center,
+                        child: Text(
+                          '立即添加',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF009999),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        skipEditInfo();
+                      },
+                    ),
+                    flex: 1,
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
+    return alertDialogs;
+  }
+  Container verticalLine() {
+    return Container(
+      height: 24,
+      width: 1,
+      color: Color(0xFFE6E6E6),
+    );
+  }
+  void skipPersonalCenter() async{
+    var result= await Navigator.pushNamed(context, 'personal'); //跳转至个人中心
+    if(result!=null){
+      //重新调取接口
+      getDoctorExtendInfo();
+    }
+  }
+  void skipEditInfo() async{
+    var result= await Navigator.pushNamed(context, 'edit_info'); //跳转至编辑信息
+    if(result!=null){
+      //重新调取接口
+      getDoctorExtendInfo();
+    }
   }
 
 

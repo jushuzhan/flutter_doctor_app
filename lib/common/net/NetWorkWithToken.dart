@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/common/constants/constants.dart';
 
+import '../../generated/json/doctor_extend_by_doctor_id_response_entity_helper.dart';
 import '../../generated/json/get_paged_exam_visit_for_doctor_input_entity_helper.dart';
 import '../../generated/json/get_paged_order_response_entity_helper.dart';
 import '../../generated/json/make_conclusion_input_request_entity_helper.dart';
@@ -13,6 +14,7 @@ import '../../generated/json/paged_result_dto_response_entity_helper.dart';
 import '../../generated/json/update_exam_visit_status_input_request_entity_helper.dart';
 import '../../generated/json/common_input_response_entity_helper.dart';
 import '../../models/BaseBean.dart';
+import '../../models/doctor_extend_by_doctor_id_response_entity.dart';
 import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import '../../models/get_paged_order_response_entity.dart';
 import '../../models/make_conclusion_input_request_entity.dart';
@@ -45,6 +47,7 @@ class NetWorkWithToken {
      dio.interceptors.add(TokenInterceptor(dio,));
     // 设置用户token（可能为null，代表未登录）
     String? token=await LoginPrefs(dio.options.extra['context']).getToken();
+    print('token init :$token');
     dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer '+token!;
 
   }
@@ -108,5 +111,12 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
     var r=await dio.post(MAKE_CONCLUSION,data:makeConclusionInputRequestEntity.toJson());
     print(r.data);
     return commonInputResponseEntityFromJson(CommonInputResponseEntity() ,BaseBean(r.data).result);
+  }
+  //获取医生扩展信息
+  Future<DoctorExtendByDoctorIdResponseEntity> getDoctorExtendByDoctorId(String? userId) async{
+    var r=await dio.get(DOCTOR_EXTEND_GET_DOCTOR_EXTEND_BY_DOCTORID,queryParameters: {'input':userId});
+    print('获取医生扩展信息');
+    print(r.data);
+    return doctorExtendByDoctorIdResponseEntityFromJson(DoctorExtendByDoctorIdResponseEntity() ,BaseBean(r.data).result);
   }
 }

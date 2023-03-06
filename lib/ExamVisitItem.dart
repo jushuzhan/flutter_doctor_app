@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
+import 'common/LoginPrefs.dart';
 import 'models/paged_result_dto_response_entity.dart';
 import 'models/update_exam_visit_status_input_request_entity.dart';
 import 'models/common_input_response_entity.dart';
@@ -467,12 +468,26 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     Navigator.pushNamed(context, 'auditRecord',arguments:arguments);
   }
   void rejectApplyClick()async{
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
     bool isSuccess=await isUpdateExamVisitStatusSuccess(3);
     if(isSuccess){
       widget.refreshDataCallBack();
     }
   }
   void agreeApplyClick()async{
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
     bool isSuccess=await isUpdateExamVisitStatusSuccess(4);
     if(isSuccess){
       widget.refreshDataCallBack();

@@ -12,4 +12,5 @@ const String GET_PAGE_EXAM_VISIT_FOR_DOCTOR = "doctor/ExamVisit/GetPagedExamVisi
 const String LOAD_URL = "https://marketingtest.comeon4eyes.com/#/medicalreport?examRecordId=";
 const String UPDATE_EXAMVISIT_STATUS = "doctor/ExamVisit/UpdateExamVisitStatus";//专家修改咨询记录的状态
 const String MAKE_CONCLUSION = "doctor/ExamVisit/MakeConclusion";//专家下结论
+const String DOCTOR_EXTEND_GET_DOCTOR_EXTEND_BY_DOCTORID = "doctor/DoctorExtend/GetDoctorExtendByDoctorId";//获取医生扩展信息
 const String JIGUANGID = "190e35f7e0a2b54243d";

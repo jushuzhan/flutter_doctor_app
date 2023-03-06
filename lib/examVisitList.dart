@@ -170,6 +170,13 @@ class _ExamVisitListPageState extends State<ExamVisitListPage> {
   }
 
   void getPagedExamVisitForDoctor () async{
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
     GetPagedExamVisitForDoctorInputEntity  _pagedExamVisitForDoctorInputEntity=GetPagedExamVisitForDoctorInputEntity();
     _pagedExamVisitForDoctorInputEntity.maxResultCount=MAXRESULTCOUNT;
     _pagedExamVisitForDoctorInputEntity.skipCount=(currentPage - 1) * MAXRESULTCOUNT;

@@ -66,13 +66,11 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
 }
 
 String routeBeforeHook(RouteSettings settings) {
-  if('home'==settings.name!&&checkToken()==false)
+  if('home'==settings.name!&&checkIsLogin()==false)
     return 'login';
   return settings.name!;
 }
-bool checkToken() {
+bool checkIsLogin() {
   BuildContext context=navigatorKey.currentState!.context;
-  String token = LoginPrefs(context).getAccessToken()??'';
-  if ('' != token) return true;
-    return false;
+    return LoginPrefs(context).isLogin();
 }

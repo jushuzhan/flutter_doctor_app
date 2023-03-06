@@ -155,6 +155,13 @@ class _FillInConclusionPageState extends State<FillInConclusionPage> {
         Fluttertoast.showToast(msg: "请填写结论");
         return;
       }
+      if(!LoginPrefs(context).isLogin()){
+        LoginPrefs(context).logout();
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
+        return;
+
+      }
       MakeConclusionInputRequestEntity makeConclusionInputRequestEntity=MakeConclusionInputRequestEntity();
       makeConclusionInputRequestEntity.id=id;
       makeConclusionInputRequestEntity.conclusion=_conclusionController.text.toString();

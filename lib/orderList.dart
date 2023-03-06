@@ -179,6 +179,13 @@ class _OrderListPageState extends State<OrderListPage> {
     }
   }
   void _getOrderList() async {
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
     Future <GetPagedOrderResponseEntity> data = NetWorkWithToken(context)
         .getPagedOrdersByCurrentDoctor(queryParameters: {
       'MaxResultCount': MAXRESULTCOUNT,
