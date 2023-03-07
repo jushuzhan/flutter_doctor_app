@@ -19,6 +19,8 @@ import 'package:flutter_doctor_app/models/paged_result_dto_response_entity.dart'
 import 'package:flutter_doctor_app/generated/json/paged_result_dto_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/make_conclusion_input_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/make_conclusion_input_request_entity_helper.dart';
+import 'package:flutter_doctor_app/models/reset_user_password_request_entity.dart';
+import 'package:flutter_doctor_app/generated/json/reset_user_password_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/user_info_settings_get_by_user_id_response_entity.dart';
 import 'package:flutter_doctor_app/generated/json/user_info_settings_get_by_user_id_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/logout_this_device_request_entity.dart';
@@ -73,6 +75,8 @@ class JsonConvert<T> {
 				return pagedResultDtoResponseItemsFromJson(data as PagedResultDtoResponseItems, json) as T;
 			case MakeConclusionInputRequestEntity:
 				return makeConclusionInputRequestEntityFromJson(data as MakeConclusionInputRequestEntity, json) as T;
+			case ResetUserPasswordRequestEntity:
+				return resetUserPasswordRequestEntityFromJson(data as ResetUserPasswordRequestEntity, json) as T;
 			case UserInfoSettingsGetByUserIdResponseEntity:
 				return userInfoSettingsGetByUserIdResponseEntityFromJson(data as UserInfoSettingsGetByUserIdResponseEntity, json) as T;
 			case LogoutThisDeviceRequestEntity:
@@ -120,6 +124,8 @@ class JsonConvert<T> {
 				return pagedResultDtoResponseItemsToJson(data as PagedResultDtoResponseItems);
 			case MakeConclusionInputRequestEntity:
 				return makeConclusionInputRequestEntityToJson(data as MakeConclusionInputRequestEntity);
+			case ResetUserPasswordRequestEntity:
+				return resetUserPasswordRequestEntityToJson(data as ResetUserPasswordRequestEntity);
 			case UserInfoSettingsGetByUserIdResponseEntity:
 				return userInfoSettingsGetByUserIdResponseEntityToJson(data as UserInfoSettingsGetByUserIdResponseEntity);
 			case LogoutThisDeviceRequestEntity:
@@ -181,6 +187,9 @@ class JsonConvert<T> {
 		}
 		if(type == (MakeConclusionInputRequestEntity).toString()){
 			return MakeConclusionInputRequestEntity().fromJson(json);
+		}
+		if(type == (ResetUserPasswordRequestEntity).toString()){
+			return ResetUserPasswordRequestEntity().fromJson(json);
 		}
 		if(type == (UserInfoSettingsGetByUserIdResponseEntity).toString()){
 			return UserInfoSettingsGetByUserIdResponseEntity().fromJson(json);
@@ -250,6 +259,9 @@ class JsonConvert<T> {
 		}
 		if(<MakeConclusionInputRequestEntity>[] is M){
 			return data.map<MakeConclusionInputRequestEntity>((e) => MakeConclusionInputRequestEntity().fromJson(e)).toList() as M;
+		}
+		if(<ResetUserPasswordRequestEntity>[] is M){
+			return data.map<ResetUserPasswordRequestEntity>((e) => ResetUserPasswordRequestEntity().fromJson(e)).toList() as M;
 		}
 		if(<UserInfoSettingsGetByUserIdResponseEntity>[] is M){
 			return data.map<UserInfoSettingsGetByUserIdResponseEntity>((e) => UserInfoSettingsGetByUserIdResponseEntity().fromJson(e)).toList() as M;

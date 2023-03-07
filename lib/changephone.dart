@@ -521,7 +521,6 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
                   ),flex: 1,)
                 ],
               )
-
             ],
           );
         });
@@ -577,8 +576,6 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
       CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithToken(context).updateUserPhone(updateUserPhoneRequestEntity);
       if(commonInputResponseEntity!=null){
         if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
-          //跳转至登录
-          //TODO 调接口验证更换 清空缓存 弹窗提示 退出登录 此界面消失
           var result = await showLoginDialog();
           print('result$result');
 

@@ -18,6 +18,7 @@ import '../../models/RequestTokenResponse.dart';
 import '../../models/common_input_response_entity.dart';
 import '../../models/create_auth_code_request_entity.dart';
 import '../../models/logout_this_device_request_entity.dart';
+import '../../models/reset_user_password_request_entity.dart';
 export 'package:dio/dio.dart' show DioError;
 
 class NetWorkWithoutToken {
@@ -73,10 +74,14 @@ Future<BaseBean> logoutThisDevice(LogoutThisDeviceRequestEntity logoutThisDevice
     BaseBean baseBean=BaseBean(r.data);
     return baseBean;
 }
-//发送手机验证码
+  //发送手机验证码
   Future<CommonInputResponseEntity> createAuthCode(CreateAuthCodeRequestEntity codeRequestEntity)async{
     var r=await dio.post(CREATE_AUTH_CODE,data:codeRequestEntity.toJson());
     return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
   }
-
+  //用户重置密码
+  Future<CommonInputResponseEntity> resetUserPassword(ResetUserPasswordRequestEntity resetUserPasswordRequestEntity)async{
+    var r=await dio.post(RESET_USER_PASSWORD,data:resetUserPasswordRequestEntity.toJson());
+    return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
 }

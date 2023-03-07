@@ -8,6 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithoutToken.dart';
+import 'common/view/LoadingDialog.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/create_auth_code_request_entity.dart';
+import 'models/reset_user_password_request_entity.dart';
+
 class ForgetPasswordPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -66,11 +73,12 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         Radius.circular(4)),
   );
 
-
+  late final LoadingDialog loading;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     verificationCodeDecoration=defaultVerificationCodeDecoration;
     _uPhoneController.addListener(() {
       print(_uPhoneController.text);
@@ -626,17 +634,42 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
     }
     _uPhoneFocusNode.unfocus();
     if(_countdownTime==0){
-      //TODO HTTP请求发送验证码
-      setState(() {
-        _countdownTime=119;
-        verificationCodeDecoration=decoration;
-        _isVerificationCodeDisable=true;//获取验证码按钮不可用
-        verificationCodeData='$_countdownTime'+"s";
-      });
+      createAuthCode(_uPhoneController.text);
       //开始倒计时
       startCountdownTimer();
-
     }
+  }
+
+  createAuthCode (String phone) async
+  {
+    try{
+      loading.showLoading();
+      CreateAuthCodeRequestEntity codeRequestEntity=new CreateAuthCodeRequestEntity();
+      codeRequestEntity.userRole=USER_ROLE;
+      codeRequestEntity.phone=phone;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).createAuthCode(codeRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Fluttertoast.showToast(msg: "验证码发送成功请注意查收");
+          setState(() {
+            _countdownTime=119;
+            verificationCodeDecoration=decoration;
+            _isVerificationCodeDisable=true;//获取验证码按钮不可用
+            verificationCodeData='$_countdownTime'+"s";
+          });
+        }else{
+          if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+            Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+          }
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
   }
   void startCountdownTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -698,10 +731,34 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         Fluttertoast.showToast(msg: "两次输入密码不一致");
         return;
       }
-
-      //TODO 调接口确认密码 密码确认成功此界面消失
-      //LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
-      Navigator.of(context).pop(); //注册页消失
+      resetUserPassword(_uPhoneController.text,_uVerificationCodeController.text,_uPasswordController.text,_uSurePasswordController.text);
     });
+  }
+
+  resetUserPassword (String phone,String authCode,String newPassword,String confirmPassword) async
+  {
+    try{
+      loading.showLoading();
+      ResetUserPasswordRequestEntity resetUserPasswordRequestEntity=new ResetUserPasswordRequestEntity();
+      resetUserPasswordRequestEntity.userRole=USER_ROLE;
+      resetUserPasswordRequestEntity.phone=phone;
+      resetUserPasswordRequestEntity.authCode=authCode;
+      resetUserPasswordRequestEntity.newPassword=newPassword;
+      resetUserPasswordRequestEntity.confirmPassword=confirmPassword;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).resetUserPassword(resetUserPasswordRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+          Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+        }
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Navigator.of(context).pop(); //注册页消失
+        }
+      }
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
   }
 }

@@ -19,4 +19,5 @@ const String UPDATE_USER_PASSWORD = "user/UserInfo/UpdateUserPassword";//用户�
 const String GET_CURRENT_DOCTOR_INFO = "user/UserInfo/GetCurrentDoctorInfo";//获取当前医生信息
 const String CREATE_AUTH_CODE = "user/Common/CreateAuthCode";//发送验证码
 const String UPDATE_USER_PHONE = "user/UserInfo/UpdateUserPhone";//用户修改绑定手机
+const String RESET_USER_PASSWORD = "user/UserInfo/ResetUserPassword";//用户重置密码
 const String JIGUANGID = "190e35f7e0a2b54243d";
