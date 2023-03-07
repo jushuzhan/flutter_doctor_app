@@ -15,12 +15,15 @@ import '../../generated/json/update_exam_visit_status_input_request_entity_helpe
 import '../../generated/json/common_input_response_entity_helper.dart';
 import '../../models/BaseBean.dart';
 import '../../models/doctor_extend_by_doctor_id_response_entity.dart';
+import '../../models/get_current_user_info_response_entity.dart';
 import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import '../../models/get_paged_order_response_entity.dart';
 import '../../models/make_conclusion_input_request_entity.dart';
 import '../../models/paged_result_dto_response_entity.dart';
 import '../../models/update_exam_visit_status_input_request_entity.dart';
 import '../../models/common_input_response_entity.dart';
+import '../../models/update_user_password_request_entity.dart';
+import '../../models/update_user_phone_request_entity.dart';
 import '../../models/user_info_settings_get_by_user_id_request_entity.dart';
 import '../../models/user_info_settings_get_by_user_id_response_entity.dart';
 import '../../models/user_info_settings_set_by_user_id_request_entity.dart';
@@ -133,6 +136,25 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
   //登陆后设置自身设置
   Future<CommonInputResponseEntity> userInfoSettingsSetByUserId(UserInfoSettingsSetByUserIdRequestEntity userIdRequestEntity) async{
     var r=await dio.post(USERINFO_SETTINGS_SET_BY_USERID,data:userIdRequestEntity.toJson());
+    print(r.data);
+    return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+  //用户自己修改密码
+  Future<CommonInputResponseEntity> updateUserPassword(UpdateUserPasswordRequestEntity updateUserPasswordRequestEntity) async{
+    var r=await dio.post(UPDATE_USER_PASSWORD,data:updateUserPasswordRequestEntity.toJson());
+    print(r.data);
+    return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+  //获取当前医生信息
+  Future <GetCurrentUserInfoResponseEntity> getCurrentDoctorInfo() async{
+    var r=await dio.get(GET_CURRENT_DOCTOR_INFO);
+    print(r.data);
+    return GetCurrentUserInfoResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
+  //重新绑定手机号码
+  Future<CommonInputResponseEntity> updateUserPhone(UpdateUserPhoneRequestEntity updateUserPhoneRequestEntity) async{
+    var r=await dio.post(UPDATE_USER_PHONE,data:updateUserPhoneRequestEntity.toJson());
     print(r.data);
     return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
   }

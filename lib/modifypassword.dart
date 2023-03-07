@@ -3,6 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithToken.dart';
+import 'common/view/LoadingDialog.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/doctor_extend_by_doctor_id_response_entity.dart';
+import 'models/update_user_password_request_entity.dart';
+
 class ModifyPasswordPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -35,12 +42,14 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
   int completeTextColor = 0xFF999999; //完成字体颜色
   int completeBackgroundColor = 0xFFE6E6E6; //完成按钮背景颜色
   bool _isDisable = true; //完成按钮是否可用，默认是不可用
+  late final LoadingDialog loading;
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     _originalPasswordController.addListener(() {
       setCompleteState();
     });
@@ -455,7 +464,6 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
           ],
         ));
   }
-//TODO 调接口完成密码修改
   void onCompleteClick() async {
     print("完成");
     setState(() {
@@ -478,8 +486,41 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
         Fluttertoast.showToast(msg: "新密码与确认密码不一致");
         return;
       }
-      //TODO 调接口修改密码
-      Navigator.of(context).pop(); //密码修改成功，此页消失。
+      if(!LoginPrefs(context).isLogin()){
+        LoginPrefs(context).logout();
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
+        return;
+
+      }
+      updateUserPassword(_originalPasswordController.text,_newPasswordController.text,_surePasswordController.text);
+
     });
+  }
+  updateUserPassword(String oldPassword,String newPassword,String confirmPassword)async{
+    try{
+      loading.showLoading();
+      UpdateUserPasswordRequestEntity updateUserPasswordRequestEntity=new UpdateUserPasswordRequestEntity();
+      updateUserPasswordRequestEntity.oldPassword=oldPassword;
+      updateUserPasswordRequestEntity.newPassword=newPassword;
+      updateUserPasswordRequestEntity.confirmPassword=confirmPassword;
+      updateUserPasswordRequestEntity.userRole=USER_ROLE;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithToken(context).updateUserPassword(updateUserPasswordRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+          Fluttertoast.showToast(msg:commonInputResponseEntity.msg!);
+        }
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Navigator.of(context).pop(); //密码修改成功，此页消失。
+        }
+      }
+    }on DioError catch(e){
+      print(e.message!);
+
+    }finally{
+      loading.dismissLoading();
+    }
+
+
   }
 }

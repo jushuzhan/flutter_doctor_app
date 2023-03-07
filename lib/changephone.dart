@@ -4,7 +4,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
+import 'package:flutter_doctor_app/common/net/NetWorkWithoutToken.dart';
+import 'package:flutter_doctor_app/common/view/LoadingDialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'common/constants/constants.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/create_auth_code_request_entity.dart';
+import 'models/update_user_phone_request_entity.dart';
 
 class ChangePhonePage extends StatefulWidget {
   @override
@@ -41,10 +49,15 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
 
   bool _checkboxSelected = false; //维护复选框状态
 
+  late  Map<String, dynamic>  arguments;
+  String phoneNumber='';
+  late final LoadingDialog loading;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     verificationCodeDecoration = defaultVerificationCodeDecoration;
     _uPhoneController.addListener(() {
       setVerificationState();
@@ -74,6 +87,11 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
 
   @override
   Widget build(BuildContext context) {
+    arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    print("arguments==$arguments");
+    phoneNumber=arguments["phoneNumber"];
+    print(phoneNumber);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -135,7 +153,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 4, bottom: 40),
               child: Text(
-                '当前手机号码：18600002306',
+                '当前手机号码：$phoneNumber',
                 style: TextStyle(fontSize: 12, color: Color(0xFF999999)),
               ),
             ),
@@ -387,13 +405,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
     }
     FocusScope.of(context).unfocus();
     if (_countdownTime == 0) {
-      //TODO HTTP请求发送验证码
-      setState(() {
-        _countdownTime = 119;
-        verificationCodeDecoration = decoration;
-        _isVerificationCodeDisable = true; //获取验证码按钮不可用
-        verificationCodeData = '$_countdownTime' + "s";
-      });
+      createAuthCode (_uPhoneController.text);
       //开始倒计时
       startCountdownTimer();
     }
@@ -434,9 +446,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
       Fluttertoast.showToast(msg: "请输入正确长度的验证码");
       return;
     }
-    //TODO 调接口验证更换 清空缓存 弹窗提示 退出登录 此界面消失
-    var result = await showLoginDialog();
-    print('result$result');
+    updateUserPhone(_uPhoneController.text,_uVerificationCodeController.text);
   }
 
   Future showLoginDialog() async {
@@ -489,7 +499,7 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: ()  {
-                        LoginPrefs(context).clearLogin();
+                        LoginPrefs(context).logout();
                         Navigator.of(context).pushNamedAndRemoveUntil(
                               "login", ModalRoute.withName("login"));
                       },
@@ -519,4 +529,72 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
     print('result$result');
     return result;
   }
+
+  createAuthCode (String phone) async{
+    try{
+      loading.showLoading();
+      CreateAuthCodeRequestEntity codeRequestEntity=new CreateAuthCodeRequestEntity();
+      codeRequestEntity.userRole=USER_ROLE;
+      codeRequestEntity.phone=phone;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).createAuthCode(codeRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Fluttertoast.showToast(msg: "验证码发送成功请注意查收");
+          setState(() {
+            _countdownTime = 119;
+            verificationCodeDecoration = decoration;
+            _isVerificationCodeDisable = true; //获取验证码按钮不可用
+            verificationCodeData = '$_countdownTime' + "s";
+          });
+        }else{
+          if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+            Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+          }
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
+  }
+  updateUserPhone(String phone,String authCode) async{
+    try{
+      if(!LoginPrefs(context).isLogin()){
+        LoginPrefs(context).logout();
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
+        return;
+
+      }
+      loading.showLoading();
+      UpdateUserPhoneRequestEntity updateUserPhoneRequestEntity=new UpdateUserPhoneRequestEntity();
+      updateUserPhoneRequestEntity.phone=phone;
+      updateUserPhoneRequestEntity.authCode=authCode;
+      updateUserPhoneRequestEntity.userRole=USER_ROLE;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithToken(context).updateUserPhone(updateUserPhoneRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          //跳转至登录
+          //TODO 调接口验证更换 清空缓存 弹窗提示 退出登录 此界面消失
+          var result = await showLoginDialog();
+          print('result$result');
+
+        }else{
+          if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+            Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+          }
+        }
+
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+  }
+
 }

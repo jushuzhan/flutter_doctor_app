@@ -15,6 +15,8 @@ import '../../models/RefreshTokenRequest.dart';
 import '../../models/RefreshTokenResponse.dart';
 import '../../models/RequestTokenRequest.dart';
 import '../../models/RequestTokenResponse.dart';
+import '../../models/common_input_response_entity.dart';
+import '../../models/create_auth_code_request_entity.dart';
 import '../../models/logout_this_device_request_entity.dart';
 export 'package:dio/dio.dart' show DioError;
 
@@ -71,16 +73,10 @@ Future<BaseBean> logoutThisDevice(LogoutThisDeviceRequestEntity logoutThisDevice
     BaseBean baseBean=BaseBean(r.data);
     return baseBean;
 }
-  // //获取用户项目列表
-  // Future<List<Repo>> getRepos({
-  //   Map<String, dynamic>? queryParameters, //query参数，用于接收分页信息
-  //   refresh = false,
-  // }) async {
-  //   var r = await dio.get<List>(
-  //     "user/repos",
-  //     queryParameters: queryParameters,
-  //     options: _options,
-  //   );
-  //   return r.data!.map((e) => Repo.fromJson(e)).toList();
-  // }
+//发送手机验证码
+  Future<CommonInputResponseEntity> createAuthCode(CreateAuthCodeRequestEntity codeRequestEntity)async{
+    var r=await dio.post(CREATE_AUTH_CODE,data:codeRequestEntity.toJson());
+    return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
 }

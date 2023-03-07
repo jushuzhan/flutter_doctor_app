@@ -2,6 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/AppVersion.dart';
+import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
+
+import 'common/LoginPrefs.dart';
+import 'common/view/LoadingDialog.dart';
+import 'models/get_current_user_info_response_entity.dart';
+import 'models/get_paged_order_response_entity.dart';
 
 class ChangeBindPhonePage extends StatefulWidget {
   @override
@@ -11,6 +17,15 @@ class ChangeBindPhonePage extends StatefulWidget {
 }
 
 class _ChangeBindPhonePageState extends State<ChangeBindPhonePage> {
+  String showPhoneNumber='';
+  String phoneNumber='';
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +77,7 @@ class _ChangeBindPhonePageState extends State<ChangeBindPhonePage> {
             Container(
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center,
-              child: Text('当前手机号码 186 0000 2036',style: TextStyle(
+              child: Text(showPhoneNumber,style: TextStyle(
                 fontSize: 18,
                 color: Color(0xFF666666)
               ),),
@@ -86,7 +101,11 @@ class _ChangeBindPhonePageState extends State<ChangeBindPhonePage> {
                   Expanded(
                     child: Container(
                       child: ElevatedButton(
-                        onPressed: ()=> Navigator.pushNamed(context, 'change_phone',arguments: null), //TODO 之后传手机号给换绑手机界面
+                        onPressed: (){
+                          Map<String, dynamic> arguments = {'phoneNumber': phoneNumber,};
+                          Navigator.pushNamed(context, 'change_phone',arguments: arguments);
+
+                        },
                         child: Text(
                           '更换手机号码',
                           style: TextStyle(
@@ -119,5 +138,34 @@ class _ChangeBindPhonePageState extends State<ChangeBindPhonePage> {
         ),
       ),
     );
+  }
+  getUserInfo(){
+    getCurrentDoctorInfo();
+  }
+  getCurrentDoctorInfo() async{
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
+    try{
+      GetCurrentUserInfoResponseEntity currentUserInfoResponseEntity=await NetWorkWithToken(context).getCurrentDoctorInfo();
+      if(currentUserInfoResponseEntity!=null){
+        if(currentUserInfoResponseEntity.phoneNumber!=null&&currentUserInfoResponseEntity.phoneNumber!.isNotEmpty){
+          setState(() {
+            phoneNumber=currentUserInfoResponseEntity.phoneNumber!;
+            // String substring(int start, int? end);[);
+            showPhoneNumber='当前手机号码 '+phoneNumber.substring(0,3)+' '+phoneNumber.substring(3,7)+' '+phoneNumber.substring(7);
+          });
+        }
+      }
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+    }
+
+
   }
 }
