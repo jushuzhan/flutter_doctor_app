@@ -1,13 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 
+import 'common/Prefs.dart';
 import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithToken.dart';
 import 'common/net/NetWorkWithoutToken.dart';
 import 'common/view/ExitBottomDialog.dart';
 import 'models/BaseBean.dart';
+import 'models/EnumBean.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/doctor_extend_by_doctor_id_response_entity.dart';
 import 'models/logout_this_device_request_entity.dart';
+import 'models/user_info_settings_get_by_user_id_request_entity.dart';
+import 'models/user_info_settings_get_by_user_id_response_entity.dart';
+import 'package:dio/dio.dart';
+
+import 'models/user_info_settings_set_by_user_id_request_entity.dart';
 
 class PersonalPage extends StatefulWidget {
   @override
@@ -26,42 +38,50 @@ class _PersonalPageState extends State<PersonalPage> {
   var onSetClick;
   bool disableNotify = false; //通知默认开启
 
-  late Container personalInfo; //个人信息
-
   bool isEdited = false; //默认是未编辑状态
 
   bool isAudit = false; //默认是未审核状态
 
-  //var onExitLoginClick;
+  ImageProvider backgroundImage=AssetImage('assets/images/info_image_portrait.png');
+  String name='';//姓名
+  String  auditStatus='';//审核状态
+  String doctorType='';
+  String technicianType='';
+  String hospital='';
+  String description='';
+  bool isExpanded=false;//个人简介是否展开
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getDoctorExtendInfo();
     initView();
   }
 
   void initView() {
-    isEdited
-        ? personalInfo = editedContainer()
-        : personalInfo = notEditedContainer();
-    horizontalLine = getHorizontalLine();
-    onOrderListClick = () => {
-      skipPage('order_list'),//跳转至订单列表界面
-        };
-    onEditInfoClick = () => {
-      skipPage('edit_info'),//跳转至编辑信息
-        };
-    onSetClick = () => {
-      skipPage('setting'),//跳转至设置
-        };
-    orderListDetector = getDetector('订单列表', onOrderListClick);
-    editInfoDetector = getDetector('编辑信息', onEditInfoClick);
-    setDetector = getDetector('设置', onSetClick);
-    // onExitLoginClick=()=>{
-    //
-    // };
+    setState(() {
+      horizontalLine = getHorizontalLine();
+      onOrderListClick = () => {
+        skipPage('order_list'),//跳转至订单列表界面
+      };
+      onEditInfoClick = () => {
+        if(auditStatus=='审核通过'){
+          _alertDialog(),
+      }else{
+        skipEditInfo(),//跳转至编辑信息
+      }
+
+      };
+      onSetClick = () => {
+        skipPage('setting'),//跳转至设置
+      };
+      orderListDetector = getDetector('订单列表', onOrderListClick);
+      editInfoDetector = getDetector('编辑信息', onEditInfoClick);
+      setDetector = getDetector('设置', onSetClick);
+    });
+
   }
   void skipPage(String routName){
     Navigator.pushNamed(context, routName);
@@ -113,26 +133,40 @@ class _PersonalPageState extends State<PersonalPage> {
                 Column(
                   children: [
                     Container(
-                      height: MediaQuery.of(context).size.height / 5,
+                      constraints: BoxConstraints(
+                        minHeight:MediaQuery.of(context).size.height / 5
+                      ),
                       child: Column(
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.only(top: 18, bottom: 6),
-                            child: Container(
-                              alignment: Alignment.center,
-                              child: Image.asset(
-                                'assets/images/info_image_portrait.png',
-                                width: 56,
-                              ),
+                            padding: EdgeInsets.only(top:18,bottom:6),
+                            child: CircleAvatar(
+                              backgroundImage:  backgroundImage,
                             ),
                           ),
+
+                          // Padding(
+                          //   padding: EdgeInsets.only(top: 18, bottom: 6),
+                          //   child: Container(
+                          //     alignment: Alignment.center,
+                          //     child: Image.asset(
+                          //       'assets/images/info_image_portrait.png',
+                          //       width: 56,
+                          //     ),
+                          //   ),
+                          // ),
                           Container(
                             width: MediaQuery.of(context).size.width,
                             alignment: Alignment.center,
                             child: Stack(
                               children: <Widget>[
-                                //未编辑状态下的显示
-                                personalInfo,
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,//水平居中
+                                    children:_buildMiddleColumn(),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -278,106 +312,237 @@ class _PersonalPageState extends State<PersonalPage> {
     setState(() {
       disableNotify = !disableNotify;
     });
+    userInfoSettingsSetByUserId();
   }
-
-  //未编辑状态的显示
-  Container notEditedContainer() {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,//水平居中
-        children: <Widget>[
-          Text(
-            '您还未认证个人信息',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFFFFFFFF),
-            ),
-          ),
-          Text(
-            '点击下面\“编辑信息\”开始填写',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFFFFFFFF),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-//已编辑状态的显示
-  Container editedContainer() {
-    return Container(
-      alignment: Alignment.center,
-      child: Column(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,//水平居中
-              children: <Widget>[
-                Text(
-                  '张医生',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFFFFFFFF),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Container(
-                      width: 48,
-                      height: 16,
-                      alignment: Alignment.center,
-                      child: Text(
-                        isAudit ? '已审核' : '未审核',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color:
-                              isAudit ? Color(0x99FFFFFF) : Color(0xFF999999),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(2)),
-                        color: isAudit ? Color(0xFF1aa3a3) : Color(0xFFCCCCCC),
-                      ),
-                    ))
-              ],
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,//水平居中
-              children: <Widget>[
-                Text(
-                  '天津市第一中心医院/',
-                  style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
-                ),
-                Text(
-                  '医学教授',
-                  style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 16, left: 15, right: 15),
-            child: Container(
-              alignment: Alignment.center,
-              child: Text(
-                '简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Color(0x99FFFFFF),
-                ),
+  List<Widget> _buildMiddleColumn() {
+    List<Widget> widgets = [];
+    if(isEdited){
+      //已编辑
+      widgets.add(Container(
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,//水平居中
+          children: <Widget>[
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFFFFFFFF),
               ),
             ),
-          )
-        ],
+            Padding(
+                padding: EdgeInsets.only(left: 4),
+                child: Container(
+                  width: 48,
+                  height: 16,
+                  alignment: Alignment.center,
+                  child: Text(
+                    auditStatus,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color:
+                      isAudit ? Color(0x99FFFFFF) : Color(0xFF999999),
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(2)),
+                    color: isAudit ? Color(0xFF1aa3a3) : Color(0xFFCCCCCC),
+                  ),
+                ))
+          ],
+        ),
+      ),);
+      widgets.add(Container(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              hospital,
+              style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,//水平居中
+              children: <Widget>[
+                Text(
+                  doctorType,
+                  style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
+                ),
+                Text(
+                  technicianType,
+                  style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),);
+      widgets.add(Padding(
+      padding: EdgeInsets.only(top: 16, left: 15, right: 15),
+      child: GestureDetector(
+        onTap: (){
+          print('点击了');
+          setState(() {
+            if(description.length>216){
+              isExpanded=!isExpanded;
+              print(isExpanded);
+            }
+
+          });
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(child: Text(
+                  description,
+                  textAlign: description.length>216?TextAlign.justify:TextAlign.center,
+                  maxLines: isExpanded?null:4,
+                  overflow: isExpanded?null:TextOverflow.clip,//裁剪
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0x99FFFFFF),
+                  ),
+                ),flex: 1,),
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            Column(
+              children: _buildBottomColumn(),
+            ),
+          ],
+        ),
       ),
+    ),);
+    }else{
+      //未编辑
+      widgets.add(Text(
+        '您还未认证个人信息',
+        style: TextStyle(
+          fontSize: 16,
+          color: Color(0xFFFFFFFF),
+        ),
+      ),);
+      widgets.add(Text(
+        '点击下面\“编辑信息\”开始填写',
+        style: TextStyle(
+          fontSize: 16,
+          color: Color(0xFFFFFFFF),
+        ),
+      ),);
+
+
+    }
+    return widgets;
+  }
+  List<Widget> _buildBottomColumn() {
+    List<Widget> widgets = [];
+    if(description.length>216){
+      widgets.add(Padding(padding: EdgeInsets.only(top: 9),child: Text(
+        isExpanded?'收起':'展开',
+        style: TextStyle(
+          fontSize: 10,
+          color: Colors.white,
+        ),
+      ),));
+      widgets.add(Image(image: AssetImage(
+        isExpanded?'assets/images/zhankai.png':'assets/images/shouqi.png',
+      ),width: 24,height: 12,),);
+    }
+
+    return widgets;
+  }
+  Container verticalLine() {
+    return Container(
+      height: 24,
+      width: 1,
+      color: Color(0xFFE6E6E6),
     );
   }
+
+  _alertDialog() async {
+    var alertDialogs = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("您的信息已通过审核",textAlign: TextAlign.center,style: TextStyle(
+                fontSize: 18,color: Color(0xFF333333),fontWeight: FontWeight.bold
+            ),),
+            content:Text("如果修改，需要再次审核才能接诊。",textAlign: TextAlign.center,style: TextStyle(
+                fontSize: 14,color: Color(0xFF999999)
+            ),),
+            actions: <Widget>[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Divider(
+                    height: 1.0,
+                    color: Color(0xFFE6E6E6),
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
+                    children: <Widget>[
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            height: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF999999),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        flex: 1,
+                      ),
+                      verticalLine(),
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            height: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '去修改',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF009999),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            skipEditInfo();
+                          },
+                        ),
+                        flex: 1,
+                      ),
+                    ],
+                  ),
+                ],
+              )
+
+            ],
+          );
+        },barrierDismissible: false);
+    return alertDialogs;
+  }
+  void skipEditInfo() async{
+    Navigator.pop(context);
+    var result= await Navigator.pushNamed(context, 'edit_info'); //跳转至编辑信息
+    if(result!=null){
+      //重新调取接口
+      getDoctorExtendInfo();
+    }
+  }
+
   //退出 TODO 需要调接口退出
   void exitPersonal(){
     showModalBottomSheet(
@@ -405,5 +570,124 @@ class _PersonalPageState extends State<PersonalPage> {
       Navigator.of(context).pushNamedAndRemoveUntil(
           "login", ModalRoute.withName("login"));
     });
+  }
+  void getDoctorExtendInfo(){
+    getInfoData();
+  }
+
+  Future<UserInfoSettingsGetByUserIdResponseEntity> userInfoSettingsGetByUserId(){
+    UserInfoSettingsGetByUserIdRequestEntity userIdRequestEntity=UserInfoSettingsGetByUserIdRequestEntity();
+    userIdRequestEntity.userId=int.parse(LoginPrefs(context).getUserId()!);
+    userIdRequestEntity.userRole=USER_ROLE;
+    return NetWorkWithToken(context).userInfoSettingsGetByUserId(userIdRequestEntity);
+  }
+  getInfoData() async{
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
+    var response=await Future.wait([NetWorkWithToken(context).getDoctorExtendByDoctorId(LoginPrefs(context).getUserId()), userInfoSettingsGetByUserId()]);
+    if(response!=null){
+      if(response.length==2){
+        DoctorExtendByDoctorIdResponseEntity doctorInfo=response[0] as DoctorExtendByDoctorIdResponseEntity;
+        UserInfoSettingsGetByUserIdResponseEntity userInfo=response[1] as UserInfoSettingsGetByUserIdResponseEntity;
+        setState(() {
+          isEdited=true;
+          print('isEdited==$isEdited');
+          if(doctorInfo!=null){
+            print('${doctorInfo.headimgurl}');
+            print('${doctorInfo.name}');
+            backgroundImage=NetworkImage(doctorInfo.headimgurl!);
+            name=doctorInfo.name!;
+
+
+            if(doctorInfo.auditStatus!=null&& doctorInfo.auditStatus==2){//已审核
+             isAudit=true;
+             switch(doctorInfo.auditStatus){
+               case 1:
+                 auditStatus='等待审核';
+                 break;
+               case 2:
+                 auditStatus='审核通过';
+                 break;
+               case 3:
+                 auditStatus='审核未过';
+                 break;
+             }
+            }else{
+              isAudit=false;
+            }
+            if(doctorInfo.doctorType!=null){
+              for (var i = 0; i < getDoctorType().length; i++) {
+               if(getDoctorType()[i].key==doctorInfo.doctorType.toString()){
+                 doctorType=getDoctorType()[i].value!;
+                 break;
+               }
+              }
+
+            }
+            if(doctorInfo.technicianType!=null){
+              for (var i = 0; i < getTechnicianType().length; i++) {
+                if(getTechnicianType()[i].key==doctorInfo.technicianType.toString()){
+                  if(doctorType.isNotEmpty){
+                    technicianType='/'+getTechnicianType()[i].value!;
+                  }else{
+                    technicianType=getTechnicianType()[i].value!;
+                  }
+
+                  break;
+                }
+              }
+
+            }
+            hospital=doctorInfo.hospital!;
+            description=doctorInfo.description!;
+            //description='个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介';
+
+          }
+          if(userInfo!=null){
+            if(userInfo.jiguangPush!=null){
+              disableNotify=userInfo.jiguangPush!;
+            }
+
+            print('${userInfo.jiguangPush}');
+          }
+        });
+
+      }
+    }
+  }
+  userInfoSettingsSetByUserId() async{
+    if(!LoginPrefs(context).isLogin()){
+      LoginPrefs(context).logout();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "login", ModalRoute.withName("login"));
+      return;
+
+    }
+    UserInfoSettingsSetByUserIdRequestEntity userIdRequestEntity=UserInfoSettingsSetByUserIdRequestEntity();
+    userIdRequestEntity.jiguangPush=disableNotify;
+    userIdRequestEntity.userRole=USER_ROLE;
+    userIdRequestEntity.userId=int.parse(LoginPrefs(context).getUserId()!);
+    CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithToken(context).userInfoSettingsSetByUserId(userIdRequestEntity);
+    if(commonInputResponseEntity!=null){
+
+    }
+
+  }
+  List<EnumBean> getDoctorType() {
+    var listDynamic = jsonDecode(Prefs.getDoctorType()!);
+    return (listDynamic as List<dynamic>)
+        .map((e) => EnumBean.fromJson((e as Map<String, dynamic>)))
+        .toList();
+  }
+  List<EnumBean> getTechnicianType() {
+    var listDynamic = jsonDecode(Prefs.getTechnicianType()!);
+    return (listDynamic as List<dynamic>)
+        .map((e) => EnumBean.fromJson((e as Map<String, dynamic>)))
+        .toList();
   }
 }

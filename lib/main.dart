@@ -185,66 +185,67 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             title: Text("您还未添加认证信息",textAlign: TextAlign.center,style: TextStyle(
               fontSize: 18,color: Color(0xFF333333),fontWeight: FontWeight.bold
             ),),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text("请先添加您的认证信息",textAlign: TextAlign.center,style: TextStyle(
-                    fontSize: 14,color: Color(0xFF999999)
-                ),),
-                Divider(
-                  height: 1.0,
-                  color: Color(0xFFE6E6E6),
-                )
-              ],
-            ),
+            content:   Text("请先添加您的认证信息",textAlign: TextAlign.center,style: TextStyle(
+                fontSize: 14,color: Color(0xFF999999)
+            ),),
             actions: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
+              Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Expanded(
-                    child: GestureDetector(
-                      child: Container(
-                        height: 40,
-                        alignment: Alignment.center,
-                        child: Text(
-                          '取消',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF009999),
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    flex: 1,
+                  Divider(
+                    height: 1.0,
+                    color: Color(0xFFE6E6E6),
                   ),
-                  verticalLine(),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Container(
-                        height: 40,
-                        alignment: Alignment.center,
-                        child: Text(
-                          '立即添加',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF009999),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center, //垂直居中
+                    children: <Widget>[
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            height: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF999999),
+                              ),
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
+                        flex: 1,
                       ),
-                      onTap: () {
-                        skipEditInfo();
-                      },
-                    ),
-                    flex: 1,
+                      verticalLine(),
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            height: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '立即添加',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF009999),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            skipEditInfo();
+                          },
+                        ),
+                        flex: 1,
+                      ),
+                    ],
                   ),
                 ],
-              ),
+              )
+
             ],
           );
-        });
+        },barrierDismissible: false);
     return alertDialogs;
   }
   Container verticalLine() {
@@ -262,6 +263,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
   }
   void skipEditInfo() async{
+    Navigator.pop(context);
     var result= await Navigator.pushNamed(context, 'edit_info'); //跳转至编辑信息
     if(result!=null){
       //重新调取接口

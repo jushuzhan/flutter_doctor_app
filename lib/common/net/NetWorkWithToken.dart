@@ -21,6 +21,9 @@ import '../../models/make_conclusion_input_request_entity.dart';
 import '../../models/paged_result_dto_response_entity.dart';
 import '../../models/update_exam_visit_status_input_request_entity.dart';
 import '../../models/common_input_response_entity.dart';
+import '../../models/user_info_settings_get_by_user_id_request_entity.dart';
+import '../../models/user_info_settings_get_by_user_id_response_entity.dart';
+import '../../models/user_info_settings_set_by_user_id_request_entity.dart';
 import 'interceptor/TokenInterceptor.dart';
 export 'package:dio/dio.dart' show DioError;
 
@@ -118,5 +121,19 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
     print('获取医生扩展信息');
     print(r.data);
     return doctorExtendByDoctorIdResponseEntityFromJson(DoctorExtendByDoctorIdResponseEntity() ,BaseBean(r.data).result);
+  }
+
+  //登陆后获取自身设置
+  Future<UserInfoSettingsGetByUserIdResponseEntity> userInfoSettingsGetByUserId(UserInfoSettingsGetByUserIdRequestEntity userIdRequestEntity) async{
+    var r=await dio.post(USERINFO_SETTINGS_GET_BY_USERID,data:userIdRequestEntity.toJson());
+    print(r.data);
+   return UserInfoSettingsGetByUserIdResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
+  //登陆后设置自身设置
+  Future<CommonInputResponseEntity> userInfoSettingsSetByUserId(UserInfoSettingsSetByUserIdRequestEntity userIdRequestEntity) async{
+    var r=await dio.post(USERINFO_SETTINGS_SET_BY_USERID,data:userIdRequestEntity.toJson());
+    print(r.data);
+    return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
   }
 }
