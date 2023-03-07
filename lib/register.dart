@@ -6,7 +6,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/view/LoadingDialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithoutToken.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/create_auth_code_request_entity.dart';
+import 'models/user_info_register_request_entity.dart';
 
 class RegisterPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -68,13 +75,18 @@ class _RegisterPageState extends State<RegisterPage> {
     borderRadius: BorderRadius.all(
         Radius.circular(4)),
   );
+  late final LoadingDialog loading;
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     verificationCodeDecoration=defaultVerificationCodeDecoration;
+    _uNickNameController.addListener(() {
+
+    });
     _uPhoneController.addListener(() {
       print(_uPhoneController.text);
       setRegisterState();
@@ -750,18 +762,13 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     _uPhoneFocusNode.unfocus();
     if(_countdownTime==0){
-      //TODO HTTP请求发送验证码
-      setState(() {
-        _countdownTime=119;
-        verificationCodeDecoration=decoration;
-        _isVerificationCodeDisable=true;//获取验证码按钮不可用
-        verificationCodeData='$_countdownTime'+"s";
-      });
+      createAuthCode(_uPhoneController.text);
       //开始倒计时
       startCountdownTimer();
 
     }
   }
+
   void startCountdownTimer() {
     const oneSec = const Duration(seconds: 1);
     var callback = (timer) => {
@@ -783,6 +790,40 @@ class _RegisterPageState extends State<RegisterPage> {
 
 
   }
+
+
+  createAuthCode (String phone) async
+  {
+    try{
+      loading.showLoading();
+      CreateAuthCodeRequestEntity codeRequestEntity=new CreateAuthCodeRequestEntity();
+      codeRequestEntity.userRole=USER_ROLE;
+      codeRequestEntity.phone=phone;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).createAuthCode(codeRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Fluttertoast.showToast(msg: "验证码发送成功请注意查收");
+          setState(() {
+            _countdownTime=119;
+            verificationCodeDecoration=decoration;
+            _isVerificationCodeDisable=true;//获取验证码按钮不可用
+            verificationCodeData='$_countdownTime'+"s";
+          });
+        }else{
+          if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+            Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+          }
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
+  }
+
 
   void onRegisterClick() async {
     print("注册");
@@ -822,10 +863,36 @@ class _RegisterPageState extends State<RegisterPage> {
         Fluttertoast.showToast(msg: "两次输入密码不一致");
         return;
       }
-
-      //TODO 调接口注册 注册成功此界面消失
-      //LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
-      Navigator.of(context).pop(); //注册页消失
+      userInfoRegister(_uNickNameController.text,_uPhoneController.text,_uVerificationCodeController.text,_uPasswordController.text);
     });
+  }
+
+  userInfoRegister (String nickName,String phone,String authCode, String password ) async
+  {
+    try{
+      loading.showLoading();
+      UserInfoRegisterRequestEntity userInfoRegisterRequestEntity=new UserInfoRegisterRequestEntity();
+      userInfoRegisterRequestEntity.userRole=USER_ROLE;
+      userInfoRegisterRequestEntity.loginType=LOGIN_TYPE;
+      userInfoRegisterRequestEntity.phone=phone;
+      userInfoRegisterRequestEntity.authCode=authCode;
+      userInfoRegisterRequestEntity.nickName=nickName;
+      userInfoRegisterRequestEntity.password=password;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).userInfoRegister(userInfoRegisterRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+          Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+        }
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Navigator.of(context).pop(); //注册页消失
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
   }
 }

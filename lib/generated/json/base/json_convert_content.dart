@@ -23,6 +23,8 @@ import 'package:flutter_doctor_app/models/reset_user_password_request_entity.dar
 import 'package:flutter_doctor_app/generated/json/reset_user_password_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/user_info_settings_get_by_user_id_response_entity.dart';
 import 'package:flutter_doctor_app/generated/json/user_info_settings_get_by_user_id_response_entity_helper.dart';
+import 'package:flutter_doctor_app/models/user_info_register_request_entity.dart';
+import 'package:flutter_doctor_app/generated/json/user_info_register_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/logout_this_device_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/logout_this_device_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/doctor_extend_by_doctor_id_response_entity.dart';
@@ -79,6 +81,8 @@ class JsonConvert<T> {
 				return resetUserPasswordRequestEntityFromJson(data as ResetUserPasswordRequestEntity, json) as T;
 			case UserInfoSettingsGetByUserIdResponseEntity:
 				return userInfoSettingsGetByUserIdResponseEntityFromJson(data as UserInfoSettingsGetByUserIdResponseEntity, json) as T;
+			case UserInfoRegisterRequestEntity:
+				return userInfoRegisterRequestEntityFromJson(data as UserInfoRegisterRequestEntity, json) as T;
 			case LogoutThisDeviceRequestEntity:
 				return logoutThisDeviceRequestEntityFromJson(data as LogoutThisDeviceRequestEntity, json) as T;
 			case DoctorExtendByDoctorIdResponseEntity:
@@ -128,6 +132,8 @@ class JsonConvert<T> {
 				return resetUserPasswordRequestEntityToJson(data as ResetUserPasswordRequestEntity);
 			case UserInfoSettingsGetByUserIdResponseEntity:
 				return userInfoSettingsGetByUserIdResponseEntityToJson(data as UserInfoSettingsGetByUserIdResponseEntity);
+			case UserInfoRegisterRequestEntity:
+				return userInfoRegisterRequestEntityToJson(data as UserInfoRegisterRequestEntity);
 			case LogoutThisDeviceRequestEntity:
 				return logoutThisDeviceRequestEntityToJson(data as LogoutThisDeviceRequestEntity);
 			case DoctorExtendByDoctorIdResponseEntity:
@@ -193,6 +199,9 @@ class JsonConvert<T> {
 		}
 		if(type == (UserInfoSettingsGetByUserIdResponseEntity).toString()){
 			return UserInfoSettingsGetByUserIdResponseEntity().fromJson(json);
+		}
+		if(type == (UserInfoRegisterRequestEntity).toString()){
+			return UserInfoRegisterRequestEntity().fromJson(json);
 		}
 		if(type == (LogoutThisDeviceRequestEntity).toString()){
 			return LogoutThisDeviceRequestEntity().fromJson(json);
@@ -265,6 +274,9 @@ class JsonConvert<T> {
 		}
 		if(<UserInfoSettingsGetByUserIdResponseEntity>[] is M){
 			return data.map<UserInfoSettingsGetByUserIdResponseEntity>((e) => UserInfoSettingsGetByUserIdResponseEntity().fromJson(e)).toList() as M;
+		}
+		if(<UserInfoRegisterRequestEntity>[] is M){
+			return data.map<UserInfoRegisterRequestEntity>((e) => UserInfoRegisterRequestEntity().fromJson(e)).toList() as M;
 		}
 		if(<LogoutThisDeviceRequestEntity>[] is M){
 			return data.map<LogoutThisDeviceRequestEntity>((e) => LogoutThisDeviceRequestEntity().fromJson(e)).toList() as M;
