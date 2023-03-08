@@ -1,12 +1,21 @@
 
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/view/LoadingDialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithoutToken.dart';
+import 'models/RequestTokenRequest.dart';
+import 'models/RequestTokenResponse.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/set_password_input_request_entity.dart';
 
 class SetPasswordPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -44,15 +53,18 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   int sureTextColor = 0xFF999999; //注册字体颜色
   int sureBackgroundColor = 0xFFE6E6E6; //注册按钮背景颜色
   bool _isDisable = true; //确认按钮是否可用，默认是不可用
-  late final arguments;
-  late final String phone;
-  late final String userId;
+  late   Map<String, dynamic> arguments;
+  late  String phone;
+  late  String userId;
+  late  String unionid;
+  late  LoadingDialog loading;
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     _uPasswordController.addListener(() {
       print(_uPasswordController.text);
       setSureState();
@@ -83,12 +95,14 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   }
   @override
   Widget build(BuildContext context) {
-    arguments = ModalRoute.of(context)!.settings.arguments;
+    arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     print("arguments==$arguments");
     phone=arguments["phone"];
     print("phone==$phone");
     userId=arguments["userId"];
     print("userId==$userId");
+    unionid=arguments["unionid"];
+    print("unionid==$unionid");
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -433,11 +447,66 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
         Fluttertoast.showToast(msg: "两次输入密码不一致");
         return;
       }
-
-      //TODO 调接口设置密码 设置密码成功之后调获取token接口，token获取成功直接跳转至首页
-      //LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          "home", ModalRoute.withName("home"));
+      setUserPassword(_uPasswordController.text,_uSurePasswordController.text);
     });
+  }
+
+  setUserPassword (String newPassword,String confirmPassword) async
+  {
+    try{
+      loading.showLoading();
+      SetPasswordInputRequestEntity setPasswordInputRequestEntity=new SetPasswordInputRequestEntity();
+      setPasswordInputRequestEntity.userRole=USER_ROLE;
+      setPasswordInputRequestEntity.newPassword=newPassword;
+      setPasswordInputRequestEntity.confirmPassword=confirmPassword;
+      setPasswordInputRequestEntity.userId=int.tryParse(userId)!;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).setUserPassword(setPasswordInputRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+          Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+        }
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          //调请求token接口
+          RequestTokenRequest requestTokenRequest=RequestTokenRequest(clientId: CLIENT_ID,
+              jiguangId: JIGUANGID,
+              phone: phone,
+              password: confirmPassword,
+              deviceUUID: JIGUANGID,
+              loginType: LOGIN_TYPE,
+              userRole: USER_ROLE);
+          requestTokenRequest.unionId=unionid;
+          requestToken(requestTokenRequest);
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
+  }
+  Future <void> requestToken(RequestTokenRequest requestTokenRequest)async{
+    RequestTokenResponse tokenResponse=await NetWorkWithoutToken(context).requestToken(requestTokenRequest);
+    var json = jsonEncode(tokenResponse);
+    print(json);
+    if(tokenResponse!=null){
+      bool? success=tokenResponse.success;
+      if(success!=null&&!success){
+        Fluttertoast.showToast(msg: tokenResponse.msg!);
+        return;
+      }
+      String userId=tokenResponse.userId!;
+      String accessToken=tokenResponse.accessToken!;
+      int expiresIn=tokenResponse.expiresIn!;
+        //不需要设置密码
+        LoginPrefs(context).login(accessToken, expiresIn, userId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          "home", ModalRoute.withName("home"));//跳转至首页
+    }else{
+      Fluttertoast.showToast(msg: "服务器错误，请稍候再试");
+    }
+
+
   }
 }

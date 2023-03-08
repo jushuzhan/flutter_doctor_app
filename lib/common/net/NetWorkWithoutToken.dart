@@ -15,10 +15,13 @@ import '../../models/RefreshTokenRequest.dart';
 import '../../models/RefreshTokenResponse.dart';
 import '../../models/RequestTokenRequest.dart';
 import '../../models/RequestTokenResponse.dart';
+import '../../models/bind_phone_request_entity.dart';
+import '../../models/bind_phone_response_entity.dart';
 import '../../models/common_input_response_entity.dart';
 import '../../models/create_auth_code_request_entity.dart';
 import '../../models/logout_this_device_request_entity.dart';
 import '../../models/reset_user_password_request_entity.dart';
+import '../../models/set_password_input_request_entity.dart';
 import '../../models/user_info_register_request_entity.dart';
 export 'package:dio/dio.dart' show DioError;
 
@@ -90,5 +93,16 @@ Future<BaseBean> logoutThisDevice(LogoutThisDeviceRequestEntity logoutThisDevice
   Future<CommonInputResponseEntity> userInfoRegister(UserInfoRegisterRequestEntity userInfoRegisterRequestEntity)async{
     var r=await dio.post(USER_INFO_REGISTER,data:userInfoRegisterRequestEntity.toJson());
     return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
+  //用户设置密码
+  Future<CommonInputResponseEntity> setUserPassword(SetPasswordInputRequestEntity setPasswordInputRequestEntity)async{
+    var r=await dio.post(SET_USER_PASSWORD,data:setPasswordInputRequestEntity.toJson());
+    return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+  //绑定手机号码(实现注册信息)
+  Future<BindPhoneResponseEntity> userInfoBindPhone(BindPhoneRequestEntity bindPhoneRequestEntity)async{
+    var r=await dio.post(BIND_PHONE,data:bindPhoneRequestEntity.toJson());
+    return BindPhoneResponseEntity().fromJson(BaseBean(r.data).result);
   }
 }

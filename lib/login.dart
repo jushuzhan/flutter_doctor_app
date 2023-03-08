@@ -404,7 +404,6 @@ class _LoginPageState extends State<LoginPage> {
                                   GestureDetector(
                                     onTap: () {
                                       print("注册账号");
-                                      //TODO 注册账号 跳转至注册界面
                                       Navigator.pushNamed(
                                           context, 'register'); //跳转至首页
                                     },
@@ -553,12 +552,26 @@ class _LoginPageState extends State<LoginPage> {
         if(response.setPassword){
           //如果需要设置密码则跳转至设置密码界面
           //set_password
+
+          //携带参数userid和phone跳转至设置密码界面
+          Map<String, dynamic> arguments = {'userId': userId,'unionid':unionid};
+          Navigator.pushNamed(context, 'set_password',arguments:arguments);
         }else{
           //不需要设置密码则请求token 请求token的时候需要极光id
+          RequestTokenRequest requestTokenRequest=RequestTokenRequest(clientId: CLIENT_ID,
+              jiguangId: JIGUANGID,
+              phone: _uNameController.text,
+              password: _uPasswordController.text,
+              deviceUUID: JIGUANGID,
+              loginType: LOGIN_TYPE,
+              userRole: USER_ROLE);
+          var result=await requestToken(requestTokenRequest);
         }
       }else{
         //如果没有绑定手机号跳转至绑定手机号的界面，把必要信息带过去
        // bind_phone
+        Map<String, dynamic> arguments = {'userId': userId,'unionid':unionid,'sex':sex,'openid':openid,'nickname':nickname};
+        Navigator.pushNamed(context, 'bind_phone',arguments:arguments);
       }
     }
 
@@ -581,7 +594,8 @@ class _LoginPageState extends State<LoginPage> {
       String phone=requestTokenRequest.phone!;
       if(setPassword){
         //携带参数userid和phone跳转至设置密码界面
-        Navigator.pushNamed(context, 'set_password',arguments:{"userId":"$userId","phone":"$phone"} );
+        Map<String, dynamic> arguments = {'userId': userId,'phone':phone};
+        Navigator.pushNamed(context, 'set_password',arguments:arguments);
       }else{
         //不需要设置密码
         LoginPrefs(context).login(accessToken, expiresIn, userId);

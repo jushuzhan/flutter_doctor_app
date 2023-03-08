@@ -21,4 +21,6 @@ const String CREATE_AUTH_CODE = "user/Common/CreateAuthCode";//发送验证码
 const String UPDATE_USER_PHONE = "user/UserInfo/UpdateUserPhone";//用户修改绑定手机
 const String RESET_USER_PASSWORD = "user/UserInfo/ResetUserPassword";//用户重置密码
 const String USER_INFO_REGISTER = "user/UserInfo/UserInfoRegister";//用户注册
+const String SET_USER_PASSWORD = "user/UserInfo/SetUserPassword";//用户设置密码
+const String BIND_PHONE = "user/UserInfo/UserInfoBindPhone";//绑定手机号
 const String JIGUANGID = "190e35f7e0a2b54243d";

@@ -1,12 +1,23 @@
 
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/common/view/LoadingDialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'common/constants/constants.dart';
+import 'common/net/NetWorkWithoutToken.dart';
+import 'models/RequestTokenRequest.dart';
+import 'models/RequestTokenResponse.dart';
+import 'models/bind_phone_request_entity.dart';
+import 'models/bind_phone_response_entity.dart';
+import 'models/common_input_response_entity.dart';
+import 'models/create_auth_code_request_entity.dart';
 
 class BindPhonePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -56,12 +67,20 @@ class _BindPhonePageState extends State<BindPhonePage> {
     borderRadius: BorderRadius.all(
         Radius.circular(4)),
   );
-
+late final LoadingDialog loading;
+  late   Map<String, dynamic> arguments;
+  late  String phone;
+  late  String userId;
+  late  String unionid;
+  late  String openid;
+  late  String nickname;
+  late  int sex;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loading=LoadingDialog(buildContext: context);
     verificationCodeDecoration=defaultVerificationCodeDecoration;
     _uPhoneController.addListener(() {
       print(_uPhoneController.text);
@@ -99,6 +118,13 @@ class _BindPhonePageState extends State<BindPhonePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    phone=arguments['phone'];
+    userId=arguments['userId'];
+    unionid=arguments['unionid'];
+    openid=arguments['openid'];
+    nickname=arguments['nickname'];
+    sex=arguments['sex'];
     return Scaffold(
       extendBodyBehindAppBar: false, //不沉浸式状态栏
       appBar: AppBar(
@@ -453,18 +479,48 @@ class _BindPhonePageState extends State<BindPhonePage> {
     }
     _uPhoneFocusNode.unfocus();
     if(_countdownTime==0){
-      //TODO HTTP请求发送验证码
-      setState(() {
-        _countdownTime=119;
-        verificationCodeDecoration=decoration;
-        _isVerificationCodeDisable=true;//获取验证码按钮不可用
-        verificationCodeData='$_countdownTime'+"s";
-      });
+      createAuthCode(_uPhoneController.text);
       //开始倒计时
       startCountdownTimer();
 
     }
   }
+
+  createAuthCode (String phone) async
+  {
+    try{
+      loading.showLoading();
+      CreateAuthCodeRequestEntity codeRequestEntity=new CreateAuthCodeRequestEntity();
+      codeRequestEntity.userRole=USER_ROLE;
+      codeRequestEntity.phone=phone;
+      CommonInputResponseEntity commonInputResponseEntity=await NetWorkWithoutToken(context).createAuthCode(codeRequestEntity);
+      if(commonInputResponseEntity!=null){
+        if(commonInputResponseEntity.successed!=null&&commonInputResponseEntity.successed==true){
+          Fluttertoast.showToast(msg: "验证码发送成功请注意查收");
+          setState(() {
+            _countdownTime=119;
+            verificationCodeDecoration=decoration;
+            _isVerificationCodeDisable=true;//获取验证码按钮不可用
+            verificationCodeData='$_countdownTime'+"s";
+          });
+        }else{
+          if(commonInputResponseEntity.msg!=null&&commonInputResponseEntity.msg!.isNotEmpty){
+            Fluttertoast.showToast(msg: commonInputResponseEntity.msg!);
+          }
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
+  }
+
+
+
+
   void startCountdownTimer() {
     const oneSec = const Duration(seconds: 1);
     var callback = (timer) => {
@@ -508,10 +564,77 @@ class _BindPhonePageState extends State<BindPhonePage> {
         Fluttertoast.showToast(msg: "请输入正确长度的验证码");
         return;
       }
-
-      //TODO 调接口绑定手机 绑定成功 判断是否需要设置密码，如果需要设置密码，则跳转至设置密码界面，不需要设置密码则直接登录获取token,如果需要设置密码，则跳转至设置密码界面，如果不需要则跳转至首页
-      //LoginPrefs.saveToken(_uPhoneController.text); //保存token (我这里保存的输入框中输入的值)
-      Navigator.pushNamed(context, 'set_password');//跳转至设置界面
+      userInfoBindPhone(_uPhoneController.text, _uVerificationCodeController.text);
     });
+  }
+
+  userInfoBindPhone (String phone,String authCode) async
+  {
+    try{
+      loading.showLoading();
+      BindPhoneRequestEntity bindPhoneRequestEntity=new BindPhoneRequestEntity();
+      bindPhoneRequestEntity.userRole=USER_ROLE;
+      bindPhoneRequestEntity.unionId=unionid;
+      bindPhoneRequestEntity.phone=phone;
+      bindPhoneRequestEntity.authCode=authCode;
+      bindPhoneRequestEntity.loginType=LOGIN_TYPE;
+      bindPhoneRequestEntity.sex=sex;
+      bindPhoneRequestEntity.nickname=nickname;
+      bindPhoneRequestEntity.openid=openid;
+      BindPhoneResponseEntity bindPhoneResponseEntity=await NetWorkWithoutToken(context).userInfoBindPhone(bindPhoneRequestEntity);
+      if(bindPhoneResponseEntity!=null){
+        if(bindPhoneResponseEntity.msg!=null&&bindPhoneResponseEntity.msg!.isNotEmpty){
+          Fluttertoast.showToast(msg: bindPhoneResponseEntity.msg!);
+        }
+        if(bindPhoneResponseEntity.successed!=null&&bindPhoneResponseEntity.successed==true){
+          if(bindPhoneResponseEntity.setPassword!=null&&bindPhoneResponseEntity.setPassword==true){
+            //需要设置密码，跳转到设置密码页面
+            Map<String, dynamic> arguments = {'userId': bindPhoneResponseEntity.userId.toString(),'phone':phone};
+            Navigator.pushNamed(context, 'set_password',arguments:arguments);
+          }else{
+            //不需要设置密码，直接登录获取token
+            RequestTokenRequest requestTokenRequest=RequestTokenRequest(clientId: CLIENT_ID,
+                jiguangId: JIGUANGID,
+                phone: phone,
+                password: '',
+                deviceUUID: JIGUANGID,
+                loginType: LOGIN_TYPE,
+                userRole: USER_ROLE);
+            requestTokenRequest.unionId=unionid;
+            requestToken(requestTokenRequest);
+          }
+
+        }
+      }
+
+    }on DioError catch(e){
+      print(e.message!);
+    }finally{
+      loading.dismissLoading();
+    }
+
+  }
+  Future <void> requestToken(RequestTokenRequest requestTokenRequest)async{
+    RequestTokenResponse tokenResponse=await NetWorkWithoutToken(context).requestToken(requestTokenRequest);
+    var json = jsonEncode(tokenResponse);
+    print(json);
+    if(tokenResponse!=null){
+      bool? success=tokenResponse.success;
+      if(success!=null&&!success){
+        Fluttertoast.showToast(msg: tokenResponse.msg!);
+        return;
+      }
+      String userId=tokenResponse.userId!;
+      String accessToken=tokenResponse.accessToken!;
+      int expiresIn=tokenResponse.expiresIn!;
+      //不需要设置密码
+      LoginPrefs(context).login(accessToken, expiresIn, userId);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "home", ModalRoute.withName("home"));//跳转至首页
+    }else{
+      Fluttertoast.showToast(msg: "服务器错误，请稍候再试");
+    }
+
+
   }
 }
