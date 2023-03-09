@@ -29,10 +29,16 @@ import 'package:flutter_doctor_app/models/user_info_register_request_entity.dart
 import 'package:flutter_doctor_app/generated/json/user_info_register_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/logout_this_device_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/logout_this_device_request_entity_helper.dart';
+import 'package:flutter_doctor_app/models/sts_upload_response_response_entity.dart';
+import 'package:flutter_doctor_app/generated/json/sts_upload_response_response_entity_helper.dart';
+import 'package:flutter_doctor_app/models/get_user_info_for_edit_response_entity.dart';
+import 'package:flutter_doctor_app/generated/json/get_user_info_for_edit_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/doctor_extend_by_doctor_id_response_entity.dart';
 import 'package:flutter_doctor_app/generated/json/doctor_extend_by_doctor_id_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/update_user_phone_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/update_user_phone_request_entity_helper.dart';
+import 'package:flutter_doctor_app/models/sts_upload_response_request_entity.dart';
+import 'package:flutter_doctor_app/generated/json/sts_upload_response_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/update_exam_visit_status_input_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/update_exam_visit_status_input_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/user_info_settings_set_by_user_id_request_entity.dart';
@@ -93,10 +99,18 @@ class JsonConvert<T> {
 				return userInfoRegisterRequestEntityFromJson(data as UserInfoRegisterRequestEntity, json) as T;
 			case LogoutThisDeviceRequestEntity:
 				return logoutThisDeviceRequestEntityFromJson(data as LogoutThisDeviceRequestEntity, json) as T;
+			case StsUploadResponseResponseEntity:
+				return stsUploadResponseResponseEntityFromJson(data as StsUploadResponseResponseEntity, json) as T;
+			case GetUserInfoForEditResponseEntity:
+				return getUserInfoForEditResponseEntityFromJson(data as GetUserInfoForEditResponseEntity, json) as T;
+			case GetUserInfoForEditResponseDoctorExtend:
+				return getUserInfoForEditResponseDoctorExtendFromJson(data as GetUserInfoForEditResponseDoctorExtend, json) as T;
 			case DoctorExtendByDoctorIdResponseEntity:
 				return doctorExtendByDoctorIdResponseEntityFromJson(data as DoctorExtendByDoctorIdResponseEntity, json) as T;
 			case UpdateUserPhoneRequestEntity:
 				return updateUserPhoneRequestEntityFromJson(data as UpdateUserPhoneRequestEntity, json) as T;
+			case StsUploadResponseRequestEntity:
+				return stsUploadResponseRequestEntityFromJson(data as StsUploadResponseRequestEntity, json) as T;
 			case UpdateExamVisitStatusInputRequestEntity:
 				return updateExamVisitStatusInputRequestEntityFromJson(data as UpdateExamVisitStatusInputRequestEntity, json) as T;
 			case UserInfoSettingsSetByUserIdRequestEntity:
@@ -150,10 +164,18 @@ class JsonConvert<T> {
 				return userInfoRegisterRequestEntityToJson(data as UserInfoRegisterRequestEntity);
 			case LogoutThisDeviceRequestEntity:
 				return logoutThisDeviceRequestEntityToJson(data as LogoutThisDeviceRequestEntity);
+			case StsUploadResponseResponseEntity:
+				return stsUploadResponseResponseEntityToJson(data as StsUploadResponseResponseEntity);
+			case GetUserInfoForEditResponseEntity:
+				return getUserInfoForEditResponseEntityToJson(data as GetUserInfoForEditResponseEntity);
+			case GetUserInfoForEditResponseDoctorExtend:
+				return getUserInfoForEditResponseDoctorExtendToJson(data as GetUserInfoForEditResponseDoctorExtend);
 			case DoctorExtendByDoctorIdResponseEntity:
 				return doctorExtendByDoctorIdResponseEntityToJson(data as DoctorExtendByDoctorIdResponseEntity);
 			case UpdateUserPhoneRequestEntity:
 				return updateUserPhoneRequestEntityToJson(data as UpdateUserPhoneRequestEntity);
+			case StsUploadResponseRequestEntity:
+				return stsUploadResponseRequestEntityToJson(data as StsUploadResponseRequestEntity);
 			case UpdateExamVisitStatusInputRequestEntity:
 				return updateExamVisitStatusInputRequestEntityToJson(data as UpdateExamVisitStatusInputRequestEntity);
 			case UserInfoSettingsSetByUserIdRequestEntity:
@@ -227,11 +249,23 @@ class JsonConvert<T> {
 		if(type == (LogoutThisDeviceRequestEntity).toString()){
 			return LogoutThisDeviceRequestEntity().fromJson(json);
 		}
+		if(type == (StsUploadResponseResponseEntity).toString()){
+			return StsUploadResponseResponseEntity().fromJson(json);
+		}
+		if(type == (GetUserInfoForEditResponseEntity).toString()){
+			return GetUserInfoForEditResponseEntity().fromJson(json);
+		}
+		if(type == (GetUserInfoForEditResponseDoctorExtend).toString()){
+			return GetUserInfoForEditResponseDoctorExtend().fromJson(json);
+		}
 		if(type == (DoctorExtendByDoctorIdResponseEntity).toString()){
 			return DoctorExtendByDoctorIdResponseEntity().fromJson(json);
 		}
 		if(type == (UpdateUserPhoneRequestEntity).toString()){
 			return UpdateUserPhoneRequestEntity().fromJson(json);
+		}
+		if(type == (StsUploadResponseRequestEntity).toString()){
+			return StsUploadResponseRequestEntity().fromJson(json);
 		}
 		if(type == (UpdateExamVisitStatusInputRequestEntity).toString()){
 			return UpdateExamVisitStatusInputRequestEntity().fromJson(json);
@@ -311,11 +345,23 @@ class JsonConvert<T> {
 		if(<LogoutThisDeviceRequestEntity>[] is M){
 			return data.map<LogoutThisDeviceRequestEntity>((e) => LogoutThisDeviceRequestEntity().fromJson(e)).toList() as M;
 		}
+		if(<StsUploadResponseResponseEntity>[] is M){
+			return data.map<StsUploadResponseResponseEntity>((e) => StsUploadResponseResponseEntity().fromJson(e)).toList() as M;
+		}
+		if(<GetUserInfoForEditResponseEntity>[] is M){
+			return data.map<GetUserInfoForEditResponseEntity>((e) => GetUserInfoForEditResponseEntity().fromJson(e)).toList() as M;
+		}
+		if(<GetUserInfoForEditResponseDoctorExtend>[] is M){
+			return data.map<GetUserInfoForEditResponseDoctorExtend>((e) => GetUserInfoForEditResponseDoctorExtend().fromJson(e)).toList() as M;
+		}
 		if(<DoctorExtendByDoctorIdResponseEntity>[] is M){
 			return data.map<DoctorExtendByDoctorIdResponseEntity>((e) => DoctorExtendByDoctorIdResponseEntity().fromJson(e)).toList() as M;
 		}
 		if(<UpdateUserPhoneRequestEntity>[] is M){
 			return data.map<UpdateUserPhoneRequestEntity>((e) => UpdateUserPhoneRequestEntity().fromJson(e)).toList() as M;
+		}
+		if(<StsUploadResponseRequestEntity>[] is M){
+			return data.map<StsUploadResponseRequestEntity>((e) => StsUploadResponseRequestEntity().fromJson(e)).toList() as M;
 		}
 		if(<UpdateExamVisitStatusInputRequestEntity>[] is M){
 			return data.map<UpdateExamVisitStatusInputRequestEntity>((e) => UpdateExamVisitStatusInputRequestEntity().fromJson(e)).toList() as M;

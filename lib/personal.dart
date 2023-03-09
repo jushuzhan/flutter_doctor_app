@@ -142,6 +142,7 @@ class _PersonalPageState extends State<PersonalPage> {
                             padding: EdgeInsets.only(top:18,bottom:6),
                             child: CircleAvatar(
                               backgroundImage:  backgroundImage,
+                              radius: 28,//圆形半径
                             ),
                           ),
 

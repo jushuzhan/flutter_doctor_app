@@ -1,17 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
 import 'package:flutter_doctor_app/common/Prefs.dart';
+import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
+import 'package:flutter_doctor_app/common/view/NetworkImageSSL.dart';
 import 'package:flutter_doctor_app/models/EnumBean.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:date_format/date_format.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'common/net/NetWorkWithoutToken.dart';
+import 'common/util/OssUtil.dart';
+import 'models/get_user_info_for_edit_response_entity.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'models/sts_upload_response_request_entity.dart';
+import 'models/sts_upload_response_response_entity.dart';
 class EditInfoPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -35,9 +47,9 @@ class _EditInfoPageState extends State<EditInfoPage> {
   int saveBackgroundColor = 0xFFE6E6E6; //保存按钮背景颜色
   bool _isDisable = true; //保存按钮是否可用，默认是不可用
 
-  String auditStatusText = '等待审核';
-  int auditStatusTextColor = 0xFFF5A631;
-  int auditStatusBackgroundColor = 0x1AF5A631;
+  String auditStatusText = '';//审核状态
+  int auditStatusTextColor = 0xFFF5A631;//审核未通过/等待审核的字体颜色
+  int auditStatusBackgroundColor = 0x1AF5A631;//审核未通过/等待审核的字体颜色
 
   final TextEditingController _uNameController = TextEditingController(); //姓名
   final TextEditingController _uIdCardController =
@@ -85,6 +97,8 @@ class _EditInfoPageState extends State<EditInfoPage> {
   late List<EnumBean> technicianTypeList;
 
   String? _radioGroup = "";
+  var _permissionStatus;
+  bool _permissionDenied=true;//默认权限拒绝
 
   void _handleRadioValueChanged(String? value) {
     setState(() {
@@ -93,18 +107,15 @@ class _EditInfoPageState extends State<EditInfoPage> {
   }
 
   XFile? _headFile; //头像
-  List<XFile>? _imageFileList; //专家认证
-
+  ImageProvider _headFileImageProvider =
+      AssetImage('assets/images/info_image_portrait.png');
+  List<XFile> _imageFileList = []; //专家认证
   final ImagePicker _picker = ImagePicker();
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initView();
-  }
-
-  void initView() {
+    requestPermission();
     headList.add("现在拍照");
     headList.add("相册选择");
     headList.add("取消");
@@ -112,6 +123,15 @@ class _EditInfoPageState extends State<EditInfoPage> {
     doctorTypeList.add(EnumBean(key: "", value: "取消"));
     technicianTypeList = getTechnicianType();
     technicianTypeList.add(EnumBean(key: "", value: "取消"));
+    getUserInfo();
+    initView();
+  }
+
+  getUserInfo() {
+    getUserInfoForEdit();
+  }
+
+  void initView() {
     if ("" != uBirthDate) {
       _dateTime = DateTime.parse(uBirthDate);
     }
@@ -175,19 +195,19 @@ class _EditInfoPageState extends State<EditInfoPage> {
   }
 
   void setSaveState() {
-    // if (_originalPasswordController.text.length >= 6&&_newPasswordController.text.length >= 6&&_surePasswordController.text.length >= 6) {
-    //   setState(() {
-    //     _isDisable = false; //保存按钮可用
-    //     saveTextColor = 0xFFFFFFFF;
-    //     saveBackgroundColor = 0xFF009999;
-    //   });
-    // } else {
-    //   setState(() {
-    //     _isDisable = true; //保存按钮不可用
-    //     saveTextColor = 0xFF999999;
-    //     saveBackgroundColor = 0xFFE6E6E6;
-    //   });
-    // }
+    if (_uNameController.text.length !=0&&_uIdCardController.text.length!=0) {
+      setState(() {
+        _isDisable = false; //保存按钮可用
+        saveTextColor = 0xFFFFFFFF;
+        saveBackgroundColor = 0xFF009999;
+      });
+    } else {
+      setState(() {
+        _isDisable = true; //保存按钮不可用
+        saveTextColor = 0xFF999999;
+        saveBackgroundColor = 0xFFE6E6E6;
+      });
+    }
   }
 
   @override
@@ -271,61 +291,60 @@ class _EditInfoPageState extends State<EditInfoPage> {
                               ),
                             ),
                             //头像
-                            Container(
+                            Padding(
                               padding: EdgeInsets.only(top: 8),
-                              height: 96,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                //纵轴居中即垂直居中
-                                children: <Widget>[
-                                  Text(
-                                    '头像',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF666666),
-                                    ),
-                                  ),
-                                  Spacer(
-                                    flex: 1,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      _showHeadBottomSheet().then((index) {
-                                        switch (index) {
-                                          case 0:
-                                            gotoCamera();
-                                            break;
-                                          case 1:
-                                            gotoGallery();
-                                            break;
-                                        }
-                                      });
-                                    },
-                                    child: Row(
-                                      children: <Widget>[
-                                         ClipOval(
-                                            child: _headFile == null
-                                                ? Image.asset(
-                                                    'assets/images/info_image_portrait.png',fit: BoxFit.cover,width: 56,height: 56,)
-                                                : kIsWeb
-                                                    ? Image.network(
-                                                        _headFile!.path,fit: BoxFit.cover,width: 56,height: 56,)
-                                                    : Image.file(
-                                                        File(_headFile!.path),fit: BoxFit.cover,width: 56,height: 56,),
-                                          ),
-
-                                        Container(
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.only(left: 8),
-                                          child: Image.asset(
-                                            'assets/images/button_icon_continue.png',
-                                            height: 16,
-                                          ),
+                              child: SizedBox(
+                                height: 96,
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        '头像',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Color(0xFF666666),
                                         ),
-                                      ],
+                                      ),
+                                      flex: 1,
                                     ),
-                                  )
-                                ],
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showHeadBottomSheet().then((index) {
+                                          switch (index) {
+                                            case 0:
+                                              gotoCamera();
+                                              break;
+                                            case 1:
+                                              gotoGallery();
+                                              break;
+                                          }
+                                        });
+                                      },
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          CircleAvatar(
+                                            backgroundImage:
+                                                _headFileImageProvider,
+                                            radius: 28, //圆形半径
+                                          ),
+                                          Container(
+                                            alignment: Alignment.center,
+                                            padding: EdgeInsets.only(left: 8),
+                                            child: Image.asset(
+                                              'assets/images/button_icon_continue.png',
+                                              height: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             //分割线
@@ -1164,6 +1183,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
       ),
     );
   }
+
   void showDatePicker() {
     DatePicker.showDatePicker(
       context,
@@ -1336,9 +1356,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: GestureDetector(
-                child: kIsWeb
-                    ? Image.network(_imageFileList![index].path)
-                    : Image.file(File(_imageFileList![index].path)),
+                child: Image.file(File(_imageFileList[index].path)),
                 onTap: () {
                   //点击事件
                   gotoGalleryMultiImage();
@@ -1422,6 +1440,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
     );
     setState(() {
       _headFile = pickedFile;
+      _headFileImageProvider = FileImage(File(_headFile!.path));
     });
   }
 
@@ -1431,6 +1450,260 @@ class _EditInfoPageState extends State<EditInfoPage> {
     );
     setState(() {
       _headFile = pickedFile;
+      _headFileImageProvider = FileImage(File(_headFile!.path));
     });
   }
+
+  getUserInfoForEdit() async {
+    try {
+      if (!LoginPrefs(context).isLogin()) {
+        LoginPrefs(context).logout();
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("login", ModalRoute.withName("login"));
+        return;
+      }
+      GetUserInfoForEditResponseEntity getUserInfoForEditResponseEntity =
+          await NetWorkWithToken(context).getUserInfoForEdit();
+      if (getUserInfoForEditResponseEntity != null) {
+        if (getUserInfoForEditResponseEntity.doctorExtend != null) {
+          GetUserInfoForEditResponseDoctorExtend doctorExtend =
+              getUserInfoForEditResponseEntity.doctorExtend!;
+          if ((doctorExtend.name == null || doctorExtend.name!.isEmpty) &&
+              (doctorExtend.cardId == null || doctorExtend.cardId!.isEmpty) &&
+              (doctorExtend.hospital == null ||
+                  doctorExtend.hospital!.isEmpty)) {
+            doctorExtend.price = null;
+          }
+          setViewData(doctorExtend);
+        }
+      }
+    } on DioError catch (e) {
+      print(e.message!);
+    } finally {}
+  }
+
+  setViewData(GetUserInfoForEditResponseDoctorExtend doctorExtend)  {
+    setState(() {
+      //审核状态
+      if(doctorExtend.auditStatus!=null){
+        switch(doctorExtend.auditStatus){
+          case 1:
+            auditStatusText='等待审核';
+            break;
+          case 2:
+            auditStatusText='审核通过';
+            break;
+          case 3:
+            auditStatusText='审核未过';
+            break;
+        }
+        if(doctorExtend.auditStatus!=2){
+           auditStatusTextColor = 0xFFF5A631;//审核未通过/等待审核的字体颜色
+           auditStatusBackgroundColor = 0x1AF5A631;//审核未通过/等待审核的字体颜色
+        }else{
+          auditStatusTextColor = 0xFF009999;//审核通过字体颜色
+          auditStatusBackgroundColor = 0x1A009999;//审核通过字体颜色
+        }
+
+
+
+      }
+
+      if (doctorExtend.headimgurl != null) {
+        //头像
+        if (_headFile == null) {
+          _headFile = XFile(doctorExtend.headimgurl!);
+          _headFileImageProvider = NetworkImage(_headFile!.path);
+        }
+      }
+      _uNameController.text = doctorExtend.name!; //姓名
+      _uIdCardController.text = doctorExtend.cardId!; //身份证
+      if (doctorExtend.gender != null) {
+        //性别
+        switch (doctorExtend.gender) {
+          case 1:
+            _radioGroup = "男";
+            break;
+          case 2:
+            _radioGroup = "女";
+            break;
+        }
+      }
+      if (doctorExtend.birthdate != null &&
+          doctorExtend.birthdate!.isNotEmpty) {
+        uBirthDate = doctorExtend.birthdate!.substring(0, 10); //出生日期
+      }
+      if (doctorExtend.doctorType != null) {
+        uDoctorTypeText = getDoctorTypeValue(doctorExtend.doctorType!.toString()); //职称
+      }
+      if (doctorExtend.technicianType != null) {
+        uTechnicianTypeText =
+            getTechnicianTypeValue(doctorExtend.technicianType!.toString()); //技师资格
+      }
+      _uHospitalController.text = doctorExtend.hospital!; //就职医院
+      if (doctorExtend.description != null) {
+        _uDescriptionController.text = doctorExtend.description!; //个人简介
+      }
+      if (doctorExtend.price != null) {
+        _uPriceController.text = (doctorExtend.price!.toDouble() / 100) //问诊价格
+            .toStringAsFixed(2);
+      }
+      if (doctorExtend.certificationImgUrl != null) {
+        //专家认证
+        getImageFileList(doctorExtend.certificationImgUrl!);
+
+      }
+    });
+    setSaveState();
+  }
+
+  getImageFileList(String imageUrl) async{
+    var tempDir = await getTemporaryDirectory();
+    var now=DateTime.now().microsecond.toString().replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+    String fullPath = tempDir.path + "/$now.jpg";
+    print('full path ${fullPath}');
+    downloadImageFile(imageUrl,fullPath);
+
+  }
+  void downloadImageFile(String imageUrl,String path) async{
+    //await downloadImageProgress(imageUrl, path);
+    await downloadImage(imageUrl, path);
+
+
+  }
+
+  String getDoctorTypeValue(String doctorType) {
+    for (int i = 0; i < doctorTypeList.length; i++) {
+      if (doctorType == doctorTypeList[i].key) {
+        return doctorTypeList[i].value!;
+      }
+    }
+    return "";
+  }
+
+  int? getDoctorTypeKey(String doctorType) {
+    for (int i = 0; i < doctorTypeList.length; i++) {
+      if (doctorType == doctorTypeList[i].value) {
+        return int.tryParse(doctorTypeList[i].key!);
+      }
+    }
+    return null;
+  }
+
+  String getTechnicianTypeValue(String technicianType) {
+    for (int i = 0; i < technicianTypeList.length; i++) {
+      if (technicianType == technicianTypeList[i].key) {
+        return technicianTypeList[i].value!;
+      }
+    }
+    return "";
+  }
+
+  int? getTechnicianTypeKey(String technicianType) {
+    for (int i = 0; i < technicianTypeList.length; i++) {
+      if (technicianType == technicianTypeList[i].value) {
+        return int.tryParse(technicianTypeList[i].key!);
+      }
+    }
+    return null;
+  }
+
+  Future  downloadImageProgress(String url, String savePath) async {
+    try {
+      Response response = await NetWorkWithoutToken(context).downLoadFile(url, savePath, (count, total) {
+        print('count==$count');
+        print('total==$total');
+        if (total != -1) {
+          String percent=(count / total * 100).toStringAsFixed(0) + "%";
+          print(percent);
+        }
+      });
+      if(response!=null){
+        File file=new File(savePath);
+        if (file.existsSync() && file.length() != 0) {
+          setState(() {
+            _imageFileList.add(XFile(file.path));
+          });
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future  downloadImage(String url, String savePath) async {
+    try {
+      List<int>? data = await NetWorkWithoutToken(context).downLoadFileNotProgress(url);
+      if (data != null) {
+        File file = File(savePath);
+        var raf = file.openSync(mode: FileMode.write);
+        // buffer is List<int> type
+        raf.writeFromSync(data);
+        await raf.close();
+        if (file.existsSync() && file.length() != 0) {
+          setState(() {
+            _imageFileList.add(XFile(file.path));
+          });
+          stsUploadResponse(file);
+        }
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+  Future<void> requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      Permission.storage,
+    ].request();
+    setState(() {
+      for (PermissionStatus value in statuses.values) {
+        if(value.isDenied){
+          _permissionDenied=true;
+          break;
+        }
+      }
+      _permissionDenied=false;
+    });
+
+
+  }
+
+  stsUploadResponse(File file) async{
+    try {
+      if (!LoginPrefs(context).isLogin()) {
+        LoginPrefs(context).logout();
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("login", ModalRoute.withName("login"));
+        return;
+      }
+      StsUploadResponseRequestEntity stsUploadResponseRequestEntity=new StsUploadResponseRequestEntity();
+      stsUploadResponseRequestEntity.fileType=1;
+      stsUploadResponseRequestEntity.fileName=file.path;
+      StsUploadResponseResponseEntity stsUploadResponseResponseEntity =
+      await NetWorkWithToken(context).stsUploadResponse(stsUploadResponseRequestEntity);
+      if (stsUploadResponseResponseEntity != null) {
+        String accessKeyId=stsUploadResponseResponseEntity.accessKeyId;
+        String accessKeySecret=stsUploadResponseResponseEntity.accessKeySecret;
+        String securityToken=stsUploadResponseResponseEntity.securityToken;
+        String bucket=stsUploadResponseResponseEntity.bucket;
+        String endPoint=stsUploadResponseResponseEntity.endPoint;
+        String ossFileFullName=stsUploadResponseResponseEntity.ossFileFullName;
+        ossAccessKeyId=accessKeyId;
+        ossAccessKeySecret=accessKeySecret;
+        bucketName=bucket;
+        ossEndPoint=endPoint;
+        ossSecurityToken=securityToken;
+        String fileType=ossFileFullName.substring(ossFileFullName.lastIndexOf('.')+1);
+        print(fileType);
+        Uint8List imageData;
+        imageData=await file.readAsBytes();
+        String path=await OssUtil().ossUploadImage(imageData, ossFileFullName,fileType: fileType);
+        print('阿里云返回的路径：'+path);
+        return path;
+      }
+    } on DioError catch (e) {
+      print(e.message!);
+    } finally {}
+  }
+
 }

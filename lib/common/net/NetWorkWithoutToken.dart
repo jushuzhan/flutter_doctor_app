@@ -105,4 +105,20 @@ Future<BaseBean> logoutThisDevice(LogoutThisDeviceRequestEntity logoutThisDevice
     var r=await dio.post(BIND_PHONE,data:bindPhoneRequestEntity.toJson());
     return BindPhoneResponseEntity().fromJson(BaseBean(r.data).result);
   }
+
+  Future<Response<dynamic>> downLoadFile(String urlPath,String savePath,ProgressCallback onReceiveProgress) async{
+    var r=await dio.download(urlPath, savePath,onReceiveProgress:onReceiveProgress);
+    return r;
+  }
+  Future<List<int>?> downLoadFileNotProgress(urlPath) async{
+    final rs = await dio.get<List<int>>(
+      urlPath,
+      options: Options(responseType: ResponseType.bytes), // Set the response type to `bytes`.
+    );
+    if(rs.statusCode==200&&rs.data!=null){
+      return rs.data!;
+    }
+    return null;
+
+  }
 }

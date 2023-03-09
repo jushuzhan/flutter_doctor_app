@@ -18,8 +18,11 @@ import '../../models/doctor_extend_by_doctor_id_response_entity.dart';
 import '../../models/get_current_user_info_response_entity.dart';
 import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import '../../models/get_paged_order_response_entity.dart';
+import '../../models/get_user_info_for_edit_response_entity.dart';
 import '../../models/make_conclusion_input_request_entity.dart';
 import '../../models/paged_result_dto_response_entity.dart';
+import '../../models/sts_upload_response_request_entity.dart';
+import '../../models/sts_upload_response_response_entity.dart';
 import '../../models/update_exam_visit_status_input_request_entity.dart';
 import '../../models/common_input_response_entity.dart';
 import '../../models/update_user_password_request_entity.dart';
@@ -158,4 +161,19 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
     print(r.data);
     return CommonInputResponseEntity().fromJson(BaseBean(r.data).result);
   }
+
+  //获取编辑用户信息
+  Future<GetUserInfoForEditResponseEntity> getUserInfoForEdit() async{
+    var r=await dio.get(GET_USER_INFO_FOR_EDIT);
+    print(r.data);
+    return GetUserInfoForEditResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
+  //获取Oss上传需要的Sts
+  Future<StsUploadResponseResponseEntity> stsUploadResponse(StsUploadResponseRequestEntity stsUploadResponseRequestEntity) async{
+    var r=await dio.post(STS_UPLOAD_RESPONSE,data:stsUploadResponseRequestEntity.toJson());
+    print(r.data);
+    return StsUploadResponseResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
 }
