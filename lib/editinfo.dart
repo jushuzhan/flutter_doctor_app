@@ -16,14 +16,18 @@ import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_pic
 import 'package:date_format/date_format.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'common/format/InputFormat.dart';
 import 'common/net/NetWorkWithoutToken.dart';
+import 'common/util/IdCardUtil.dart';
 import 'common/util/OssUtil.dart';
+import 'models/create_or_update_doctor_extend_input_request_entity.dart';
 import 'models/get_user_info_for_edit_response_entity.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'models/sts_upload_response_request_entity.dart';
 import 'models/sts_upload_response_response_entity.dart';
+import 'models/update_user_info_response_entity.dart';
 class EditInfoPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -100,6 +104,11 @@ class _EditInfoPageState extends State<EditInfoPage> {
   var _permissionStatus;
   bool _permissionDenied=true;//默认权限拒绝
 
+  int?id;
+  int?doctorId;
+  String? phoneNumber;
+  int? auditStatus;
+
   void _handleRadioValueChanged(String? value) {
     setState(() {
       _radioGroup = value;
@@ -109,7 +118,13 @@ class _EditInfoPageState extends State<EditInfoPage> {
   XFile? _headFile; //头像
   ImageProvider _headFileImageProvider =
       AssetImage('assets/images/info_image_portrait.png');
-  List<XFile> _imageFileList = []; //专家认证
+
+  bool isUploadHeadImage=true;//是否需要上传头像 默认是需要上传的
+  List<XFile> _certificationImageFileList = []; //专家认证
+
+  bool isUploadCertificationImage=true;//是否需要上传专家认证 默认是需要上传的
+  String _headImageUrl='';//上传给后台的url
+  String _certificationImageUrl='';//上传给后台的url
   final ImagePicker _picker = ImagePicker();
   @override
   void initState() {
@@ -1053,7 +1068,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                               controller: _uPriceController,
                                               inputFormatters: [
                                                 LengthLimitingTextInputFormatter(
-                                                    10),
+                                                    10),InputFormat(),
                                               ],
                                               focusNode: _uPriceFocusNode,
                                               keyboardType: TextInputType
@@ -1339,7 +1354,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
   }
 
   Widget _previewImages() {
-    if (_imageFileList != null && _imageFileList!.length != 0) {
+    if (_certificationImageFileList != null && _certificationImageFileList!.length != 0) {
       return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               mainAxisExtent: 80,
@@ -1348,7 +1363,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
               //childAspectRatio: 1.0, //显示区域宽高相等
               crossAxisSpacing: 8 //列间距 每一列的间距
               ),
-          itemCount: _imageFileList!.length,
+          itemCount: _certificationImageFileList!.length,
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           key: UniqueKey(),
@@ -1356,7 +1371,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: GestureDetector(
-                child: Image.file(File(_imageFileList[index].path)),
+                child: Image.file(File(_certificationImageFileList[index].path)),
                 onTap: () {
                   //点击事件
                   gotoGalleryMultiImage();
@@ -1415,11 +1430,113 @@ class _EditInfoPageState extends State<EditInfoPage> {
     setState(() {
       // 当所有编辑框都失去焦点时键盘就会收起
       FocusScope.of(context).unfocus();
-      //TODO 调接口保存信息
-      Navigator.of(context).pop(); //密码修改成功，此页消失。
+      String cardId;
+      String? birthdate;
+      int? gender;
+      String name;
+      int price;
+      int? doctorType;
+      int? technicianType;
+      String hospital;
+      String ?description;
+      if (_uNameController.text.length==0) {
+        Fluttertoast.showToast(msg: "请输入姓名");
+        return;
+      }
+      if (_uIdCardController.text.length==0) {
+        Fluttertoast.showToast(msg: "请输入身份证号");
+        return;
+      }
+      IdCardUtil idCardUtil = new IdCardUtil(_uIdCardController.text);
+      if (idCardUtil.isCorrect() > 1) {
+        Fluttertoast.showToast(msg: "请输入正确格式的身份证号");
+        return;
+      }
+
+      if (_uHospitalController.text.length==0) {
+        Fluttertoast.showToast(msg: "请输入您的就职医院");
+        return;
+      }
+      if (_uPriceController.text.length==0) {
+        Fluttertoast.showToast(msg: "请输入您的问诊价格");
+        return;
+      }
+      if (double.parse(_uPriceController.text) > 1000) {
+        Fluttertoast.showToast(msg: "您输入的问诊价格已超出1000元");
+        return;
+      }
+      if (_certificationImageFileList.length==0) {
+        Fluttertoast.showToast(msg: "请上传您的认证资料图片");
+        return;
+      }
+      cardId=_uIdCardController.text;
+      if(uBirthDate.isNotEmpty){
+        birthdate=uBirthDate;
+      }
+      if(_radioGroup!=null&&_radioGroup!.isNotEmpty){
+        switch(_radioGroup){
+          case '男':
+            gender = 1;
+            break;
+          case '女':
+            gender = 2;
+            break;
+        }
+      }
+      name=_uNameController.text;
+      double tempPrice=double.parse(_uPriceController.text)*100;
+      price=int.parse(tempPrice.toStringAsFixed(0));
+      doctorType= getDoctorTypeKey(uDoctorTypeText);
+      technicianType=getTechnicianTypeKey(uTechnicianTypeText);
+      hospital=_uHospitalController.text;
+      description=_uDescriptionController.text;
+      //保存图片
+      executeUploadImage(cardId, birthdate, gender, name, price, doctorType, technicianType, hospital, description);
     });
   }
 
+  executeUploadImage(String cardId,
+      String? birthdate,
+      int? gender,
+      String name,
+      int price,
+      int? doctorType,
+      int? technicianType,
+      String hospital,
+      String ?description,
+      ) async{
+    if(isUploadHeadImage){
+      if(_headFile!=null){
+        var tempImageUrl=await uploadImage(File(_headFile!.path));
+        if(tempImageUrl!=null){
+          setState(() {
+            _headImageUrl=tempImageUrl;
+          });
+        }
+
+      }
+    }
+    if(isUploadCertificationImage){
+      if(_certificationImageFileList.length!=0){
+        var tempImageUrl=await uploadImage(File(_certificationImageFileList[0].path));
+        if(tempImageUrl!=null){
+          setState(() {
+            _certificationImageUrl=tempImageUrl;
+          });
+        }
+
+      }
+    }
+    String? headimgurl;
+    String? certificationImgUrl;
+    if(_headImageUrl.isNotEmpty){
+      headimgurl=_headImageUrl;
+    }
+    if(_certificationImageUrl.isNotEmpty){
+      certificationImgUrl=_certificationImageUrl;
+    }
+     await updateUserInfo(cardId, birthdate, gender, name, price, headimgurl, doctorType, technicianType, hospital, description, certificationImgUrl);
+  }
   Future<void> gotoGalleryMultiImage() async {
     final List<XFile> pickedFileList = await _picker.pickMultiImage(
         // maxWidth: 80,
@@ -1430,7 +1547,10 @@ class _EditInfoPageState extends State<EditInfoPage> {
     int length = pickedFileList.length;
     print("长度：$length");
     setState(() {
-      _imageFileList = pickedFileList;
+      _certificationImageFileList = pickedFileList;
+      if(_certificationImageFileList.length!=0){
+        isUploadCertificationImage=true;
+      }
     });
   }
 
@@ -1438,9 +1558,14 @@ class _EditInfoPageState extends State<EditInfoPage> {
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.camera,
     );
+    setHeadFile(pickedFile);
+  }
+
+  void setHeadFile(XFile? pickedFile) {
     setState(() {
       _headFile = pickedFile;
       _headFileImageProvider = FileImage(File(_headFile!.path));
+      isUploadHeadImage=true;
     });
   }
 
@@ -1448,10 +1573,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
     );
-    setState(() {
-      _headFile = pickedFile;
-      _headFileImageProvider = FileImage(File(_headFile!.path));
-    });
+    setHeadFile(pickedFile);
   }
 
   getUserInfoForEdit() async {
@@ -1484,8 +1606,15 @@ class _EditInfoPageState extends State<EditInfoPage> {
 
   setViewData(GetUserInfoForEditResponseDoctorExtend doctorExtend)  {
     setState(() {
+      if(doctorExtend.id!=null&&doctorExtend.id!=0){
+        id=doctorExtend.id;
+      }
+      if(doctorExtend.doctorId!=null&&doctorExtend.doctorId!=0){
+        doctorId=doctorExtend.doctorId;
+      }
       //审核状态
       if(doctorExtend.auditStatus!=null){
+        auditStatus=doctorExtend.auditStatus;
         switch(doctorExtend.auditStatus){
           case 1:
             auditStatusText='等待审核';
@@ -1510,13 +1639,18 @@ class _EditInfoPageState extends State<EditInfoPage> {
       }
 
       if (doctorExtend.headimgurl != null) {
+        _headImageUrl=doctorExtend.headimgurl!;
         //头像
         if (_headFile == null) {
           _headFile = XFile(doctorExtend.headimgurl!);
           _headFileImageProvider = NetworkImage(_headFile!.path);
         }
+        isUploadHeadImage=false;
       }
       _uNameController.text = doctorExtend.name!; //姓名
+      if(doctorExtend.phoneNumber!=null){
+        phoneNumber=doctorExtend.phoneNumber;
+      }
       _uIdCardController.text = doctorExtend.cardId!; //身份证
       if (doctorExtend.gender != null) {
         //性别
@@ -1549,8 +1683,10 @@ class _EditInfoPageState extends State<EditInfoPage> {
             .toStringAsFixed(2);
       }
       if (doctorExtend.certificationImgUrl != null) {
+        _certificationImageUrl=doctorExtend.certificationImgUrl!;
         //专家认证
         getImageFileList(doctorExtend.certificationImgUrl!);
+        isUploadCertificationImage=false;
 
       }
     });
@@ -1582,11 +1718,11 @@ class _EditInfoPageState extends State<EditInfoPage> {
   }
 
   int? getDoctorTypeKey(String doctorType) {
-    for (int i = 0; i < doctorTypeList.length; i++) {
-      if (doctorType == doctorTypeList[i].value) {
-        return int.tryParse(doctorTypeList[i].key!);
+      for (int i = 0; i < doctorTypeList.length; i++) {
+        if (doctorType == doctorTypeList[i].value) {
+          return int.tryParse(doctorTypeList[i].key!);
+        }
       }
-    }
     return null;
   }
 
@@ -1622,7 +1758,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
         File file=new File(savePath);
         if (file.existsSync() && file.length() != 0) {
           setState(() {
-            _imageFileList.add(XFile(file.path));
+            _certificationImageFileList.add(XFile(file.path));
           });
         }
       }
@@ -1641,9 +1777,8 @@ class _EditInfoPageState extends State<EditInfoPage> {
         await raf.close();
         if (file.existsSync() && file.length() != 0) {
           setState(() {
-            _imageFileList.add(XFile(file.path));
+            _certificationImageFileList.add(XFile(file.path));
           });
-          stsUploadResponse(file);
         }
       }
     }catch(e){
@@ -1668,7 +1803,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
 
   }
 
-  stsUploadResponse(File file) async{
+  uploadImage(File file) async{
     try {
       if (!LoginPrefs(context).isLogin()) {
         LoginPrefs(context).logout();
@@ -1680,7 +1815,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
       stsUploadResponseRequestEntity.fileType=1;
       stsUploadResponseRequestEntity.fileName=file.path;
       StsUploadResponseResponseEntity stsUploadResponseResponseEntity =
-      await NetWorkWithToken(context).stsUploadResponse(stsUploadResponseRequestEntity);
+      await NetWorkWithToken(context).stsUploadResponse(stsUploadResponseRequestEntity);//调接口获取oss需要的参数
       if (stsUploadResponseResponseEntity != null) {
         String accessKeyId=stsUploadResponseResponseEntity.accessKeyId;
         String accessKeySecret=stsUploadResponseResponseEntity.accessKeySecret;
@@ -1705,5 +1840,92 @@ class _EditInfoPageState extends State<EditInfoPage> {
       print(e.message!);
     } finally {}
   }
+  updateUserInfo(String cardId,
+      String? birthdate,
+      int? gender,
+      String name,
+      int price,
+      String? headimgurl,
+      int? doctorType,
+      int? technicianType,
+      String hospital,
+      String ?description,
+      String? certificationImgUrl,
+      )async{
+    try {
+      if (!LoginPrefs(context).isLogin()) {
+        LoginPrefs(context).logout();
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("login", ModalRoute.withName("login"));
+        return;
+      }
+      CreateOrUpdateDoctorExtendInputRequestEntity createOrUpdateDoctorExtendInputRequestEntity=new CreateOrUpdateDoctorExtendInputRequestEntity();
+      CreateOrUpdateDoctorExtendInputRequestDoctorExtend doctorExtend=new CreateOrUpdateDoctorExtendInputRequestDoctorExtend();
+      if(id!=null&&id!=0){
+        doctorExtend.id=id;
+      }
+
+      if(doctorId==null||doctorId==0){
+        if(LoginPrefs(context).getUserId()!=null&&LoginPrefs(context).getUserId()!.isNotEmpty){
+          doctorId=int.parse(LoginPrefs(context).getUserId()!);
+        }
+      }
+      doctorExtend.doctorId=doctorId;
+      doctorExtend.cardId=cardId;
+      if(birthdate!=null&&birthdate.isNotEmpty){
+        doctorExtend.birthdate=birthdate;
+      }
+      if(gender!=null){
+        doctorExtend.gender=gender;
+      }
+      doctorExtend.name=name;
+      doctorExtend.price=price;
+
+      if(headimgurl!=null&&headimgurl.isNotEmpty){
+        doctorExtend.headimgurl=headimgurl;
+      }
+      if(doctorType!=null){
+        doctorExtend.doctorType=doctorType;
+      }
+      if(technicianType!=null){
+        doctorExtend.technicianType=technicianType;
+      }
+      doctorExtend.hospital=hospital;
+
+      if(description!=null&&description.isNotEmpty){
+        doctorExtend.description=description;
+      }
+      if(certificationImgUrl!=null&&certificationImgUrl.isNotEmpty){
+        doctorExtend.certificationImgUrl=certificationImgUrl;
+      }
+      // if(phoneNumber!=null){
+      //   doctorExtend.phoneNumber=phoneNumber;
+      // }
+      // if(auditStatus!=null){
+      //   doctorExtend.auditStatus=auditStatus;
+      // }
+      doctorExtend.auditStatus=1;
+      createOrUpdateDoctorExtendInputRequestEntity.doctorExtend=doctorExtend;
+      UpdateUserInfoResponseEntity updateUserInfoResponseEntity=await NetWorkWithToken(context).updateUserInfo(createOrUpdateDoctorExtendInputRequestEntity);
+      if(updateUserInfoResponseEntity!=null){
+        if(updateUserInfoResponseEntity.msg!=null&&updateUserInfoResponseEntity.msg!.isNotEmpty){
+          //编辑失败
+          Fluttertoast.showToast(msg: updateUserInfoResponseEntity.msg!);
+          return;
+        }
+        //编辑成功继续
+        if(updateUserInfoResponseEntity.doctorExtend!=null){
+          Fluttertoast.showToast(msg: "编辑信息成功！");
+          Navigator.of(context).pop('refreshData'); //告诉前一页面需要刷新数据了
+        }
+
+      }
+    }on DioError catch(e){
+      print(e.message!);
+      }finally{
+
+    }
+  }
+
 
 }

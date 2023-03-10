@@ -91,11 +91,11 @@ class OssUtil{
     return left;
   }
 
-//这个时间要注意 首先要调用初始化
+//这个时间要注意 首先要调用初始化 因为是GMT时间，我们是东八区，所以当前时间要减去8小时
   String getGMTDateString() {
     initializeDateFormatting();
     var date = DateTime.now();
-    // date = date.subtract(const Duration(hours: 8));//当前时间减去8个小时
+    date = date.subtract(const Duration(hours: 8));//当前时间减去8个小时
     // date = date.add(const Duration(hours: 8));//当前时间加上8个小时
     return DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", 'en').format(date);
   }

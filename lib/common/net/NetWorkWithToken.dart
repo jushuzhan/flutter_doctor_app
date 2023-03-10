@@ -14,6 +14,7 @@ import '../../generated/json/paged_result_dto_response_entity_helper.dart';
 import '../../generated/json/update_exam_visit_status_input_request_entity_helper.dart';
 import '../../generated/json/common_input_response_entity_helper.dart';
 import '../../models/BaseBean.dart';
+import '../../models/create_or_update_doctor_extend_input_request_entity.dart';
 import '../../models/doctor_extend_by_doctor_id_response_entity.dart';
 import '../../models/get_current_user_info_response_entity.dart';
 import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
@@ -25,6 +26,7 @@ import '../../models/sts_upload_response_request_entity.dart';
 import '../../models/sts_upload_response_response_entity.dart';
 import '../../models/update_exam_visit_status_input_request_entity.dart';
 import '../../models/common_input_response_entity.dart';
+import '../../models/update_user_info_response_entity.dart';
 import '../../models/update_user_password_request_entity.dart';
 import '../../models/update_user_phone_request_entity.dart';
 import '../../models/user_info_settings_get_by_user_id_request_entity.dart';
@@ -175,5 +177,11 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
     print(r.data);
     return StsUploadResponseResponseEntity().fromJson(BaseBean(r.data).result);
   }
-
+  //编辑用户信息
+  Future<UpdateUserInfoResponseEntity> updateUserInfo(CreateOrUpdateDoctorExtendInputRequestEntity createOrUpdateDoctorExtendInputRequestEntity) async{
+    print('上传的json数据:${createOrUpdateDoctorExtendInputRequestEntity.toJson()}');
+    var r=await dio.post(UPDATE_USER_INFO,data:createOrUpdateDoctorExtendInputRequestEntity.toJson());
+    print(r.data);
+    return UpdateUserInfoResponseEntity().fromJson(BaseBean(r.data).result);
+  }
 }

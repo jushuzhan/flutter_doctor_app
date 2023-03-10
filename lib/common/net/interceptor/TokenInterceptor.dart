@@ -96,8 +96,38 @@ class TokenInterceptor extends Interceptor{
       // queue.add(_getTokenData(err,handler).then((value) => null));
       return handler.next(err);
 
+    }else if(err.response!=null&&err.response!.statusCode==456){
+//401代表token过期
+      String? userId = LoginPrefs(context).getUserId();
+      if (userId==null||userId.isEmpty) {
+        print("Interceptor:sp取到的userId为空");
+        handler.reject(err);
+        //如果sp取到userid为空，可以直接认为用户没有登录过，直接提示登录即可
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
+
+        return;
+      }
+
+      LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity=LogoutThisDeviceRequestEntity();
+      logoutThisDeviceRequestEntity.userId=userId!;
+      logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
+      logoutThisDeviceRequestEntity.clientId=CLIENT_ID;
+      logoutThisDeviceRequestEntity.deviceUUID=JIGUANGID;
+      BaseBean baseBean= await NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
+      if(baseBean!=null){
+        handler.reject(err);
+        print('Interceptor:退出设备${baseBean.success}');
+        LoginPrefs(context).logout();
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
+      }else{
+        LoginPrefs(context).logout();
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            "login", ModalRoute.withName("login"));
+      }
     }else{
-     return handler.next(err);
+    return handler.next(err);
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,7 @@ import 'models/user_info_settings_get_by_user_id_response_entity.dart';
 import 'package:dio/dio.dart';
 
 import 'models/user_info_settings_set_by_user_id_request_entity.dart';
-
+import 'common/event/event.dart';
 class PersonalPage extends StatefulWidget {
   @override
   _PersonalPageState createState() {
@@ -50,7 +51,7 @@ class _PersonalPageState extends State<PersonalPage> {
   String hospital='';
   String description='';
   bool isExpanded=false;//个人简介是否展开
-
+  var result;//从编辑信息返回数据是否需要刷新
 
   @override
   void initState() {
@@ -89,7 +90,7 @@ class _PersonalPageState extends State<PersonalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           titleSpacing: 15.0, //标题距离左边大小
@@ -103,7 +104,8 @@ class _PersonalPageState extends State<PersonalPage> {
                 width: 24,
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(result!=null
+                    ?'refreshData':null);
               }),
           actions: [
             GestureDetector(
@@ -134,7 +136,7 @@ class _PersonalPageState extends State<PersonalPage> {
                   children: [
                     Container(
                       constraints: BoxConstraints(
-                        minHeight:MediaQuery.of(context).size.height / 5
+                          minHeight:MediaQuery.of(context).size.height / 5
                       ),
                       child: Column(
                         children: <Widget>[
@@ -246,8 +248,16 @@ class _PersonalPageState extends State<PersonalPage> {
               ],
             ),
           ],
-        ));
+        )), onWillPop: onWillPop);
   }
+  //返回拦截
+    Future<bool> onWillPop() async{
+    if(result!=null){
+      //问诊申请界面需要刷新数据
+      eventBus.fire(MyEventRefresh(true));
+    }
+    return true;
+}
 
   //容器封装 @param textData 内容 @param onClick 点击事件
   GestureDetector getDetector(String textData, void Function() onClick) {
@@ -536,8 +546,7 @@ class _PersonalPageState extends State<PersonalPage> {
     return alertDialogs;
   }
   void skipEditInfo() async{
-    Navigator.pop(context);
-    var result= await Navigator.pushNamed(context, 'edit_info'); //跳转至编辑信息
+    result=await Navigator.pushNamed(context, 'edit_info'); //跳转至编辑信息
     if(result!=null){
       //重新调取接口
       getDoctorExtendInfo();
@@ -601,12 +610,21 @@ class _PersonalPageState extends State<PersonalPage> {
           if(doctorInfo!=null){
             print('${doctorInfo.headimgurl}');
             print('${doctorInfo.name}');
-            backgroundImage=NetworkImage(doctorInfo.headimgurl!);
+            if(doctorInfo.headimgurl!=null){
+              backgroundImage=NetworkImage(doctorInfo.headimgurl!);
+            }
+
             name=doctorInfo.name!;
 
 
-            if(doctorInfo.auditStatus!=null&& doctorInfo.auditStatus==2){//已审核
-             isAudit=true;
+            if(doctorInfo.auditStatus!=null){//已审核
+              if(doctorInfo.auditStatus==2){
+                isAudit=true;
+              }else{
+                isAudit=false;
+              }
+
+
              switch(doctorInfo.auditStatus){
                case 1:
                  auditStatus='等待审核';
@@ -618,8 +636,6 @@ class _PersonalPageState extends State<PersonalPage> {
                  auditStatus='审核未过';
                  break;
              }
-            }else{
-              isAudit=false;
             }
             if(doctorInfo.doctorType!=null){
               for (var i = 0; i < getDoctorType().length; i++) {

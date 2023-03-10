@@ -9,6 +9,8 @@ import 'package:flutter_doctor_app/models/common_input_response_entity.dart';
 import 'package:flutter_doctor_app/generated/json/common_input_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/get_current_user_info_response_entity.dart';
 import 'package:flutter_doctor_app/generated/json/get_current_user_info_response_entity_helper.dart';
+import 'package:flutter_doctor_app/models/create_or_update_doctor_extend_input_request_entity.dart';
+import 'package:flutter_doctor_app/generated/json/create_or_update_doctor_extend_input_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import 'package:flutter_doctor_app/generated/json/get_paged_exam_visit_for_doctor_input_entity_helper.dart';
 import 'package:flutter_doctor_app/models/get_paged_order_response_entity.dart';
@@ -17,6 +19,8 @@ import 'package:flutter_doctor_app/models/create_auth_code_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/create_auth_code_request_entity_helper.dart';
 import 'package:flutter_doctor_app/models/update_user_password_request_entity.dart';
 import 'package:flutter_doctor_app/generated/json/update_user_password_request_entity_helper.dart';
+import 'package:flutter_doctor_app/models/update_user_info_response_entity.dart';
+import 'package:flutter_doctor_app/generated/json/update_user_info_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/paged_result_dto_response_entity.dart';
 import 'package:flutter_doctor_app/generated/json/paged_result_dto_response_entity_helper.dart';
 import 'package:flutter_doctor_app/models/make_conclusion_input_request_entity.dart';
@@ -67,6 +71,10 @@ class JsonConvert<T> {
 				return commonInputResponseEntityFromJson(data as CommonInputResponseEntity, json) as T;
 			case GetCurrentUserInfoResponseEntity:
 				return getCurrentUserInfoResponseEntityFromJson(data as GetCurrentUserInfoResponseEntity, json) as T;
+			case CreateOrUpdateDoctorExtendInputRequestEntity:
+				return createOrUpdateDoctorExtendInputRequestEntityFromJson(data as CreateOrUpdateDoctorExtendInputRequestEntity, json) as T;
+			case CreateOrUpdateDoctorExtendInputRequestDoctorExtend:
+				return createOrUpdateDoctorExtendInputRequestDoctorExtendFromJson(data as CreateOrUpdateDoctorExtendInputRequestDoctorExtend, json) as T;
 			case GetPagedExamVisitForDoctorInputEntity:
 				return getPagedExamVisitForDoctorInputEntityFromJson(data as GetPagedExamVisitForDoctorInputEntity, json) as T;
 			case GetPagedOrderResponseEntity:
@@ -85,6 +93,10 @@ class JsonConvert<T> {
 				return createAuthCodeRequestEntityFromJson(data as CreateAuthCodeRequestEntity, json) as T;
 			case UpdateUserPasswordRequestEntity:
 				return updateUserPasswordRequestEntityFromJson(data as UpdateUserPasswordRequestEntity, json) as T;
+			case UpdateUserInfoResponseEntity:
+				return updateUserInfoResponseEntityFromJson(data as UpdateUserInfoResponseEntity, json) as T;
+			case UpdateUserInfoResponseDoctorExtend:
+				return updateUserInfoResponseDoctorExtendFromJson(data as UpdateUserInfoResponseDoctorExtend, json) as T;
 			case PagedResultDtoResponseEntity:
 				return pagedResultDtoResponseEntityFromJson(data as PagedResultDtoResponseEntity, json) as T;
 			case PagedResultDtoResponseItems:
@@ -132,6 +144,10 @@ class JsonConvert<T> {
 				return commonInputResponseEntityToJson(data as CommonInputResponseEntity);
 			case GetCurrentUserInfoResponseEntity:
 				return getCurrentUserInfoResponseEntityToJson(data as GetCurrentUserInfoResponseEntity);
+			case CreateOrUpdateDoctorExtendInputRequestEntity:
+				return createOrUpdateDoctorExtendInputRequestEntityToJson(data as CreateOrUpdateDoctorExtendInputRequestEntity);
+			case CreateOrUpdateDoctorExtendInputRequestDoctorExtend:
+				return createOrUpdateDoctorExtendInputRequestDoctorExtendToJson(data as CreateOrUpdateDoctorExtendInputRequestDoctorExtend);
 			case GetPagedExamVisitForDoctorInputEntity:
 				return getPagedExamVisitForDoctorInputEntityToJson(data as GetPagedExamVisitForDoctorInputEntity);
 			case GetPagedOrderResponseEntity:
@@ -150,6 +166,10 @@ class JsonConvert<T> {
 				return createAuthCodeRequestEntityToJson(data as CreateAuthCodeRequestEntity);
 			case UpdateUserPasswordRequestEntity:
 				return updateUserPasswordRequestEntityToJson(data as UpdateUserPasswordRequestEntity);
+			case UpdateUserInfoResponseEntity:
+				return updateUserInfoResponseEntityToJson(data as UpdateUserInfoResponseEntity);
+			case UpdateUserInfoResponseDoctorExtend:
+				return updateUserInfoResponseDoctorExtendToJson(data as UpdateUserInfoResponseDoctorExtend);
 			case PagedResultDtoResponseEntity:
 				return pagedResultDtoResponseEntityToJson(data as PagedResultDtoResponseEntity);
 			case PagedResultDtoResponseItems:
@@ -201,6 +221,12 @@ class JsonConvert<T> {
 		if(type == (GetCurrentUserInfoResponseEntity).toString()){
 			return GetCurrentUserInfoResponseEntity().fromJson(json);
 		}
+		if(type == (CreateOrUpdateDoctorExtendInputRequestEntity).toString()){
+			return CreateOrUpdateDoctorExtendInputRequestEntity().fromJson(json);
+		}
+		if(type == (CreateOrUpdateDoctorExtendInputRequestDoctorExtend).toString()){
+			return CreateOrUpdateDoctorExtendInputRequestDoctorExtend().fromJson(json);
+		}
 		if(type == (GetPagedExamVisitForDoctorInputEntity).toString()){
 			return GetPagedExamVisitForDoctorInputEntity().fromJson(json);
 		}
@@ -227,6 +253,12 @@ class JsonConvert<T> {
 		}
 		if(type == (UpdateUserPasswordRequestEntity).toString()){
 			return UpdateUserPasswordRequestEntity().fromJson(json);
+		}
+		if(type == (UpdateUserInfoResponseEntity).toString()){
+			return UpdateUserInfoResponseEntity().fromJson(json);
+		}
+		if(type == (UpdateUserInfoResponseDoctorExtend).toString()){
+			return UpdateUserInfoResponseDoctorExtend().fromJson(json);
 		}
 		if(type == (PagedResultDtoResponseEntity).toString()){
 			return PagedResultDtoResponseEntity().fromJson(json);
@@ -297,6 +329,12 @@ class JsonConvert<T> {
 		if(<GetCurrentUserInfoResponseEntity>[] is M){
 			return data.map<GetCurrentUserInfoResponseEntity>((e) => GetCurrentUserInfoResponseEntity().fromJson(e)).toList() as M;
 		}
+		if(<CreateOrUpdateDoctorExtendInputRequestEntity>[] is M){
+			return data.map<CreateOrUpdateDoctorExtendInputRequestEntity>((e) => CreateOrUpdateDoctorExtendInputRequestEntity().fromJson(e)).toList() as M;
+		}
+		if(<CreateOrUpdateDoctorExtendInputRequestDoctorExtend>[] is M){
+			return data.map<CreateOrUpdateDoctorExtendInputRequestDoctorExtend>((e) => CreateOrUpdateDoctorExtendInputRequestDoctorExtend().fromJson(e)).toList() as M;
+		}
 		if(<GetPagedExamVisitForDoctorInputEntity>[] is M){
 			return data.map<GetPagedExamVisitForDoctorInputEntity>((e) => GetPagedExamVisitForDoctorInputEntity().fromJson(e)).toList() as M;
 		}
@@ -323,6 +361,12 @@ class JsonConvert<T> {
 		}
 		if(<UpdateUserPasswordRequestEntity>[] is M){
 			return data.map<UpdateUserPasswordRequestEntity>((e) => UpdateUserPasswordRequestEntity().fromJson(e)).toList() as M;
+		}
+		if(<UpdateUserInfoResponseEntity>[] is M){
+			return data.map<UpdateUserInfoResponseEntity>((e) => UpdateUserInfoResponseEntity().fromJson(e)).toList() as M;
+		}
+		if(<UpdateUserInfoResponseDoctorExtend>[] is M){
+			return data.map<UpdateUserInfoResponseDoctorExtend>((e) => UpdateUserInfoResponseDoctorExtend().fromJson(e)).toList() as M;
 		}
 		if(<PagedResultDtoResponseEntity>[] is M){
 			return data.map<PagedResultDtoResponseEntity>((e) => PagedResultDtoResponseEntity().fromJson(e)).toList() as M;

@@ -19,6 +19,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'models/doctor_extend_by_doctor_id_response_entity.dart';
 import 'models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import 'models/paged_result_dto_response_entity.dart';
+import 'common/event/event.dart';
 
 
 void main() async{
@@ -87,6 +88,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     //监听tab切换的回调
     _tabController.addListener(() {
       var index=_tabController.index;
+    });
+
+    eventBus.on<MyEventRefresh>().listen((event) {
+      // All events are of type MyEventRefresh (or subtypes of it).
+      print(event.isRefresh);
+      if(event.isRefresh){
+        //需要刷新数据
+        getDoctorExtendInfo();
+      }
     });
 
   }
