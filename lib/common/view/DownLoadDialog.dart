@@ -57,23 +57,33 @@ class _DownloadDialogState extends State<DownloadDialog>{
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Padding(
+            child: Image.asset(
+              'assets/images/image_upgrade.png',
+              width: MediaQuery.of(context).size.width,
+              height: 139,
+              fit: BoxFit.fill,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 28),
+          ),
           Container(
-            color: Colors.white,
-            width: 320,
+            margin: EdgeInsets.symmetric(horizontal: 28),
+            decoration: BoxDecoration(
+              color:  Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(6),bottomRight: Radius.circular(6))
+            ),
             child: Stack(
               children: <Widget>[
-                Image.asset(
-                  'assets/images/image_upgrade.png',
-                  fit: BoxFit.cover,
-                ),
                 Container(
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(top: 135),
+                        margin: EdgeInsets.only(top: 74),
                         child: Text(
                           widget.percent,
                           style:
@@ -81,17 +91,20 @@ class _DownloadDialogState extends State<DownloadDialog>{
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 40),
+                        margin: EdgeInsets.only(top: 8,left: 40,right: 40),
                         height: 12,
-                        child: LinearProgressIndicator(
-                          value: widget.progress,
-                          backgroundColor: Color(0xFFEEEEEE),
-                          valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xff30c1b5)),
-                        ),
+                        child:ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                          child: LinearProgressIndicator(
+                            value: widget.progress,
+                            backgroundColor: Color(0xFFEEEEEE),
+                            valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xff30c1b5)),
+                          ),
+                        )
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 40, bottom: 20),
+                        padding: EdgeInsets.only(top: 40, bottom: 73),
                         child: Text(
                           '新版本正在更新，请稍等…',
                           style:

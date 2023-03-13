@@ -273,7 +273,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 ),
                                 onTap: () {
                                   Navigator.pop(context); //关闭弹窗
-                                  Navigator.of(context).pop(); //关闭当前页面
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      "home", ModalRoute.withName("home"));
                                 },
                               ),
                               flex: 1,
