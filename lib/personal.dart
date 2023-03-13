@@ -52,6 +52,7 @@ class _PersonalPageState extends State<PersonalPage> {
   String description='';
   bool isExpanded=false;//个人简介是否展开
   var result;//从编辑信息返回数据是否需要刷新
+  var alertDialog;
 
   @override
   void initState() {
@@ -69,7 +70,7 @@ class _PersonalPageState extends State<PersonalPage> {
       };
       onEditInfoClick = () => {
         if(auditStatus=='审核通过'){
-          _alertDialog(),
+          alertDialog= _alertDialog(),
       }else{
         skipEditInfo(),//跳转至编辑信息
       }
@@ -546,6 +547,9 @@ class _PersonalPageState extends State<PersonalPage> {
     return alertDialogs;
   }
   void skipEditInfo() async{
+    if(alertDialog!=null){
+      Navigator.pop(context);
+    }
     result=await Navigator.pushNamed(context, 'edit_info'); //跳转至编辑信息
     if(result!=null){
       //重新调取接口

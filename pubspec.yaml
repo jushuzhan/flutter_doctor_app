@@ -49,6 +49,7 @@ dev_dependencies:
   permission_handler: ^10.2.0 #权限处理
   crypto: ^3.0.2 #加密处理
   intl: ^0.18.0 #国际化
+  open_file: ^3.2.1 #打开文件
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

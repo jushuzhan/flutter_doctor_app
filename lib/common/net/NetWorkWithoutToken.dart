@@ -19,6 +19,7 @@ import '../../models/bind_phone_request_entity.dart';
 import '../../models/bind_phone_response_entity.dart';
 import '../../models/common_input_response_entity.dart';
 import '../../models/create_auth_code_request_entity.dart';
+import '../../models/get_current_app_vision_response_entity.dart';
 import '../../models/logout_this_device_request_entity.dart';
 import '../../models/reset_user_password_request_entity.dart';
 import '../../models/set_password_input_request_entity.dart';
@@ -120,5 +121,13 @@ Future<BaseBean> logoutThisDevice(LogoutThisDeviceRequestEntity logoutThisDevice
     }
     return null;
 
+  }
+  Future<GetCurrentAppVisionResponseEntity> getCurrentAppVision(int appType,int appPlatform) async{
+    var r=await dio.get(GET_CURRENT_APP_VEERSION,queryParameters:{
+    'AppType': appType,
+    'AppPlatform': appPlatform
+    });
+    print(r.data);
+    return GetCurrentAppVisionResponseEntity().fromJson(BaseBean(r.data).result);
   }
 }

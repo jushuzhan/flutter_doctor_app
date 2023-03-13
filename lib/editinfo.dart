@@ -159,6 +159,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
           //删除按钮不显示
           nameSuffixIconIsVisible = false;
         }
+        setSaveState();
       });
     });
     _uIdCardController.addListener(() {
@@ -170,6 +171,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
           //删除按钮不显示
           idCardSuffixIconIsVisible = false;
         }
+        setSaveState();
       });
     });
     _uHospitalController.addListener(() {
@@ -1190,6 +1192,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
         //删除所有的输入的文字
         setState(() {
           editingController.clear();
+          setSaveState();
         });
       },
       child: Image(

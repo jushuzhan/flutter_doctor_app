@@ -23,3 +23,8 @@ class MyEventRefresh{
   bool isRefresh=false;//默认不需要刷新
   MyEventRefresh(this.isRefresh);
 }
+class MyEventProgress{
+  String percent;
+  double progress;
+  MyEventProgress(this.percent,this.progress);
+}
