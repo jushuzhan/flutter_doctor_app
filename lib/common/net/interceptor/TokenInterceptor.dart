@@ -17,15 +17,21 @@ import '../NetWorkWithToken.dart';
 import '../NetWorkWithoutToken.dart';
 
 
-class TokenInterceptor extends Interceptor{
+class TokenInterceptor extends QueuedInterceptor{
   late Dio _dio;
   bool isReLogin = false;
   Queue queue = new Queue();
   TokenInterceptor(this._dio);
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
     // TODO: implement onRequest
     print('REQUEST[${options.method}] => PATH: ${options.path}');
+    // 设置用户token（可能为null，代表未登录）
+    String? token=await LoginPrefs(_dio.options.extra['context']).getToken();//options中包含context
+    print('token init :$token');
+    if(token!=null&&token.isNotEmpty){
+      options.headers[HttpHeaders.authorizationHeader] = 'Bearer '+token!;
+    }
     super.onRequest(options, handler);
   }
   @override
@@ -41,12 +47,15 @@ class TokenInterceptor extends Interceptor{
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     // TODO: implement onError
+    if(err.response==null){
+      return;
+    }
     //print('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
     print('Interceptor:ERROR');
     print('Interceptor:${err.response?.statusCode}');
     //BuildContext context= err.requestOptions.extra['context'];
     BuildContext context=navigatorKey.currentState!.context;
-    if(err.response!=null&&err.response!.statusCode==401){
+    if(err.response!.statusCode==401){
       //401代表token过期
       String? userId = LoginPrefs(context).getUserId();
       if (userId==null||userId.isEmpty) {
@@ -60,16 +69,18 @@ class TokenInterceptor extends Interceptor{
       }
 
       RefreshTokenRequest refreshTokenRequest=RefreshTokenRequest(clientId: CLIENT_ID, userId: userId, deviceUUID: JIGUANGID);
-      RefreshTokenResponse refreshTokenResponse =await NetWorkWithoutToken(
+      Future<RefreshTokenResponse> refreshTokenResponse = NetWorkWithoutToken(
           context).refreshToken(refreshTokenRequest);
-        if(refreshTokenResponse.success!=null&&refreshTokenResponse.success==true&&refreshTokenResponse.accessToken!=null&&refreshTokenResponse.accessToken!.isNotEmpty){
+      refreshTokenResponse.then((value) {
+        if(value.success!=null&&value.success==true&&value.accessToken!=null&&value.accessToken!.isNotEmpty){
           print("Interceptor:刷新token成功，用新token重新发送请求");
-          print('Interceptor:${refreshTokenResponse.accessToken!}');
-          LoginPrefs(context).setAccessToken(refreshTokenResponse.accessToken!);
-          Response<dynamic> response=await _retry(err.requestOptions);
-          // if(err.response?.statusCode!=200){
-          //   handler.reject(err);
-          // }
+          print('Interceptor:${value.accessToken!}');
+          LoginPrefs(context).setAccessToken(value.accessToken!);
+          // Response<dynamic> response=await _retry(err.requestOptions);
+          // // if(err.response?.statusCode!=200){
+          // //   handler.reject(err);
+          // // }
+          err.requestOptions.headers[HttpHeaders.authorizationHeader] = 'Bearer '+value.accessToken!;
 
         }else{
           //直接跳登录
@@ -90,10 +101,14 @@ class TokenInterceptor extends Interceptor{
           });
 
         }
-        //handler.next(err);
-
-
-      // queue.add(_getTokenData(err,handler).then((value) => null));
+      }).then((value) {
+        //再发送请求
+        _dio.fetch(err.requestOptions).then((response) => handler.resolve(response),
+        onError: (e){
+          handler.reject(e);
+        }
+        );
+      });
       return handler.next(err);
 
     }else if(err.response!=null&&err.response!.statusCode==456){

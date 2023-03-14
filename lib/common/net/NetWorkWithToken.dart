@@ -54,13 +54,8 @@ class NetWorkWithToken {
   ));
 
   static void init() async{
-    // 添加缓存插件
+    // 添加拦截器
      dio.interceptors.add(TokenInterceptor(dio,));
-    // 设置用户token（可能为null，代表未登录）
-    String? token=await LoginPrefs(dio.options.extra['context']).getToken();
-    print('token init :$token');
-    dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer '+token!;
-
   }
 
   // // 登录接口，登录成功后返回用户信息

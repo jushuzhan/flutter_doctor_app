@@ -24,6 +24,7 @@ import '../../models/logout_this_device_request_entity.dart';
 import '../../models/reset_user_password_request_entity.dart';
 import '../../models/set_password_input_request_entity.dart';
 import '../../models/user_info_register_request_entity.dart';
+import 'interceptor/WithoutTokenInterceptor.dart';
 export 'package:dio/dio.dart' show DioError;
 
 class NetWorkWithoutToken {
@@ -37,14 +38,14 @@ class NetWorkWithoutToken {
   late Options _options;
   static Dio dio = new Dio(BaseOptions(
     baseUrl: baseUrl,
-    contentType: 'application/json',
+    contentType: 'application/json; charset=utf-8',
     headers: {
       HttpHeaders.acceptHeader: "*",
     },
   ));
 
   static void init() {
-    dio.options.contentType="application/json; charset=utf-8";
+    dio.interceptors.add(WithoutTokenInterceptor(dio,));
 
   }
 

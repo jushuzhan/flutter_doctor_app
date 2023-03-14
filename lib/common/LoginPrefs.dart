@@ -135,10 +135,9 @@ class LoginPrefs {
         RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest(
             clientId: CLIENT_ID, userId: userId, deviceUUID: JIGUANGID);
 
-        Future<RefreshTokenResponse> refreshTokenResponse = NetWorkWithoutToken(
+       RefreshTokenResponse refreshTokenResponse = await NetWorkWithoutToken(
             context).refreshToken(refreshTokenRequest);
-        refreshTokenResponse.then((RefreshTokenResponse value) {
-          if (value == null) {
+          if (refreshTokenResponse == null) {
             LogoutThisDeviceRequestEntity logoutThisDeviceRequestEntity=LogoutThisDeviceRequestEntity();
             logoutThisDeviceRequestEntity.userId=userId!;
             logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
@@ -152,14 +151,14 @@ class LoginPrefs {
                   "login", ModalRoute.withName("login"));
             });
           } else {
-            if (value.success != null && value.success == true &&
-                value.accessToken != null && value.expiresIn != null) {
+            if (refreshTokenResponse.success != null && refreshTokenResponse.success == true &&
+                refreshTokenResponse.accessToken != null && refreshTokenResponse.expiresIn != null) {
               print(
                   "UserUtil刷新token成功，将新的token、expiresIn、lastGetTokenTime保存到本地，并返回刷新出来的token");
-              token = value.accessToken;
+              token = refreshTokenResponse.accessToken;
               setAccessToken(token!);
               print("新的token保存成功");
-              setExpiresIn(value.expiresIn);
+              setExpiresIn(refreshTokenResponse.expiresIn);
               print("新的expiresIn保存成功");
               setLastGetTokenTime(getCurrentTime() / 1000);
               print("新的lastGetTokenTime保存成功");
@@ -171,16 +170,16 @@ class LoginPrefs {
               logoutThisDeviceRequestEntity.loginType=LOGIN_TYPE;
               logoutThisDeviceRequestEntity.clientId=CLIENT_ID;
               logoutThisDeviceRequestEntity.deviceUUID=JIGUANGID;
-              Future<BaseBean> baseBean=NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
-              baseBean.then((value) {
-                print(value.success);
+              BaseBean baseBean= await NetWorkWithoutToken(context).logoutThisDevice(logoutThisDeviceRequestEntity);
+              if(baseBean!=null){
+                print(baseBean.success);
                 logout();
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     "login", ModalRoute.withName("login"));
-              });
+              }
             }
           }
-        });
+
       }
       return token;
     }
