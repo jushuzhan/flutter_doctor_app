@@ -110,6 +110,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
   int? auditStatus;
 
   void _handleRadioValueChanged(String? value) {
+    unFocus();
     setState(() {
       _radioGroup = value;
     });
@@ -328,6 +329,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        unFocus();
                                         _showHeadBottomSheet().then((index) {
                                           switch (index) {
                                             case 0:
@@ -371,7 +373,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //姓名
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -413,6 +415,8 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     color: Color(0xFFCCCCCC),
                                                     fontSize: 12),
                                                 border: InputBorder.none,
+                                                contentPadding:
+                                                EdgeInsets.all(0),
                                                 suffix: nameSuffixIconIsVisible
                                                     ? nameSuffixIcon
                                                     : null,
@@ -445,7 +449,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //身份证
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -487,6 +491,8 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     color: Color(0xFFCCCCCC),
                                                     fontSize: 12),
                                                 border: InputBorder.none,
+                                                contentPadding:
+                                                EdgeInsets.all(0),
                                                 suffix:
                                                     idCardSuffixIconIsVisible
                                                         ? idCardSuffixIcon
@@ -525,7 +531,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             //性别
                             Container(
                               alignment: Alignment.center,
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -568,6 +574,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                             child: RadioListTile(
                                               title: Text(
                                                 "男",
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: "男" == _radioGroup
@@ -586,6 +593,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                           Flexible(
                                               child: RadioListTile(
                                             title: Text("女",
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: "女" == _radioGroup
@@ -607,7 +615,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //出生日期
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -642,6 +650,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                 Expanded(
                                                   child: GestureDetector(
                                                     onTap: () {
+                                                      unFocus();
                                                       showDatePicker();
                                                     },
                                                     child: Text(
@@ -682,7 +691,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //职称
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -717,6 +726,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                 Expanded(
                                                   child: GestureDetector(
                                                     onTap: () {
+                                                      unFocus();
                                                       _showDoctorTypeModalBottomSheet()
                                                           .then((int? index) {
                                                         print("职称index:$index");
@@ -779,7 +789,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //技师资格
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -814,6 +824,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                 Expanded(
                                                   child: GestureDetector(
                                                     onTap: () {
+                                                      unFocus();
                                                       _showTechnicianTypeModalBottomSheet()
                                                           .then((int? index) {
                                                         print("技师index:$index");
@@ -876,7 +887,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //就职医院
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -918,6 +929,8 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     color: Color(0xFFCCCCCC),
                                                     fontSize: 12),
                                                 border: InputBorder.none,
+                                                contentPadding:
+                                                EdgeInsets.all(0),
                                                 suffix:
                                                     hospitalSuffixIconIsVisible
                                                         ? hospitalSuffixIcon
@@ -1021,7 +1034,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
                             ),
                             //问诊价格
                             Container(
-                              padding: EdgeInsets.only(top: 8),
+                              margin: EdgeInsets.only(top: 8),
                               height: 50,
                               child: Stack(
                                 alignment: Alignment.centerLeft,
@@ -1063,6 +1076,8 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                                     color: Color(0xFFCCCCCC),
                                                     fontSize: 12),
                                                 border: InputBorder.none,
+                                                contentPadding:
+                                                EdgeInsets.all(0),
                                                 suffix: priceSuffixIconIsVisible
                                                     ? priceSuffixIcon
                                                     : null,
@@ -1394,6 +1409,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
             onTap: () {
               //TODO 去相册选择图片
               //gotoGallery().then((value) => null);
+              unFocus();
               gotoGalleryMultiImage();
             },
           ),
@@ -1929,6 +1945,25 @@ class _EditInfoPageState extends State<EditInfoPage> {
 
     }
   }
+  unFocus(){
+  setState(() {
+    if(_uNameFocusNode.hasFocus){
+      _uNameFocusNode.unfocus();
+    }
+    if(_uIdCardFocusNode.hasFocus){
+      _uIdCardFocusNode.unfocus();
+    }
+    if(_uHospitalFocusNode.hasFocus){
+      _uHospitalFocusNode.unfocus();
+    }
+    if(_uDescriptionFocusNode.hasFocus){
+      _uDescriptionFocusNode.unfocus();
+    }
+    if(_uPriceFocusNode.hasFocus){
+      _uPriceFocusNode.unfocus();
+    }
+  });
 
+}
 
 }

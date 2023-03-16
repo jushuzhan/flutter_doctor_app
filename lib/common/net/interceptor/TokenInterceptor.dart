@@ -15,7 +15,7 @@ import '../../../models/logout_this_device_request_entity.dart';
 import '../../constants/constants.dart';
 import '../NetWorkWithToken.dart';
 import '../NetWorkWithoutToken.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TokenInterceptor extends QueuedInterceptor{
   late Dio _dio;
@@ -141,8 +141,11 @@ class TokenInterceptor extends QueuedInterceptor{
         Navigator.of(context).pushNamedAndRemoveUntil(
             "login", ModalRoute.withName("login"));
       }
-    }else{
+    }else if(err.response!=null&&err.response!.statusCode==500){
+      Fluttertoast.showToast(msg: "服务器错误");
     return handler.next(err);
+    }else{
+      return handler.next(err);
     }
   }
 
