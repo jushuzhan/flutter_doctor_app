@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_doctor_app/common/LoginPrefs.dart';
+import 'package:flutter_doctor_app/message/ChatPage.dart';
 import 'package:flutter_doctor_app/register.dart';
 import '../about.dart';
 import '../auditRecord.dart';
@@ -44,6 +45,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     'order_list':OrderListPage(),//定义订单列表路径
     'conclusion':FillInConclusionPage(),//定义填写结论路径
     'auditRecord':AuditRecordPage(),//定义检查记录路径
+    'chat':ChatPage(),//定义聊天界面路径
   };
 
   String routerName = routeBeforeHook(settings);

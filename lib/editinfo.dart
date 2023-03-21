@@ -265,99 +265,397 @@ class _EditInfoPageState extends State<EditInfoPage> {
         //状态栏字体为黑色
         elevation: 0.0,
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            //内容部分 左右各间距15
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            //审核状态
-                            Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 32),
-                                    height: 32,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      '审核状态：$auditStatusText',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Color(auditStatusTextColor)),
-                                    ),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(16),
-                                        ),
-                                        color:
-                                            Color(auditStatusBackgroundColor)),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //头像
-                            Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: SizedBox(
-                                height: 96,
-                                width: MediaQuery.of(context).size.width,
+      body: Column(
+            children: <Widget>[
+              //内容部分 左右各间距15
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              //审核状态
+                              Padding(
+                                padding: EdgeInsets.only(top: 8),
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Expanded(
+                                    Container(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 32),
+                                      height: 32,
+                                      alignment: Alignment.center,
                                       child: Text(
-                                        '头像',
+                                        '审核状态：$auditStatusText',
                                         style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color(0xFF666666),
+                                            fontSize: 12,
+                                            color: Color(auditStatusTextColor)),
+                                      ),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(16),
+                                          ),
+                                          color:
+                                          Color(auditStatusBackgroundColor)),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              //头像
+                              Padding(
+                                padding: EdgeInsets.only(top: 8),
+                                child: SizedBox(
+                                  height: 96,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          '头像',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Color(0xFF666666),
+                                          ),
+                                        ),
+                                        flex: 1,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async{
+                                          unFocus();
+                                          int ?index=await _showHeadBottomSheet();
+                                            switch (index) {
+                                              case 0:
+                                                gotoCamera();
+                                                break;
+                                              case 1:
+                                                gotoGallery();
+                                                break;
+                                            }
+
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            CircleAvatar(
+                                              backgroundImage:
+                                              _headFileImageProvider,
+                                              radius: 28, //圆形半径
+                                            ),
+                                            Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.only(left: 8),
+                                              child: Image.asset(
+                                                'assets/images/button_icon_continue.png',
+                                                height: 16,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      flex: 1,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        unFocus();
-                                        _showHeadBottomSheet().then((index) {
-                                          switch (index) {
-                                            case 0:
-                                              gotoCamera();
-                                              break;
-                                            case 1:
-                                              gotoGallery();
-                                              break;
-                                          }
-                                        });
-                                      },
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          CircleAvatar(
-                                            backgroundImage:
-                                                _headFileImageProvider,
-                                            radius: 28, //圆形半径
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              //分割线
+                              Divider(
+                                height: 1,
+                                color: Color(0xFFeeeeee),
+                              ),
+                              //姓名
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
+                                      children: <Widget>[
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '姓名 ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                              TextSpan(
+                                                text: '*',
+                                                style: TextStyle(
+                                                    color: Color(0xFFE65D4E)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
                                           ),
-                                          Container(
-                                            alignment: Alignment.center,
-                                            padding: EdgeInsets.only(left: 8),
-                                            child: Image.asset(
-                                              'assets/images/button_icon_continue.png',
-                                              height: 16,
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  hintText: "请输入您的姓名",
+                                                  hintStyle: TextStyle(
+                                                      color: Color(0xFFCCCCCC),
+                                                      fontSize: 12),
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  EdgeInsets.all(0),
+                                                  suffix: nameSuffixIconIsVisible
+                                                      ? nameSuffixIcon
+                                                      : null,
+                                                ),
+                                                controller: _uNameController,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      64),
+                                                ],
+                                                focusNode: _uNameFocusNode,
+                                                keyboardType: TextInputType.name,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF333333),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
                                             ),
+                                            flex: 1,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              //身份证
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
+                                      children: <Widget>[
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '身份证  ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                              TextSpan(
+                                                text: '*',
+                                                style: TextStyle(
+                                                    color: Color(0xFFE65D4E)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  hintText: "请输入您的身份证号码",
+                                                  hintStyle: TextStyle(
+                                                      color: Color(0xFFCCCCCC),
+                                                      fontSize: 12),
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  EdgeInsets.all(0),
+                                                  suffix:
+                                                  idCardSuffixIconIsVisible
+                                                      ? idCardSuffixIcon
+                                                      : null,
+                                                ),
+                                                controller: _uIdCardController,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter(
+                                                      RegExp("[0-9]|X|x"),
+                                                      allow: true),
+                                                  //只能输入字母或数字],
+                                                  LengthLimitingTextInputFormatter(
+                                                      18),
+                                                ],
+                                                focusNode: _uIdCardFocusNode,
+                                                keyboardType: TextInputType.name,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF333333),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
+                                            ),
+                                            flex: 1,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              //性别
+                              Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
+                                      children: <Widget>[
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '性别  ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Container(
+                                        alignment: Alignment.centerRight,
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    color: Color(0xFFEEEEEE)))),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Spacer(
+                                              flex: 3,
+                                            ),
+                                            Text('男',style: TextStyle(
+                                              fontSize: 16,
+                                                color: "男" == _radioGroup
+                                                    ? Color(0xFF333333)
+                                                    : Color(0xFF999999)
+                                            ),),
+                                            Radio(value: ('男'), groupValue: _radioGroup, onChanged: _handleRadioValueChanged),
+                                            Text('女',style: TextStyle(
+                                                fontSize: 16,
+                                                color: "女" == _radioGroup
+                                                    ? Color(0xFF333333)
+                                                    : Color(0xFF999999)
+                                            ),),
+                                            Radio(value: ('女'), groupValue: _radioGroup, onChanged: _handleRadioValueChanged),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              //出生日期
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
+                                      children: <Widget>[
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '出生日期',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        unFocus();
+                                                        showDatePicker();
+                                                      },
+                                                      child: Text(
+                                                        "" == uBirthDate
+                                                            ? "请选择您的出生日期"
+                                                            : uBirthDate,
+                                                        style: "" == uBirthDate
+                                                            ? defaultNoDataTextStyle
+                                                            : dataTextStyle,
+                                                      ),
+                                                    ),
+                                                    flex: 1,
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    padding:
+                                                    EdgeInsets.only(left: 8),
+                                                    child: Image.asset(
+                                                      'assets/images/button_icon_continue.png',
+                                                      height: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
+                                            ),
+                                            flex: 1,
                                           ),
                                         ],
                                       ),
@@ -365,839 +663,506 @@ class _EditInfoPageState extends State<EditInfoPage> {
                                   ],
                                 ),
                               ),
-                            ),
-                            //分割线
-                            Divider(
-                              height: 1,
-                              color: Color(0xFFeeeeee),
-                            ),
-                            //姓名
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '姓名 ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                            TextSpan(
-                                              text: '*',
-                                              style: TextStyle(
-                                                  color: Color(0xFFE65D4E)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
+                              //职称
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
                                       children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                hintText: "请输入您的姓名",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 12),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                EdgeInsets.all(0),
-                                                suffix: nameSuffixIconIsVisible
-                                                    ? nameSuffixIcon
-                                                    : null,
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "职称",
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
                                               ),
-                                              controller: _uNameController,
-                                              inputFormatters: [
-                                                LengthLimitingTextInputFormatter(
-                                                    64),
-                                              ],
-                                              focusNode: _uNameFocusNode,
-                                              keyboardType: TextInputType.name,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFF333333),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
                                           ),
-                                          flex: 1,
-                                        )
+                                        ),
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //身份证
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '身份证  ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                            TextSpan(
-                                              text: '*',
-                                              style: TextStyle(
-                                                  color: Color(0xFFE65D4E)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                hintText: "请输入您的身份证号码",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 12),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                EdgeInsets.all(0),
-                                                suffix:
-                                                    idCardSuffixIconIsVisible
-                                                        ? idCardSuffixIcon
-                                                        : null,
-                                              ),
-                                              controller: _uIdCardController,
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter(
-                                                    RegExp("[0-9]|X|x"),
-                                                    allow: true),
-                                                //只能输入字母或数字],
-                                                LengthLimitingTextInputFormatter(
-                                                    18),
-                                              ],
-                                              focusNode: _uIdCardFocusNode,
-                                              keyboardType: TextInputType.name,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFF333333),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
-                                          ),
-                                          flex: 1,
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //性别
-                            Container(
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '性别  ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  color: Color(0xFFEEEEEE)))),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
                                       child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          Spacer(
-                                            flex: 3,
-                                          ),
-                                          Flexible(
-                                            child: RadioListTile(
-                                              title: Text(
-                                                "男",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: "男" == _radioGroup
-                                                        ? Color(0xFF333333)
-                                                        : Color(0xFF999999)),
+                                          Expanded(
+                                            child: Container(
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () async{
+                                                        unFocus();
+                                                        int? index=await _showDoctorTypeModalBottomSheet();
+                                                          print("职称index:$index");
+                                                          setState(() {
+                                                            if (doctorTypeList[
+                                                            index!]
+                                                                .key!
+                                                                .length !=
+                                                                0) {
+                                                              uDoctorTypeText =
+                                                              doctorTypeList[
+                                                              index!]
+                                                                  .value!;
+                                                            } else {
+                                                              uDoctorTypeText =
+                                                              "";
+                                                            }
+                                                          });
+                                                      },
+                                                      child: Text(
+                                                        "" == uDoctorTypeText
+                                                            ? "请选择您的职称"
+                                                            : uDoctorTypeText,
+                                                        style: "" ==
+                                                            uDoctorTypeText
+                                                            ? defaultNoDataTextStyle
+                                                            : dataTextStyle,
+                                                      ),
+                                                    ),
+                                                    flex: 1,
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    padding:
+                                                    EdgeInsets.only(left: 8),
+                                                    child: Image.asset(
+                                                      'assets/images/button_icon_continue.png',
+                                                      height: 16,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              value: "男",
-                                              onChanged:
-                                                  _handleRadioValueChanged,
-                                              groupValue: _radioGroup,
-                                              controlAffinity:
-                                                  ListTileControlAffinity
-                                                      .platform,
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
                                             ),
+                                            flex: 1,
                                           ),
-                                          Flexible(
-                                              child: RadioListTile(
-                                            title: Text("女",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: "女" == _radioGroup
-                                                        ? Color(0xFF333333)
-                                                        : Color(0xFF999999))),
-                                            value: "女",
-                                            groupValue: _radioGroup,
-                                            onChanged: _handleRadioValueChanged,
-                                            controlAffinity:
-                                                ListTileControlAffinity
-                                                    .platform,
-                                          )),
                                         ],
                                       ),
                                     ),
-                                  )
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            //出生日期
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '出生日期',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
+                              //技师资格
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
                                       children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      unFocus();
-                                                      showDatePicker();
-                                                    },
-                                                    child: Text(
-                                                      "" == uBirthDate
-                                                          ? "请选择您的出生日期"
-                                                          : uBirthDate,
-                                                      style: "" == uBirthDate
-                                                          ? defaultNoDataTextStyle
-                                                          : dataTextStyle,
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "技师资格",
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () async{
+                                                        unFocus();
+                                                       int? index=await _showTechnicianTypeModalBottomSheet();
+                                                          print("技师index:$index");
+                                                          setState(() {
+                                                            if (technicianTypeList[
+                                                            index!]
+                                                                .key!
+                                                                .length !=
+                                                                0) {
+                                                              uTechnicianTypeText =
+                                                              technicianTypeList[
+                                                              index!]
+                                                                  .value!;
+                                                            } else {
+                                                              uTechnicianTypeText =
+                                                              "";
+                                                            }
+                                                          });
+                                                      },
+                                                      child: Text(
+                                                        "" == uTechnicianTypeText
+                                                            ? "请选择您的技师资格"
+                                                            : uTechnicianTypeText,
+                                                        style: "" ==
+                                                            uTechnicianTypeText
+                                                            ? defaultNoDataTextStyle
+                                                            : dataTextStyle,
+                                                      ),
+                                                    ),
+                                                    flex: 1,
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    padding:
+                                                    EdgeInsets.only(left: 8),
+                                                    child: Image.asset(
+                                                      'assets/images/button_icon_continue.png',
+                                                      height: 16,
                                                     ),
                                                   ),
-                                                  flex: 1,
-                                                ),
-                                                Container(
-                                                  alignment: Alignment.center,
-                                                  padding:
-                                                      EdgeInsets.only(left: 8),
-                                                  child: Image.asset(
-                                                    'assets/images/button_icon_continue.png',
-                                                    height: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
-                                          ),
-                                          flex: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            //职称
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "职称",
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      unFocus();
-                                                      _showDoctorTypeModalBottomSheet()
-                                                          .then((int? index) {
-                                                        print("职称index:$index");
-                                                        if (index == null) {
-                                                          return;
-                                                        }
-                                                        setState(() {
-                                                          if (doctorTypeList[
-                                                                      index!]
-                                                                  .key!
-                                                                  .length !=
-                                                              0) {
-                                                            uDoctorTypeText =
-                                                                doctorTypeList[
-                                                                        index!]
-                                                                    .value!;
-                                                          } else {
-                                                            uDoctorTypeText =
-                                                                "";
-                                                          }
-                                                        });
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      "" == uDoctorTypeText
-                                                          ? "请选择您的职称"
-                                                          : uDoctorTypeText,
-                                                      style: "" ==
-                                                              uDoctorTypeText
-                                                          ? defaultNoDataTextStyle
-                                                          : dataTextStyle,
-                                                    ),
-                                                  ),
-                                                  flex: 1,
-                                                ),
-                                                Container(
-                                                  alignment: Alignment.center,
-                                                  padding:
-                                                      EdgeInsets.only(left: 8),
-                                                  child: Image.asset(
-                                                    'assets/images/button_icon_continue.png',
-                                                    height: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
-                                          ),
-                                          flex: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            //技师资格
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "技师资格",
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      unFocus();
-                                                      _showTechnicianTypeModalBottomSheet()
-                                                          .then((int? index) {
-                                                        print("技师index:$index");
-                                                        if (index == null) {
-                                                          return;
-                                                        }
-                                                        setState(() {
-                                                          if (technicianTypeList[
-                                                                      index!]
-                                                                  .key!
-                                                                  .length !=
-                                                              0) {
-                                                            uTechnicianTypeText =
-                                                                technicianTypeList[
-                                                                        index!]
-                                                                    .value!;
-                                                          } else {
-                                                            uTechnicianTypeText =
-                                                                "";
-                                                          }
-                                                        });
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      "" == uTechnicianTypeText
-                                                          ? "请选择您的技师资格"
-                                                          : uTechnicianTypeText,
-                                                      style: "" ==
-                                                              uTechnicianTypeText
-                                                          ? defaultNoDataTextStyle
-                                                          : dataTextStyle,
-                                                    ),
-                                                  ),
-                                                  flex: 1,
-                                                ),
-                                                Container(
-                                                  alignment: Alignment.center,
-                                                  padding:
-                                                      EdgeInsets.only(left: 8),
-                                                  child: Image.asset(
-                                                    'assets/images/button_icon_continue.png',
-                                                    height: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
-                                          ),
-                                          flex: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            //就职医院
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '就职医院 ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                            TextSpan(
-                                              text: '*',
-                                              style: TextStyle(
-                                                  color: Color(0xFFE65D4E)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                hintText: "请输入您的就职医院",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 12),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                EdgeInsets.all(0),
-                                                suffix:
-                                                    hospitalSuffixIconIsVisible
-                                                        ? hospitalSuffixIcon
-                                                        : null,
+                                                ],
                                               ),
-                                              controller: _uHospitalController,
-                                              inputFormatters: [
-                                                LengthLimitingTextInputFormatter(
-                                                    64),
-                                              ],
-                                              focusNode: _uHospitalFocusNode,
-                                              keyboardType: TextInputType.name,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFF333333),
-                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
                                             ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
+                                            flex: 1,
                                           ),
-                                          flex: 1,
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //个人简介
-                            Container(
-                              padding: EdgeInsets.only(top: 14),
-                              height: 100,
-                              child: Stack(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '个人简介 ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              //就职医院
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
                                       children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                hintText: "请输入您的个人简介",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 12),
-                                                border: InputBorder.none,
-                                                suffix:
-                                                    descriptionSuffixIconIsVisible
-                                                        ? descriptionSuffixIcon
-                                                        : null,
-                                                contentPadding:
-                                                    EdgeInsets.all(0),
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '就职医院 ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
                                               ),
-                                              controller:
-                                                  _uDescriptionController,
-                                              maxLines: 5,
-                                              inputFormatters: [
-                                                LengthLimitingTextInputFormatter(
-                                                    300),
-                                              ],
-                                              focusNode: _uDescriptionFocusNode,
-                                              keyboardType: TextInputType.name,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFF333333),
+                                              TextSpan(
+                                                text: '*',
+                                                style: TextStyle(
+                                                    color: Color(0xFFE65D4E)),
                                               ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
                                           ),
-                                          flex: 1,
-                                        )
+                                        ),
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //问诊价格
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              height: 50,
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '问诊价格(元) ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  hintText: "请输入您的就职医院",
+                                                  hintStyle: TextStyle(
+                                                      color: Color(0xFFCCCCCC),
+                                                      fontSize: 12),
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  EdgeInsets.all(0),
+                                                  suffix:
+                                                  hospitalSuffixIconIsVisible
+                                                      ? hospitalSuffixIcon
+                                                      : null,
+                                                ),
+                                                controller: _uHospitalController,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      64),
+                                                ],
+                                                focusNode: _uHospitalFocusNode,
+                                                keyboardType: TextInputType.name,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF333333),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
                                             ),
-                                            TextSpan(
-                                              text: '*',
-                                              style: TextStyle(
-                                                  color: Color(0xFFE65D4E)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
+                                            flex: 1,
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Row(
+                                    )
+                                  ],
+                                ),
+                              ),
+                              //个人简介
+                              Container(
+                                padding: EdgeInsets.only(top: 14),
+                                height: 100,
+                                child: Stack(
+                                  children: <Widget>[
+                                    Row(
                                       children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                hintText: "请输入您的问诊价格",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 12),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                EdgeInsets.all(0),
-                                                suffix: priceSuffixIconIsVisible
-                                                    ? priceSuffixIcon
-                                                    : null,
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '个人简介 ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
                                               ),
-                                              controller: _uPriceController,
-                                              inputFormatters: [
-                                                LengthLimitingTextInputFormatter(
-                                                    10),InputFormat(),
-                                              ],
-                                              focusNode: _uPriceFocusNode,
-                                              keyboardType: TextInputType
-                                                  .numberWithOptions(
-                                                      decimal: true),
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFF333333),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        color: Color(
-                                                            0xFFEEEEEE)))),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
                                           ),
-                                          flex: 1,
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            //专家认证
-                            Container(
-                              padding: EdgeInsets.only(top: 8),
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    //纵轴居中即垂直居中
-                                    children: <Widget>[
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '专家认证  ',
-                                              style: TextStyle(
-                                                  color: Color(0xFF666666)),
-                                            ),
-                                            TextSpan(
-                                              text: '*',
-                                              style: TextStyle(
-                                                  color: Color(0xFFE65D4E)),
-                                            ),
-                                          ],
-                                          style: TextStyle(fontSize: 16),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 105),
-                                    child: Stack(
-                                      children: <Widget>[
-                                        _previewImages(),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  hintText: "请输入您的个人简介",
+                                                  hintStyle: TextStyle(
+                                                      color: Color(0xFFCCCCCC),
+                                                      fontSize: 12),
+                                                  border: InputBorder.none,
+                                                  suffix:
+                                                  descriptionSuffixIconIsVisible
+                                                      ? descriptionSuffixIcon
+                                                      : null,
+                                                  contentPadding:
+                                                  EdgeInsets.all(0),
+                                                ),
+                                                controller:
+                                                _uDescriptionController,
+                                                maxLines: 5,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      300),
+                                                ],
+                                                focusNode: _uDescriptionFocusNode,
+                                                keyboardType: TextInputType.name,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF333333),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
+                                            ),
+                                            flex: 1,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              //问诊价格
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                height: 50,
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
+                                      children: <Widget>[
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '问诊价格(元) ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                              TextSpan(
+                                                text: '*',
+                                                style: TextStyle(
+                                                    color: Color(0xFFE65D4E)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  hintText: "请输入您的问诊价格",
+                                                  hintStyle: TextStyle(
+                                                      color: Color(0xFFCCCCCC),
+                                                      fontSize: 12),
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  EdgeInsets.all(0),
+                                                  suffix: priceSuffixIconIsVisible
+                                                      ? priceSuffixIcon
+                                                      : null,
+                                                ),
+                                                controller: _uPriceController,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),InputFormat(),
+                                                ],
+                                                focusNode: _uPriceFocusNode,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                    decimal: true),
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF333333),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: Color(
+                                                              0xFFEEEEEE)))),
+                                            ),
+                                            flex: 1,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              //专家认证
+                              Container(
+                                padding: EdgeInsets.only(top: 8),
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      //纵轴居中即垂直居中
+                                      children: <Widget>[
+                                        Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '专家认证  ',
+                                                style: TextStyle(
+                                                    color: Color(0xFF666666)),
+                                              ),
+                                              TextSpan(
+                                                text: '*',
+                                                style: TextStyle(
+                                                    color: Color(0xFFE65D4E)),
+                                              ),
+                                            ],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 105),
+                                      child: Stack(
+                                        children: <Widget>[
+                                          _previewImages(),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                        flex: 1,
+                      ),
+                    ],
+                  ),
+                ),
+                flex: 1,
+              ),
+              //保存按钮
+              Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        child: ElevatedButton(
+                          onPressed: _isDisable ? null : onSaveClick,
+                          child: Text(
+                            '保存',
+                            style: TextStyle(
+                              color: Color(saveTextColor),
+                              fontSize: 16,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.zero),
+                              ),
+                            ),
+                            elevation: MaterialStateProperty.all(0),
+                            backgroundColor: MaterialStateProperty.all(
+                                Color(saveBackgroundColor)),
+                          ),
+                        ),
+                        height: 49,
                       ),
                       flex: 1,
                     ),
                   ],
                 ),
               ),
-              flex: 1,
-            ),
-            //保存按钮
-            Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      child: ElevatedButton(
-                        onPressed: _isDisable ? null : onSaveClick,
-                        child: Text(
-                          '保存',
-                          style: TextStyle(
-                            color: Color(saveTextColor),
-                            fontSize: 16,
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.zero),
-                            ),
-                          ),
-                          elevation: MaterialStateProperty.all(0),
-                          backgroundColor: MaterialStateProperty.all(
-                              Color(saveBackgroundColor)),
-                        ),
-                      ),
-                      height: 49,
-                    ),
-                    flex: 1,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+
+
     );
   }
 
@@ -1252,6 +1217,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
   Future<int?> _showHeadBottomSheet() {
     return showModalBottomSheet<int>(
       context: context,
+      isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(8),
@@ -1264,16 +1230,21 @@ class _EditInfoPageState extends State<EditInfoPage> {
             ListView.separated(
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListTile(
-                    title: Text(
-                      headList![index],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF009999),
+                return GestureDetector(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        alignment: Alignment.center,
+                        child: Text(
+                          headList![index],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF009999),
+                          ),
+                        ),
                       ),
-                    ),
-                    onTap: () => Navigator.of(context).pop(index));
+                      onTap: ()=>Navigator.pop(context,index));
               },
               separatorBuilder: (context, index) {
                 return Divider(
@@ -1293,6 +1264,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
   Future<int?> _showDoctorTypeModalBottomSheet() {
     return showModalBottomSheet<int>(
       context: context,
+      isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(8),
@@ -1305,16 +1277,21 @@ class _EditInfoPageState extends State<EditInfoPage> {
             ListView.separated(
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListTile(
-                    title: Text(
-                      doctorTypeList[index].value!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF009999),
+                return GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: Text(
+                        doctorTypeList![index].value!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF009999),
+                        ),
                       ),
                     ),
-                    onTap: () => Navigator.of(context).pop(index));
+                    onTap: ()=>Navigator.pop(context,index));
               },
               separatorBuilder: (context, index) {
                 return Divider(
@@ -1334,6 +1311,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
   Future<int?> _showTechnicianTypeModalBottomSheet() {
     return showModalBottomSheet<int>(
       context: context,
+      isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(8),
@@ -1346,16 +1324,21 @@ class _EditInfoPageState extends State<EditInfoPage> {
             ListView.separated(
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return ListTile(
-                    title: Text(
-                      technicianTypeList[index].value!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF009999),
+                return GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: Text(
+                        technicianTypeList![index].value!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF009999),
+                        ),
                       ),
                     ),
-                    onTap: () => Navigator.of(context).pop(index));
+                    onTap: ()=>Navigator.pop(context,index));
               },
               separatorBuilder: (context, index) {
                 return Divider(
@@ -1582,9 +1565,12 @@ class _EditInfoPageState extends State<EditInfoPage> {
 
   void setHeadFile(XFile? pickedFile) {
     setState(() {
-      _headFile = pickedFile;
-      _headFileImageProvider = FileImage(File(_headFile!.path));
-      isUploadHeadImage=true;
+      if(pickedFile!=null){
+        _headFile = pickedFile;
+        _headFileImageProvider = FileImage(File(_headFile!.path));
+        isUploadHeadImage=true;
+      }
+
     });
   }
 

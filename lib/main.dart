@@ -28,7 +28,7 @@ import 'common/event/event.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
-
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 void main() async {
   String value =
       await App.init(); // await 关键字必须用在异步方法中 await等待异步方法执行完毕 异步方法必须用变量接收
@@ -188,6 +188,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       //更新头像
       setState(() {
         if (doctor.headimgurl != null) {
+          eventBus.fire(MyEventDoctorHeadIcon(doctor.headimgurl!));
           backgroundImage = NetworkImage(doctor.headimgurl!);
         }
       });

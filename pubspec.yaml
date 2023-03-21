@@ -50,6 +50,15 @@ dev_dependencies:
   crypto: ^3.0.2 #加密处理
   intl: ^0.18.0 #国际化
   open_file: ^3.2.1 #打开文件
+  im_flutter_sdk: ^4.0.0+3
+#  flutter_record_plugin:
+#    git:
+#      url: https://github.com/huangruiLearn/flutter_record_plugin.git
+#      ref: c8dfed9c235174b223b1ab9dcaeb894bfaadabad
+  flutter_keyboard_visibility: ^5.4.0 #键盘显示与隐藏
+
+  record: ^4.4.4
+  audioplayers: ^3.0.1 #播放音视频
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

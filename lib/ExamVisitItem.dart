@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter_doctor_app/common/net/NetWorkWithToken.dart';
 import 'common/LoginPrefs.dart';
+import 'models/get_huanxin_id_input_request_entity.dart';
+import 'models/get_huanxin_id_output_response_entity.dart';
 import 'models/paged_result_dto_response_entity.dart';
+import 'models/patient_customer_get_by_id_response_entity.dart';
 import 'models/update_exam_visit_status_input_request_entity.dart';
 import 'models/common_input_response_entity.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'common/event/event.dart';
 typedef RefreshDataCallBack = void Function();//接口回调 item点击了拒绝申请或是同意申请
 class ExamVisitItemPage extends StatefulWidget {
 
@@ -23,6 +28,20 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     fontSize: 12,
     color: Color(0xFF999999),
   );
+   String headIcon="";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    eventBus.on<MyEventDoctorHeadIcon>().listen((event) {
+      // All events are of type MyEventRefresh (or subtypes of it).
+      print(event.headIcon);
+      setState(() {
+        headIcon=event.headIcon;
+      });
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -332,6 +351,11 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
                   ),
                   onTap: () {
                     //TODO 跳转至聊天界面
+                    int doctorId = widget.examVisitItem.doctorId!;
+                    int userId = widget.examVisitItem.userId!;
+                    int patientId = widget.examVisitItem.patientId!;
+                    int examRecordId = widget.examVisitItem.examRecordId!;
+                    getUserHuanxinById(doctorId, userId, patientId, examRecordId);
                   },
                 ),
                 flex: 1,
@@ -536,4 +560,99 @@ class _ExamVisitItemPageState extends State<ExamVisitItemPage> {
     return formatDate(
         dateTime!, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
   }
+  getUserHuanxinById(int doctorId,int userId,int patientId,int examRecordId) async{
+    if (!LoginPrefs(context).isLogin()) {
+      LoginPrefs(context).logout();
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("login", ModalRoute.withName("login"));
+      return;
+    }
+    GetHuanxinIdInputRequestEntity getHuanxinIdInputRequestEntity=new GetHuanxinIdInputRequestEntity();
+    getHuanxinIdInputRequestEntity.doctorId=doctorId;
+    getHuanxinIdInputRequestEntity.userId=userId;
+    GetHuanxinIdOutputResponseEntity getHuanxinIdOutputResponseEntity=await NetWorkWithToken(context).getUserHuanxinById(getHuanxinIdInputRequestEntity);
+    if(getHuanxinIdOutputResponseEntity!=null){
+      if(getHuanxinIdOutputResponseEntity.successed!=null&&getHuanxinIdOutputResponseEntity.successed==true){
+       String doctorHuanxinId= getHuanxinIdOutputResponseEntity.doctorHuanxinId!;
+       String userHuanxinId=getHuanxinIdOutputResponseEntity.userHuanxinId!;
+       loginHuanXin(doctorHuanxinId,doctorHuanxinId,userHuanxinId,patientId,examRecordId);
+      }else{
+        if(getHuanxinIdOutputResponseEntity.msg!=null){
+          Fluttertoast.showToast(msg: getHuanxinIdOutputResponseEntity.msg!);
+        }
+      }
+
+    }
+  }
+
+  loginHuanXin(String _userId,String _password,String userHuanxinId,int patientId,int examRecordId) async{
+    try {
+      await EMClient.getInstance.login(_userId, _password);
+      customerGetById(userHuanxinId,patientId,examRecordId);
+      print("sign in succeed, username: $_userId");
+    } on EMError catch (e) {
+      print("sign in failed, e: ${e.code} , ${e.description}");
+      if(e.code==200){
+        customerGetById(userHuanxinId,patientId,examRecordId);
+      }
+    }
+  }
+  customerGetById(String userHuanxinId,int patientId,int examRecordId) async{
+    if (!LoginPrefs(context).isLogin()) {
+      LoginPrefs(context).logout();
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("login", ModalRoute.withName("login"));
+      return;
+    }
+    PatientCustomerGetByIdResponseEntity patientCustomerGetByIdResponseEntity=await NetWorkWithToken(context).customerGetById(patientId);
+    if(patientCustomerGetByIdResponseEntity!=null){
+      String name='';
+      String gender='';
+      String birthday='';
+      name= patientCustomerGetByIdResponseEntity.name!;//姓名
+
+      if(patientCustomerGetByIdResponseEntity.gender!=null){
+        switch(patientCustomerGetByIdResponseEntity.gender){//性别
+          case 1:
+          //男
+            setState(() {
+              gender='男';
+            });
+            break;
+          case 2:
+          //女
+            setState(() {
+              gender='女';
+            });
+            break;
+          default:
+          //未知
+            setState(() {
+              gender='未知';
+            });
+            break;
+        }
+      }
+      if(patientCustomerGetByIdResponseEntity.birthdate!=null){
+        //出生日期
+          birthday=patientCustomerGetByIdResponseEntity.birthdate!.substring(0,10);
+      }
+
+    }
+  }
+
+
+
+
+
+
+
+  skipChatPage(String toChatUsername,//userHuanXinId
+  int patientId,
+  int examRecordId,
+ ){
+    Map<String, dynamic> arguments = {'toChatUsername': toChatUsername,'patientId':patientId,'examRecordId':examRecordId,'headIcon':headIcon};
+    Navigator.pushNamed(context, 'chat',arguments: arguments);
+  }
+
 }

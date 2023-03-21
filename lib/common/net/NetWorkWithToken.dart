@@ -17,11 +17,14 @@ import '../../models/BaseBean.dart';
 import '../../models/create_or_update_doctor_extend_input_request_entity.dart';
 import '../../models/doctor_extend_by_doctor_id_response_entity.dart';
 import '../../models/get_current_user_info_response_entity.dart';
+import '../../models/get_huanxin_id_input_request_entity.dart';
+import '../../models/get_huanxin_id_output_response_entity.dart';
 import '../../models/get_paged_exam_visit_for_doctor_input_entity.dart';
 import '../../models/get_paged_order_response_entity.dart';
 import '../../models/get_user_info_for_edit_response_entity.dart';
 import '../../models/make_conclusion_input_request_entity.dart';
 import '../../models/paged_result_dto_response_entity.dart';
+import '../../models/patient_customer_get_by_id_response_entity.dart';
 import '../../models/sts_upload_response_request_entity.dart';
 import '../../models/sts_upload_response_response_entity.dart';
 import '../../models/update_exam_visit_status_input_request_entity.dart';
@@ -178,5 +181,20 @@ Future<PagedResultDtoResponseEntity> getPagedExamVisitForDoctor(GetPagedExamVisi
     var r=await dio.post(UPDATE_USER_INFO,data:createOrUpdateDoctorExtendInputRequestEntity.toJson());
     print(r.data);
     return UpdateUserInfoResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
+  //用户App，专家App获取环信Id
+  Future<GetHuanxinIdOutputResponseEntity> getUserHuanxinById(GetHuanxinIdInputRequestEntity getHuanxinIdInputRequestEntity) async{
+    var r=await dio.post(GET_USER_HUANXIN_BYID,data:getHuanxinIdInputRequestEntity.toJson());
+    print(r.data);
+    return GetHuanxinIdOutputResponseEntity().fromJson(BaseBean(r.data).result);
+  }
+
+  //根据Id获取就诊人信息
+  Future<PatientCustomerGetByIdResponseEntity> customerGetById(int patientId) async{
+    var r=await dio.get(GET_PATIENT_INFO_BY_ID,queryParameters: {'input':patientId});
+    print('根据Id获取就诊人信息');
+    print(r.data);
+    return PatientCustomerGetByIdResponseEntity().fromJson(BaseBean(r.data).result);
   }
 }

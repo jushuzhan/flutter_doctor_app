@@ -28,3 +28,15 @@ class MyEventProgress{
   double progress;
   MyEventProgress(this.percent,this.progress);
 }
+class MyEventDoctorHeadIcon{
+  String headIcon;
+  MyEventDoctorHeadIcon(this.headIcon);
+}
+class MyEventUserInfo{
+  String toChatUsername;//userHuanXinId
+  int patientId;
+  int examRecordId;
+  String headIcon;
+  MyEventUserInfo(this.toChatUsername,this.patientId,this.examRecordId,this.headIcon);
+
+}

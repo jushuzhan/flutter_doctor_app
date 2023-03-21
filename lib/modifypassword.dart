@@ -114,354 +114,361 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
           //状态栏字体为黑色
           elevation: 0.0,
         ),
-        body: Column(
-          children: <Widget>[
-            //上半部分
-            Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(top: 24, left: 15),
-                  alignment: Alignment.topLeft,
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '请设置新的密码',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Color(0xFF666666),
+        body: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            child:
+              Column(
+                children: <Widget>[
+                  //上半部分
+                  Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.only(top: 24, left: 15),
+                        alignment: Alignment.topLeft,
+                        child: Column(
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '请设置新的密码',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color(0xFF666666),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 8, bottom: 32),
+                                  child: Text(
+                                    '请输入6~20位英文字母、数字或符号。',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF999999),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 32),
-                            child: Text(
-                              '请输入6~20位英文字母、数字或符号。',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF999999),
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        color: Colors.white,
                       ),
                     ],
                   ),
-                  color: Colors.white,
-                ),
-              ],
-            ),
-            //下半部分
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    //原密码
-                    Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Container(
-                        height: 50,
-                        child: Stack(
-                          alignment: Alignment.centerLeft,
-                          children: <Widget>[
-                            Text(
-                              '原密码',
-                              style: TextStyle(
-                                color: Color(0xFF666666),
-                                fontSize: 15,
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                                hintText: '请输入原来的密码',
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 16),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                    EdgeInsets.all(0)
-                                                // contentPadding: EdgeInsets.symmetric(
-                                                //     horizontal: 8),
-                                                ),
-                                            obscureText: !originalShowPassword,
-                                            controller:
-                                                _originalPasswordController,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter(
-                                                  RegExp("[a-zA-Z]|[0-9]"),
-                                                  allow: true),
-                                              //只能输入字母或数字],
-                                              LengthLimitingTextInputFormatter(
-                                                  20),
-                                            ],
-                                            focusNode: _originalFocusNode,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Color(0xFF333333),
-                                            ),
-                                          ),
-                                          flex: 1,
-                                        ),
-                                        Container(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                originalShowPassword =
-                                                    !originalShowPassword;
-                                              });
-                                            },
-                                            child: ImageIcon(
-                                              AssetImage(originalShowPassword
-                                                  ? 'assets/images/passwordvisible.png'
-                                                  : 'assets/images/passwordinvisible.png'),
-                                              size: 20,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                      width: 1,
-                                      color: Color(0xFFEEEEEE),
-                                    ))),
-                                    margin: EdgeInsets.only(left: 85),
-                                  ),
-                                  flex: 1,
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    //新密码
-                    Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Container(
-                        height: 50,
-                        child: Stack(
-                          alignment: Alignment.centerLeft,
-                          children: <Widget>[
-                            Text(
-                              '新密码',
-                              style: TextStyle(
-                                color: Color(0xFF666666),
-                                fontSize: 15,
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                                hintText: '请输入新的密码',
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 16),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                    EdgeInsets.all(0)
-                                                // contentPadding: EdgeInsets.symmetric(
-                                                //     horizontal: 8),
-                                                ),
-                                            obscureText: !newShowPassword,
-                                            controller: _newPasswordController,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter(
-                                                  RegExp("[a-zA-Z]|[0-9]"),
-                                                  allow: true),
-                                              //只能输入字母或数字],
-                                              LengthLimitingTextInputFormatter(
-                                                  20),
-                                            ],
-                                            focusNode: _newFocusNode,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Color(0xFF333333),
-                                            ),
-                                          ),
-                                          flex: 1,
-                                        ),
-                                        Container(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                newShowPassword =
-                                                    !newShowPassword;
-                                              });
-                                            },
-                                            child: ImageIcon(
-                                              AssetImage(newShowPassword
-                                                  ? 'assets/images/passwordvisible.png'
-                                                  : 'assets/images/passwordinvisible.png'),
-                                              size: 20,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                      width: 1,
-                                      color: Color(0xFFEEEEEE),
-                                    ))),
-                                    margin: EdgeInsets.only(left: 85),
-                                  ),
-                                  flex: 1,
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    //确认密码
-                    Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Container(
-                        height: 50,
-                        child: Stack(
-                          alignment: Alignment.centerLeft,
-                          children: <Widget>[
-                            Text(
-                              '确认密码',
-                              style: TextStyle(
-                                color: Color(0xFF666666),
-                                fontSize: 15,
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                                hintText: '请再次输入新的密码',
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFFCCCCCC),
-                                                    fontSize: 16),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                    EdgeInsets.all(0)
-                                                // contentPadding: EdgeInsets.symmetric(
-                                                //     horizontal: 8),
-                                                ),
-                                            obscureText: !sureShowPassword,
-                                            controller: _surePasswordController,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter(
-                                                  RegExp("[a-zA-Z]|[0-9]"),
-                                                  allow: true),
-                                              //只能输入字母或数字],
-                                              LengthLimitingTextInputFormatter(
-                                                  20),
-                                            ],
-                                            focusNode: _sureFocusNode,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Color(0xFF333333),
-                                            ),
-                                          ),
-                                          flex: 1,
-                                        ),
-                                        Container(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                sureShowPassword =
-                                                    !sureShowPassword;
-                                              });
-                                            },
-                                            child: ImageIcon(
-                                              AssetImage(sureShowPassword
-                                                  ? 'assets/images/passwordvisible.png'
-                                                  : 'assets/images/passwordinvisible.png'),
-                                              size: 20,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                      width: 1,
-                                      color: Color(0xFFEEEEEE),
-                                    ))),
-                                    margin: EdgeInsets.only(left: 85),
-                                  ),
-                                  flex: 1,
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    //完成按钮
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(43, 40, 43, 16),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
+                  //下半部分
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        children: [
+                          //原密码
+                          Padding(
+                            padding: EdgeInsets.only(top: 8),
                             child: Container(
-                              child: ElevatedButton(
-                                onPressed: _isDisable? null : onCompleteClick,
-                                child: Text(
-                                  '完成',
-                                  style: TextStyle(
-                                    color: Color(completeTextColor),
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                style: ButtonStyle(
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(25)),
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Text(
+                                    '原密码',
+                                    style: TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 15,
                                     ),
                                   ),
-                                  elevation:
-                                  MaterialStateProperty.all(0),
-                                  backgroundColor:
-                                  MaterialStateProperty.all(
-                                      Color(completeBackgroundColor)),
-                                ),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration: InputDecoration(
+                                                      hintText: '请输入原来的密码',
+                                                      hintStyle: TextStyle(
+                                                          color: Color(0xFFCCCCCC),
+                                                          fontSize: 16),
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                      EdgeInsets.all(0)
+                                                    // contentPadding: EdgeInsets.symmetric(
+                                                    //     horizontal: 8),
+                                                  ),
+                                                  obscureText: !originalShowPassword,
+                                                  controller:
+                                                  _originalPasswordController,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter(
+                                                        RegExp("[a-zA-Z]|[0-9]"),
+                                                        allow: true),
+                                                    //只能输入字母或数字],
+                                                    LengthLimitingTextInputFormatter(
+                                                        20),
+                                                  ],
+                                                  focusNode: _originalFocusNode,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color(0xFF333333),
+                                                  ),
+                                                ),
+                                                flex: 1,
+                                              ),
+                                              Container(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      originalShowPassword =
+                                                      !originalShowPassword;
+                                                    });
+                                                  },
+                                                  child: ImageIcon(
+                                                    AssetImage(originalShowPassword
+                                                        ? 'assets/images/passwordvisible.png'
+                                                        : 'assets/images/passwordinvisible.png'),
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                    width: 1,
+                                                    color: Color(0xFFEEEEEE),
+                                                  ))),
+                                          margin: EdgeInsets.only(left: 85),
+                                        ),
+                                        flex: 1,
+                                      )
+                                    ],
+                                  )
+                                ],
                               ),
-                              height: 50,
                             ),
-                            flex: 1,
+                          ),
+                          //新密码
+                          Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child: Container(
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Text(
+                                    '新密码',
+                                    style: TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration: InputDecoration(
+                                                      hintText: '请输入新的密码',
+                                                      hintStyle: TextStyle(
+                                                          color: Color(0xFFCCCCCC),
+                                                          fontSize: 16),
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                      EdgeInsets.all(0)
+                                                    // contentPadding: EdgeInsets.symmetric(
+                                                    //     horizontal: 8),
+                                                  ),
+                                                  obscureText: !newShowPassword,
+                                                  controller: _newPasswordController,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter(
+                                                        RegExp("[a-zA-Z]|[0-9]"),
+                                                        allow: true),
+                                                    //只能输入字母或数字],
+                                                    LengthLimitingTextInputFormatter(
+                                                        20),
+                                                  ],
+                                                  focusNode: _newFocusNode,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color(0xFF333333),
+                                                  ),
+                                                ),
+                                                flex: 1,
+                                              ),
+                                              Container(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      newShowPassword =
+                                                      !newShowPassword;
+                                                    });
+                                                  },
+                                                  child: ImageIcon(
+                                                    AssetImage(newShowPassword
+                                                        ? 'assets/images/passwordvisible.png'
+                                                        : 'assets/images/passwordinvisible.png'),
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                    width: 1,
+                                                    color: Color(0xFFEEEEEE),
+                                                  ))),
+                                          margin: EdgeInsets.only(left: 85),
+                                        ),
+                                        flex: 1,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          //确认密码
+                          Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child: Container(
+                              height: 50,
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: <Widget>[
+                                  Text(
+                                    '确认密码',
+                                    style: TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextFormField(
+                                                  decoration: InputDecoration(
+                                                      hintText: '请再次输入新的密码',
+                                                      hintStyle: TextStyle(
+                                                          color: Color(0xFFCCCCCC),
+                                                          fontSize: 16),
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                      EdgeInsets.all(0)
+                                                    // contentPadding: EdgeInsets.symmetric(
+                                                    //     horizontal: 8),
+                                                  ),
+                                                  obscureText: !sureShowPassword,
+                                                  controller: _surePasswordController,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter(
+                                                        RegExp("[a-zA-Z]|[0-9]"),
+                                                        allow: true),
+                                                    //只能输入字母或数字],
+                                                    LengthLimitingTextInputFormatter(
+                                                        20),
+                                                  ],
+                                                  focusNode: _sureFocusNode,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color(0xFF333333),
+                                                  ),
+                                                ),
+                                                flex: 1,
+                                              ),
+                                              Container(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      sureShowPassword =
+                                                      !sureShowPassword;
+                                                    });
+                                                  },
+                                                  child: ImageIcon(
+                                                    AssetImage(sureShowPassword
+                                                        ? 'assets/images/passwordvisible.png'
+                                                        : 'assets/images/passwordinvisible.png'),
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                    width: 1,
+                                                    color: Color(0xFFEEEEEE),
+                                                  ))),
+                                          margin: EdgeInsets.only(left: 85),
+                                        ),
+                                        flex: 1,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          //完成按钮
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(43, 40, 43, 16),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    child: ElevatedButton(
+                                      onPressed: _isDisable? null : onCompleteClick,
+                                      child: Text(
+                                        '完成',
+                                        style: TextStyle(
+                                          color: Color(completeTextColor),
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25)),
+                                          ),
+                                        ),
+                                        elevation:
+                                        MaterialStateProperty.all(0),
+                                        backgroundColor:
+                                        MaterialStateProperty.all(
+                                            Color(completeBackgroundColor)),
+                                      ),
+                                    ),
+                                    height: 50,
+                                  ),
+                                  flex: 1,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
+                      color: Colors.white,
                     ),
-                  ],
-                ),
-                color: Colors.white,
-              ),
-              flex: 1,
-            ),
-          ],
+                    flex: 1,
+                  ),
+                ],
+              )
+            ,
+          ),
         ));
   }
   void onCompleteClick() async {

@@ -121,269 +121,271 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
         //状态栏字体为黑色
         elevation: 0.0,
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        // 获取屏幕尺寸,宽度充满全屏,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          children: <Widget>[
-            //上半部分
-            Container(
-              width: MediaQuery.of(context).size.width, // 获取屏幕尺寸,宽度充满全屏,
-              padding: EdgeInsets.only(top: 24),
-              child: Text(
-                '请输入新的手机号码',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Color(0xFF666666),
+      body: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          // 获取屏幕尺寸,宽度充满全屏,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.white,
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Column(
+            children: <Widget>[
+              //上半部分
+              Container(
+                width: MediaQuery.of(context).size.width, // 获取屏幕尺寸,宽度充满全屏,
+                padding: EdgeInsets.only(top: 24),
+                child: Text(
+                  '请输入新的手机号码',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFF666666),
+                  ),
                 ),
               ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 8),
-              child: Text(
-                '更换手机号码后，下次登录可使用新的手机号码登录。',
-                style: TextStyle(fontSize: 12, color: Color(0xFF999999)),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  '更换手机号码后，下次登录可使用新的手机号码登录。',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF999999)),
+                ),
               ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 4, bottom: 40),
-              child: Text(
-                '当前手机号码：$phoneNumber',
-                style: TextStyle(fontSize: 12, color: Color(0xFF999999)),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.only(top: 4, bottom: 40),
+                child: Text(
+                  '当前手机号码：$phoneNumber',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF999999)),
+                ),
               ),
-            ),
-            Container(
-              height: 50,
-              child: Stack(
-                alignment: Alignment.centerLeft,
-                children: <Widget>[
-                  Text(
-                    '+86',
-                    style: TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 15,
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        height: 18,
-                        padding: EdgeInsets.only(left: 53),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                right: BorderSide(
-                                    width: 1, color: Color(0xFFD8D8D8)))),
+              Container(
+                height: 50,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: <Widget>[
+                    Text(
+                      '+86',
+                      style: TextStyle(
+                        color: Color(0xFF666666),
+                        fontSize: 15,
                       ),
-                      Expanded(
-                        child: TextFormField(
-                          autofocus: false,
-                          keyboardType: TextInputType.number,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF333333),
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "请输入新的手机号码",
-                            hintStyle: TextStyle(
-                              color: Color(0xFFCCCCCC),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          height: 18,
+                          padding: EdgeInsets.only(left: 53),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  right: BorderSide(
+                                      width: 1, color: Color(0xFFD8D8D8)))),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            autofocus: false,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
                               fontSize: 16,
+                              color: Color(0xFF333333),
                             ),
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.only(left: 7), //TextField内容实现上下居中
-                          ),
-                          controller: _uPhoneController,
-                          inputFormatters: [
-                            FilteringTextInputFormatter(RegExp("[0-9]"),
-                                allow: true), //只能输入数字
-                            LengthLimitingTextInputFormatter(11),
-                          ],
-                          //限制长度11位
-                          focusNode: _uPhoneFocusNode,
-                        ),
-                        flex: 1,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(width: 1, color: Color(0xFFEEEEEE)))),
-            ),
-            Container(
-              height: 50,
-              child: Stack(
-                alignment: Alignment.centerLeft,
-                children: <Widget>[
-                  Text(
-                    '验证码',
-                    style: TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 15,
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        height: 18,
-                        padding: EdgeInsets.only(left: 53),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                right: BorderSide(
-                                    width: 1, color: Color(0xFFD8D8D8)))),
-                      ),
-                      Expanded(
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: "请输入接收到的验证码",
-                            hintStyle: TextStyle(
-                                color: Color(0xFFCCCCCC), fontSize: 16),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(left: 7),
-                          ),
-                          controller: _uVerificationCodeController,
-                          inputFormatters: [
-                            FilteringTextInputFormatter(RegExp("[0-9]"),
-                                allow: true),
-                            //只能输入字母或数字],
-                            LengthLimitingTextInputFormatter(6),
-                          ],
-                          focusNode: _uVerificationCodeFocusNode,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF333333),
-                          ),
-                        ),
-                        flex: 1,
-                      ),
-                      Container(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (!_isVerificationCodeDisable) {
-                              onVerificationCodeClick();
-                            }
-                          },
-                          child: Container(
-                            width: 64,
-                            height: 24,
-                            alignment: Alignment.center,
-                            child: Text(
-                              verificationCodeData,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: _countdownTime == 0
-                                    ? Color(0xFF009999)
-                                    : Color(0xFFFFFFFF),
+                            decoration: InputDecoration(
+                              hintText: "请输入新的手机号码",
+                              hintStyle: TextStyle(
+                                color: Color(0xFFCCCCCC),
+                                fontSize: 16,
                               ),
+                              border: InputBorder.none,
+                              contentPadding:
+                              EdgeInsets.only(left: 7), //TextField内容实现上下居中
                             ),
-                            decoration: verificationCodeDecoration,
+                            controller: _uPhoneController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter(RegExp("[0-9]"),
+                                  allow: true), //只能输入数字
+                              LengthLimitingTextInputFormatter(11),
+                            ],
+                            //限制长度11位
+                            focusNode: _uPhoneFocusNode,
                           ),
+                          flex: 1,
                         ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                width: 1,
-                color: Color(0xFFEEEEEE),
-              ))),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(43, 40, 43, 16),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      child: ElevatedButton(
-                        onPressed: _isDisable ? null : onVerificationClick,
-                        child: Text(
-                          '验证并更换',
-                          style: TextStyle(
-                            color: Color(verificationTextColor),
-                            fontSize: 16,
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(25)),
-                            ),
-                          ),
-                          elevation: MaterialStateProperty.all(0),
-                          backgroundColor: MaterialStateProperty.all(
-                              Color(verificationBackgroundColor)),
-                        ),
-                      ),
-                      height: 50,
+                      ],
                     ),
-                    flex: 1,
-                  ),
-                ],
+                  ],
+                ),
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(width: 1, color: Color(0xFFEEEEEE)))),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(43, 16, 0, 0),
-              child: Container(
+              Container(
+                height: 50,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: <Widget>[
+                    Text(
+                      '验证码',
+                      style: TextStyle(
+                        color: Color(0xFF666666),
+                        fontSize: 15,
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          height: 18,
+                          padding: EdgeInsets.only(left: 53),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  right: BorderSide(
+                                      width: 1, color: Color(0xFFD8D8D8)))),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: "请输入接收到的验证码",
+                              hintStyle: TextStyle(
+                                  color: Color(0xFFCCCCCC), fontSize: 16),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.only(left: 7),
+                            ),
+                            controller: _uVerificationCodeController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter(RegExp("[0-9]"),
+                                  allow: true),
+                              //只能输入字母或数字],
+                              LengthLimitingTextInputFormatter(6),
+                            ],
+                            focusNode: _uVerificationCodeFocusNode,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF333333),
+                            ),
+                          ),
+                          flex: 1,
+                        ),
+                        Container(
+                          child: GestureDetector(
+                            onTap: () {
+                              if (!_isVerificationCodeDisable) {
+                                onVerificationCodeClick();
+                              }
+                            },
+                            child: Container(
+                              width: 64,
+                              height: 24,
+                              alignment: Alignment.center,
+                              child: Text(
+                                verificationCodeData,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: _countdownTime == 0
+                                      ? Color(0xFF009999)
+                                      : Color(0xFFFFFFFF),
+                                ),
+                              ),
+                              decoration: verificationCodeDecoration,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                          width: 1,
+                          color: Color(0xFFEEEEEE),
+                        ))),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(43, 40, 43, 16),
                 child: Row(
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            //改变复选框的选中状态
-                            _checkboxSelected = !_checkboxSelected;
-                            setVerificationState();
-                          });
-                        },
-                        child: Image(
-                          image: AssetImage(_checkboxSelected
-                              ? 'assets/images/agreement_checkbox_check.png'
-                              : 'assets/images/agreement_checkbox_uncheck.png'),
-                        ),
-                      ),
-                    ),
                     Expanded(
-                      child: Text.rich(TextSpan(children: [
-                        TextSpan(
-                          text: "我已阅读并同意",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF999999),
+                      child: Container(
+                        child: ElevatedButton(
+                          onPressed: _isDisable ? null : onVerificationClick,
+                          child: Text(
+                            '验证并更换',
+                            style: TextStyle(
+                              color: Color(verificationTextColor),
+                              fontSize: 16,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(25)),
+                              ),
+                            ),
+                            elevation: MaterialStateProperty.all(0),
+                            backgroundColor: MaterialStateProperty.all(
+                                Color(verificationBackgroundColor)),
                           ),
                         ),
-                        TextSpan(
-                          text: "《官方服务协议和隐私说明》",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF009999),
-                            decoration: TextDecoration.underline,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.pushNamed(
-                                  context, 'privacy_policy'); //跳转至隐私政策
-                            },
-                        ),
-                      ])),
+                        height: 50,
+                      ),
                       flex: 1,
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.fromLTRB(43, 16, 0, 0),
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(right: 8),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              //改变复选框的选中状态
+                              _checkboxSelected = !_checkboxSelected;
+                              setVerificationState();
+                            });
+                          },
+                          child: Image(
+                            image: AssetImage(_checkboxSelected
+                                ? 'assets/images/agreement_checkbox_check.png'
+                                : 'assets/images/agreement_checkbox_uncheck.png'),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(
+                            text: "我已阅读并同意",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF999999),
+                            ),
+                          ),
+                          TextSpan(
+                            text: "《官方服务协议和隐私说明》",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF009999),
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.pushNamed(
+                                    context, 'privacy_policy'); //跳转至隐私政策
+                              },
+                          ),
+                        ])),
+                        flex: 1,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -370,11 +370,11 @@ class _PersonalPageState extends State<PersonalPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
+            Padding(padding: EdgeInsets.only(top: 4),child:Text(
               hospital,
               style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
-            ),
-            Row(
+            ),),
+            Padding(padding: EdgeInsets.only(top: 4),child:Row(
               mainAxisAlignment: MainAxisAlignment.center,//水平居中
               children: <Widget>[
                 Text(
@@ -386,7 +386,8 @@ class _PersonalPageState extends State<PersonalPage> {
                   style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
                 ),
               ],
-            ),
+            ),)
+,
           ],
         ),
       ),);
